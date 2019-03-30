@@ -23,6 +23,10 @@ module.exports = {
       use: ['style-loader', 'css-loader'],
     },
     {
+      test: /\.(scss|sass)$/,
+      use: ['style-loader', 'css-loader', 'sass-loader'],
+    },
+    {
       test: /\.(png|woff|woff2|eot|ttf|svg)$/,
       loader: 'url-loader?limit=100000',
     },
@@ -36,6 +40,7 @@ module.exports = {
     open: true,
     proxy: {
       '/api': 'http://localhost:8080',
+      '/manifest.json': 'http://localhost:8080',
     },
   },
   plugins: [
