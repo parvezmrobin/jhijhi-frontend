@@ -1,5 +1,14 @@
+/**
+ * Parvez M Robin
+ * parvezmrobin@gmail.com
+ * Date: Mar 31, 2019
+ */
+
+
 import React from 'react';
 import ReactDOM from 'react-dom';
+import './scss/App.scss';
+import 'bootstrap';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
