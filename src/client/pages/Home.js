@@ -1,8 +1,24 @@
+/**
+ * Parvez M Robin
+ * parvezmrobin@gmail.com
+ * Date: Apr 01, 2019
+ */
+
+
 import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
+import $ from 'jquery';
 
 
 class Home extends Component {
+  componentDidMount() {
+    $('#home').addClass('active');
+  }
+
+  componentWillUnmount() {
+    $('#home').removeClass('active');
+  }
+
 
   render() {
     return (

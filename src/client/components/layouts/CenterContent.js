@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
-
 /**
  * Parvez M Robin
  * parvezmrobin@gmail.com
  * Date: Apr 01, 2019
  */
+
+
+import React, { Component } from 'react';
 
 
 class CenterContent extends Component {

@@ -22,21 +22,21 @@ class Navbar extends Component {
 
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav mr-auto">
-            <li className="nav-item active">
-              <Link className="nav-link" to="/">Home <span className="sr-only">(current)</span></Link>
+            <li className="nav-item" id="home">
+              <Link className="nav-link" to="/">Home</Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="#">Contact</Link>
+            <li className="nav-item" id="contact">
+              <Link className="nav-link" to="/contact">Contact</Link>
             </li>
           </ul>
           <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link className="nav-link" to="/register">Registration</Link>
+            <li className="nav-item" id="register">
+              <Link className="nav-link" to="/register">Register</Link>
             </li>
-            <li className="nav-item">
+            <li className="nav-item" id="login">
               <Link className="nav-link" to="/login">Login</Link>
             </li>
-            <li className="nav-item dropdown">
+            <li className="nav-item dropdown" id="user">
               <Link className="nav-link dropdown-toggle" to="#" id="navbarDropdown" role="button"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {this.props.username}

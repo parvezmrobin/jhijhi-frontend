@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
-import CenterContent from '../layouts/CenterContent';
-import FormGroup from '../form/FormGroup';
-import FormButton from '../form/FormButton';
-
 /**
  * Parvez M Robin
  * parvezmrobin@gmail.com
  * Date: Apr 01, 2019
  */
+
+
+import React, { Component } from 'react';
+import CenterContent from '../layouts/CenterContent';
+import FormGroup from '../form/FormGroup';
+import FormButton from '../form/FormButton';
 
 
 class AuthForm extends Component {
