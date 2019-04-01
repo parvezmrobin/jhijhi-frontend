@@ -7,9 +7,10 @@
 
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import Registration from './components/Registration';
-import Login from './components/Login';
+import Registration from './pages/Registration';
+import Login from './pages/Login';
 import Navbar from './components/Navbar';
+import Home from './pages/Home';
 
 
 class App extends Component {
@@ -29,7 +30,8 @@ class App extends Component {
       <Router>
         <Navbar username={username}/>
 
-        <Route path="/registration/" component={Registration} />
+        <Route path="/" exact component={Home}/>
+        <Route path="/register/" component={Registration} />
         <Route path="/login/" component={Login}/>
       </Router>
     );
