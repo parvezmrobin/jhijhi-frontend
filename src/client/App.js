@@ -11,6 +11,7 @@ import Registration from './pages/Registration';
 import Login from './pages/Login';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
+import Contact from './pages/Contact';
 
 
 class App extends Component {
@@ -31,8 +32,9 @@ class App extends Component {
         <Navbar username={username}/>
 
         <Route path="/" exact component={Home}/>
-        <Route path="/register/" component={Registration} />
-        <Route path="/login/" component={Login}/>
+        <Route path="/contact" component={Contact} />
+        <Route path="/register" component={Registration} />
+        <Route path="/login" component={Login}/>
       </Router>
     );
   }
