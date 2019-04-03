@@ -20,7 +20,7 @@ class AuthForm extends Component {
     const btnText = this.props.btnText || this.props.title;
 
     return (
-      <CenterContent col="col-md-10 col-lg-8 col-xl-6">
+      <CenterContent col="col-md-8 col-lg-6 col-xl-5">
         <h2>{this.props.title}</h2>
         <hr/>
         <form action={action} method="post">
