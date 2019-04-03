@@ -12,6 +12,7 @@ import Login from './pages/Login';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Contact from './pages/Contact';
+import Sidebar from './components/sidebar';
 
 
 class App extends Component {
@@ -31,10 +32,19 @@ class App extends Component {
       <Router>
         <Navbar username={username}/>
 
-        <Route path="/" exact component={Home}/>
-        <Route path="/contact" component={Contact} />
-        <Route path="/register" component={Registration} />
-        <Route path="/login" component={Login}/>
+        <div className="container-fluid">
+          <div className="row">
+            <aside className="col-md-3 vh-100 bg-dark">
+              <Sidebar/>
+            </aside>
+            <div className="col">
+              <Route path="/" exact component={Home}/>
+              <Route path="/contact" component={Contact}/>
+              <Route path="/register" component={Registration}/>
+              <Route path="/login" component={Login}/>
+            </div>
+          </div>
+        </div>
       </Router>
     );
   }
