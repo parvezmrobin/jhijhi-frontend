@@ -3,7 +3,8 @@
   "extends": ["react-app"],
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "mocha": true
   },
   "rules": {
     "no-console": "off",
