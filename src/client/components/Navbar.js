@@ -28,6 +28,9 @@ class Navbar extends Component {
             <li className="nav-item" id="contact">
               <NavLink className="nav-link" to="/contact">Contact</NavLink>
             </li>
+            <li className="nav-item" id="team">
+              <NavLink className="nav-link" to="/team">Team</NavLink>
+            </li>
           </ul>
           <ul className="navbar-nav">
             <li className="nav-item" id="register">

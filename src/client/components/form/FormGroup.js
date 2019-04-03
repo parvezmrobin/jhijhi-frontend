@@ -15,11 +15,11 @@ class FormGroup extends Component {
     return str
       .split(' ')
       .map(word => word[0].toUpperCase() + word.substr(1).toLowerCase())
-      .join();
+      .join(' ');
   }
 
   render() {
-    const labelCol = this.props.labelCol || 'col-md-4 col-lg-2';
+    const labelCol = this.props.labelCol || 'col-md-4 col-lg-3';
     const id = this.props.id || this.props.name;
     const type = this.props.type || 'text';
     const label = this.props.label || FormGroup.toTitleCase(this.props.name);

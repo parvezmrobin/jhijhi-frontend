@@ -13,6 +13,11 @@ $border-radius-sm:            .1rem !default;
 
 @include media-breakpoint-up(md) {
   aside{
-    padding-top: 5rem;
+    background-color: #11111a;
+
+    .list-group{
+      max-height: calc(100vh - 12rem);
+      overflow-y: auto;
+    }
   }
 }

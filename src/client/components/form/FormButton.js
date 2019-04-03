@@ -13,7 +13,7 @@ class FormButton extends Component {
   btnClass;
 
   render() {
-    const offsetCol = this.props.offsetCol || 'offset-md-4 offset-lg-2';
+    const offsetCol = this.props.offsetCol || 'offset-md-4 offset-lg-3';
     const btnClass = this.props.btnClass || 'outline-success';
     const type = this.props.type || 'button';
 

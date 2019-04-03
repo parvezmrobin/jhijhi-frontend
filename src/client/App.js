@@ -12,7 +12,7 @@ import Login from './pages/Login';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Contact from './pages/Contact';
-import Sidebar from './components/sidebar';
+import Team from './pages/Team';
 
 
 class App extends Component {
@@ -33,15 +33,15 @@ class App extends Component {
         <Navbar username={username}/>
 
         <div className="container-fluid">
+
           <div className="row">
-            <aside className="col-md-3 vh-100 bg-dark">
-              <Sidebar/>
-            </aside>
             <div className="col">
               <Route path="/" exact component={Home}/>
               <Route path="/contact" component={Contact}/>
               <Route path="/register" component={Registration}/>
               <Route path="/login" component={Login}/>
+
+              <Route path="/team" component={Team}/>
             </div>
           </div>
         </div>
