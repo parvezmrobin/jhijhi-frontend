@@ -7,18 +7,9 @@
 
 import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
-import $ from 'jquery';
 
 
 class Contact extends Component {
-  componentDidMount() {
-    $('#contact').addClass('active');
-  }
-
-  componentWillUnmount() {
-    $('#contact').removeClass('active');
-  }
-
 
   render() {
     return (

@@ -5,7 +5,7 @@
  */
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 
 class Navbar extends Component {
@@ -13,7 +13,7 @@ class Navbar extends Component {
   render() {
     return (
       <nav className="navbar navbar-expand-md navbar-light bg-light fixed-top">
-        <Link className="navbar-brand" to="/">Jhijhi</Link>
+        <NavLink exact className="navbar-brand" to="/">Jhijhi</NavLink>
         <button className="navbar-toggler" type="button" data-toggle="collapse"
                 data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
@@ -23,29 +23,29 @@ class Navbar extends Component {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav mr-auto">
             <li className="nav-item" id="home">
-              <Link className="nav-link" to="/">Home</Link>
+              <NavLink exact className="nav-link" to="/">Home</NavLink>
             </li>
             <li className="nav-item" id="contact">
-              <Link className="nav-link" to="/contact">Contact</Link>
+              <NavLink className="nav-link" to="/contact">Contact</NavLink>
             </li>
           </ul>
           <ul className="navbar-nav">
             <li className="nav-item" id="register">
-              <Link className="nav-link" to="/register">Register</Link>
+              <NavLink className="nav-link" to="/register">Register</NavLink>
             </li>
             <li className="nav-item" id="login">
-              <Link className="nav-link" to="/login">Login</Link>
+              <NavLink className="nav-link" to="/login">Login</NavLink>
             </li>
             <li className="nav-item dropdown" id="user">
-              <Link className="nav-link dropdown-toggle" to="#" id="navbarDropdown" role="button"
+              <NavLink className="nav-link dropdown-toggle" to="#" id="navbarDropdown" role="button"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {this.props.username}
-              </Link>
+              </NavLink>
               <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <Link className="dropdown-item" to="#">Change Password</Link>
-                <Link className="dropdown-item" to="#">Manage Account</Link>
+                <NavLink className="dropdown-item" to="#">Change Password</NavLink>
+                <NavLink className="dropdown-item" to="#">Manage Account</NavLink>
                 <div className="dropdown-divider"/>
-                <Link className="dropdown-item text-warning" to="#">Logout</Link>
+                <NavLink className="dropdown-item text-warning" to="#">Logout</NavLink>
               </div>
             </li>
           </ul>

@@ -8,17 +8,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import AuthForm from '../components/auth/AuthForm';
-import $ from 'jquery';
 
 
 class Registration extends Component {
-  componentDidMount() {
-    $('#register').addClass('active');
-  }
-
-  componentWillUnmount() {
-    $('#register').removeClass('active');
-  }
 
   render() {
     return (
@@ -29,6 +21,7 @@ class Registration extends Component {
       </AuthForm>
     );
   }
+
 }
 
 export default Registration;
