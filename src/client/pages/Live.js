@@ -14,7 +14,7 @@ import SelectControl from "../components/form/control/select";
 class Live extends Component {
 
   render() {
-    const itemMapper = (item, i) => {
+    const playerItemMapper = (item, i) => {
       if (i < 4) {
         return <span className="text-secondary">{item}</span>;
       } else if (i < 6) {
@@ -24,6 +24,7 @@ class Live extends Component {
       }
     };
     const wickets = [
+      "Wicket",
       "Bowled",
       "Caught",
       "Leg before wicket",
@@ -44,7 +45,7 @@ class Live extends Component {
               <SidebarList
                 title="Players of Team"
                 itemClass="text-white"
-                itemMapper={itemMapper}
+                itemMapper={playerItemMapper}
                 list={Array(11).fill(0).map((n, i) => `Player ${i + 1}`)}/>
             </CenterContent>
           </aside>
