@@ -42,6 +42,7 @@ class Live extends Component {
       { batsman: "Player 5", run: 1 },
       { batsman: "Player 4",boundary: 4 },
       { batsman: "Player 4",boundary: 6 },
+      { batsman: "Player 4",isWide: true },
       { batsman: "Player 4", isWicket: "bold" },
     ];
 
@@ -61,7 +62,11 @@ class Live extends Component {
           </aside>
           <main className="col">
             <CenterContent col="col">
-              <header
+              <header className="text-center">
+                <h2><span className="font-italic">CricPlatoon</span> Friendly</h2>
+              </header>
+              <hr/>
+              <div
                 className="d-flex pl-3 justify-content-between align-items-center bg-info text-white rounded">
 
                 <CheckBoxControl name="by">By</CheckBoxControl>
@@ -81,7 +86,7 @@ class Live extends Component {
                   <SelectControl name="wicket" className="form-control" options={wickets}/>
                 </div>
 
-              </header>
+              </div>
               <div className="col-md-4 pl-0">
                 <CurrentOver balls={balls} bowler="Bowler 1" onCrease="Player 6"/>
               </div>

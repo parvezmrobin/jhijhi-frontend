@@ -29,6 +29,8 @@ class CurrentOver extends Component {
                 boundary: ball.boundary,
                 run: ball.run,
                 batsman: ball.batsman,
+                isWide: ball.isWide,
+                isNo: ball.isNo,
               };
               return (<Ball {...props}/>);
             },
