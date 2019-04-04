@@ -21,7 +21,6 @@ class FormGroup extends Component {
     const label = this.props.label || toTitleCase(this.props.name);
 
     const inputProps = {
-      className: "form-control",
       name: this.props.name,
       id,
     };

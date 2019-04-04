@@ -11,7 +11,7 @@ class InputControl extends Component {
 
     render() {
         return (
-            <input {...this.props}/>
+            <input className="form-control" {...this.props}/>
         );
     }
 

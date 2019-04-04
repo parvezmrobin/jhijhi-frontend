@@ -12,7 +12,7 @@ class SelectControl extends Component {
   render() {
     const options = this.props.options.map(option => <option key={option} value={option}>{option}</option>);
     return (
-      <select {...this.props}>{options}</select>
+      <select className="form-control" {...this.props}>{options}</select>
     );
   }
 
