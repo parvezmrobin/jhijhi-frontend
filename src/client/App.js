@@ -13,6 +13,7 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Contact from './pages/Contact';
 import Team from './pages/Team';
+import Player from "./pages/Player";
 
 
 class App extends Component {
@@ -42,6 +43,7 @@ class App extends Component {
               <Route path="/login" component={Login}/>
 
               <Route path="/team" component={Team}/>
+              <Route path="/player" component={Player}/>
             </div>
           </div>
         </div>

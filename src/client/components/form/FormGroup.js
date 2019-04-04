@@ -13,7 +13,7 @@ class FormGroup extends Component {
 
   static toTitleCase(str) {
     return str
-      .split(' ')
+      .split('-')
       .map(word => word[0].toUpperCase() + word.substr(1).toLowerCase())
       .join(' ');
   }
