@@ -5,8 +5,8 @@
  */
 
 
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import React, {Component} from 'react';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
 import Registration from './pages/Registration';
 import Login from './pages/Login';
 import Navbar from './components/Navbar';
@@ -14,6 +14,7 @@ import Home from './pages/Home';
 import Contact from './pages/Contact';
 import Team from './pages/Team';
 import Player from "./pages/Player";
+import Umpire from "./pages/Umpire";
 
 
 class App extends Component {
@@ -44,6 +45,7 @@ class App extends Component {
 
               <Route path="/team" component={Team}/>
               <Route path="/player" component={Player}/>
+              <Route path="/umpire" component={Umpire}/>
             </div>
           </div>
         </div>
