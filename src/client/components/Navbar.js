@@ -4,8 +4,8 @@
  * Date: Mar 31, 2019
  */
 
-import React, { Component } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, {Component} from 'react';
+import {NavLink} from 'react-router-dom';
 
 
 class Navbar extends Component {
@@ -37,6 +37,9 @@ class Navbar extends Component {
             <li className="nav-item" id="umpire">
               <NavLink className="nav-link" to="/umpire">Umpire</NavLink>
             </li>
+            <li className="nav-item" id="match">
+              <NavLink className="nav-link" to="/match">Match</NavLink>
+            </li>
           </ul>
           <ul className="navbar-nav">
             <li className="nav-item" id="register">
@@ -47,7 +50,7 @@ class Navbar extends Component {
             </li>
             <li className="nav-item dropdown" id="user">
               <NavLink className="nav-link dropdown-toggle" to="#" id="navbarDropdown" role="button"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {this.props.username}
               </NavLink>
               <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">

@@ -15,6 +15,7 @@ import Contact from './pages/Contact';
 import Team from './pages/Team';
 import Player from "./pages/Player";
 import Umpire from "./pages/Umpire";
+import Match from "./pages/Match";
 
 
 class App extends Component {
@@ -25,11 +26,11 @@ class App extends Component {
   componentDidMount() {
     fetch('/api/users')
       .then(res => res.json())
-      .then(users => this.setState({ username: users[0].username }));
+      .then(users => this.setState({username: users[0].username}));
   }
 
   render() {
-    const { username } = this.state;
+    const {username} = this.state;
     return (
       <Router>
         <Navbar username={username}/>
@@ -46,6 +47,7 @@ class App extends Component {
               <Route path="/team" component={Team}/>
               <Route path="/player" component={Player}/>
               <Route path="/umpire" component={Umpire}/>
+              <Route path="/match" component={Match}/>
             </div>
           </div>
         </div>
