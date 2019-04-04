@@ -16,7 +16,7 @@ class Team extends Component {
 
   render() {
     return (
-      <div className="container-fluid pl-0">
+      <div className="container-fluid px-0">
         <div className="row">
           <aside className="col-md-3">
             <CenterContent col="col">
