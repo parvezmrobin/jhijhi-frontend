@@ -16,6 +16,7 @@ import Team from './pages/Team';
 import Player from "./pages/Player";
 import Umpire from "./pages/Umpire";
 import Match from "./pages/Match";
+import {toTitleCase} from "./lib/utils";
 
 
 class App extends Component {
@@ -26,7 +27,7 @@ class App extends Component {
   componentDidMount() {
     fetch('/api/users')
       .then(res => res.json())
-      .then(users => this.setState({username: users[0].username}));
+      .then(users => this.setState({username: toTitleCase(users[0].username)}));
   }
 
   render() {
