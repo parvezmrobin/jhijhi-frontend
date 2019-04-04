@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
 import TeamForm from '../components/TeamForm';
+import CheckBoxControl from "../components/form/control/checkbox";
 
 
 class Team extends Component {
@@ -25,11 +26,20 @@ class Team extends Component {
                 list={new Array(5).fill(0).map((n, i) => `Team ${i+1}`)}/>
             </CenterContent>
           </aside>
-          <main className="col">
-            <CenterContent col="col-lg-8 col-md-10">
+          <main className="col-md-6">
+            <CenterContent col="col">
               <TeamForm/>
             </CenterContent>
           </main>
+          <aside className="col-md-3">
+            <CenterContent col="col">
+              <SidebarList
+                title="Choose Players"
+                itemClass="text-white"
+                itemMapper={((item, i) => <CheckBoxControl name={`player${i}`}>{item}</CheckBoxControl>)}
+                list={new Array(20).fill(0).map((n, i) => `Player ${i+1}`)}/>
+            </CenterContent>
+          </aside>
         </div>
       </div>
     );

@@ -10,13 +10,12 @@ import React, { Component, Fragment } from 'react';
 
 class SidebarList extends Component {
   itemClass;
+  itemMapper;
 
   render() {
     const className = "list-group-item bg-transparent " + (this.props.itemClass || "");
-
-    const items = this.props.list.map(
-      item => <li key={item} className={className}>{item}</li>,
-    );
+    const mapper = this.props.itemMapper || (item => item);
+    const items = this.props.list.map(((item, i) => <li key={item} className={className}>{mapper(item, i)}</li>));
     return (
       <Fragment>
         <h3 className="text-center text-info">{this.props.title}</h3>
