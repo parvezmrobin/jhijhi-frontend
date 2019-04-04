@@ -5,11 +5,12 @@
  */
 
 
-import React, {Component} from "react";
-import CenterContent from "../components/layouts/CenterContent";
-import SidebarList from "../components/SidebarList";
-import CheckBoxControl from "../components/form/control/checkbox";
-import SelectControl from "../components/form/control/select";
+import React, { Component } from 'react';
+import CenterContent from '../components/layouts/CenterContent';
+import SidebarList from '../components/SidebarList';
+import CheckBoxControl from '../components/form/control/checkbox';
+import SelectControl from '../components/form/control/select';
+import CurrentOver from '../components/CurrentOver';
 
 class Live extends Component {
 
@@ -24,17 +25,24 @@ class Live extends Component {
       }
     };
     const wickets = [
-      "Wicket",
-      "Bowled",
-      "Caught",
-      "Leg before wicket",
-      "Run out",
-      "Stumped",
-      "Hit the ball twice",
-      "Hit wicket",
-      "Obstructing the field",
-      "Timed out",
-      "Retired",
+      'Wicket',
+      'Bowled',
+      'Caught',
+      'Leg before wicket',
+      'Run out',
+      'Stumped',
+      'Hit the ball twice',
+      'Hit wicket',
+      'Obstructing the field',
+      'Timed out',
+      'Retired',
+    ];
+
+    const balls = [
+      { batsman: "Player 5", run: 1 },
+      { batsman: "Player 4",boundary: 4 },
+      { batsman: "Player 4",boundary: 6 },
+      { batsman: "Player 4", isWicket: "bold" },
     ];
 
     return (
@@ -46,12 +54,15 @@ class Live extends Component {
                 title="Players of Team"
                 itemClass="text-white"
                 itemMapper={playerItemMapper}
-                list={Array(11).fill(0).map((n, i) => `Player ${i + 1}`)}/>
+                list={Array(11)
+                  .fill(0)
+                  .map((n, i) => `Player ${i + 1}`)}/>
             </CenterContent>
           </aside>
           <main className="col">
             <CenterContent col="col">
-              <header className="d-flex pl-3 justify-content-between align-items-center bg-info text-white rounded">
+              <header
+                className="d-flex pl-3 justify-content-between align-items-center bg-info text-white rounded">
 
                 <CheckBoxControl name="by">By</CheckBoxControl>
 
@@ -62,7 +73,8 @@ class Live extends Component {
                 <button type="button" className="btn btn-primary m-2">Six</button>
 
                 <div>
-                  <SelectControl name="singles" className="form-control" options={[...Array(11).keys()]}/>
+                  <SelectControl name="singles" className="form-control" options={[...Array(11)
+                    .keys()]}/>
                 </div>
 
                 <div className="bg-danger py-2 px-3 rounded">
@@ -70,6 +82,9 @@ class Live extends Component {
                 </div>
 
               </header>
+              <div className="col-md-4 pl-0">
+                <CurrentOver balls={balls} bowler="Bowler 1" onCrease="Player 6"/>
+              </div>
             </CenterContent>
           </main>
         </div>
