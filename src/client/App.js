@@ -17,6 +17,7 @@ import Player from "./pages/Player";
 import Umpire from "./pages/Umpire";
 import Match from "./pages/Match";
 import {toTitleCase} from "./lib/utils";
+import Live from "./pages/Live";
 
 
 class App extends Component {
@@ -49,6 +50,7 @@ class App extends Component {
               <Route path="/player" component={Player}/>
               <Route path="/umpire" component={Umpire}/>
               <Route path="/match" component={Match}/>
+              <Route path="/live" component={Live}/>
             </div>
           </div>
         </div>

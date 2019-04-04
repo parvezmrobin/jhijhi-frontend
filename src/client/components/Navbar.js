@@ -40,6 +40,9 @@ class Navbar extends Component {
             <li className="nav-item" id="match">
               <NavLink className="nav-link" to="/match">Match</NavLink>
             </li>
+            <li className="nav-item" id="live">
+              <NavLink className="nav-link" to="/live">Live</NavLink>
+            </li>
           </ul>
           <ul className="navbar-nav">
             <li className="nav-item" id="register">
