@@ -5,7 +5,9 @@
  */
 
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import InputControl from "./control/input";
+import SelectControl from "./control/select";
 
 
 class FormGroup extends Component {
@@ -24,14 +26,25 @@ class FormGroup extends Component {
     const type = this.props.type || 'text';
     const label = this.props.label || FormGroup.toTitleCase(this.props.name);
 
-    return <div className="form-group row">
+    const inputProps = {
+      className: "form-control",
+      name: this.props.name,
+      id,
+    };
+
+    let control = <InputControl type={type} {...inputProps}/>;
+    if (type === "select") {
+      control = <SelectControl {...inputProps} options={this.props.options}/>
+    }
+
+    return (<div className="form-group row">
       <label htmlFor={id} className={'col-form-label ' + labelCol}>
         {label}
       </label>
       <div className="col">
-        <input type={type} className="form-control" name={this.props.name} id={id}/>
+        {control}
       </div>
-    </div>;
+    </div>);
   }
 }
 
