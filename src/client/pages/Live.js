@@ -11,6 +11,7 @@ import SidebarList from '../components/SidebarList';
 import CheckBoxControl from '../components/form/control/checkbox';
 import SelectControl from '../components/form/control/select';
 import CurrentOver from '../components/CurrentOver';
+import PreviousOvers from '../components/PreviousOvers';
 
 class Live extends Component {
 
@@ -46,8 +47,14 @@ class Live extends Component {
       { batsman: "Player 4", isWicket: "bold" },
     ];
 
+    const overs = [
+      {bowler: 'Bowler 2', runs: 17, wickets: []},
+      {bowler: 'Bowler 3', runs: 5, wickets: ["run out"]},
+      {bowler: 'Bowler 2', runs: 9, wickets: ["bold", "caught"]},
+    ];
+
     return (
-      <div className="container-fluid pl-0">
+      <div className="container-fluid pl-0 pr-1">
         <div className="row">
           <aside className="col-md-3">
             <CenterContent col="col">
@@ -61,13 +68,13 @@ class Live extends Component {
             </CenterContent>
           </aside>
           <main className="col">
-            <CenterContent col="col">
-              <header className="text-center">
+            <CenterContent col="row pl-1">
+              <header className="text-center col-12">
                 <h2><span className="font-italic">CricPlatoon</span> Friendly</h2>
               </header>
               <hr/>
               <div
-                className="d-flex pl-3 justify-content-between align-items-center bg-info text-white rounded">
+                className="col-12 d-flex pl-3 justify-content-between align-items-center bg-info text-white rounded">
 
                 <CheckBoxControl name="by">By</CheckBoxControl>
 
@@ -87,8 +94,16 @@ class Live extends Component {
                 </div>
 
               </div>
-              <div className="col-md-4 pl-0">
+              <div className="col-md-4">
+                <h3 className="mt-3 text-primary">Team 1</h3>
+                <h4>43/4</h4>
+                <h5><small>After</small> 3 overs 4 bawls</h5>
+              </div>
+              <div className="col-md-4">
                 <CurrentOver balls={balls} bowler="Bowler 1" onCrease="Player 6"/>
+              </div>
+              <div className="col-md-4">
+                <PreviousOvers overs={overs}/>
               </div>
             </CenterContent>
           </main>
