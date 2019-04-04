@@ -19,7 +19,7 @@ class TeamForm extends Component{
         <hr/>
         <form>
           <FormGroup name="name"/>
-          <FormGroup name="short name"/>
+          <FormGroup name="short-name"/>
           <FormButton type="submit" text="Create" btnClass="outline-success">
             {this.props.children}
           </FormButton>

@@ -22,7 +22,7 @@ class Team extends Component {
               <SidebarList
                 title="Existing Teams"
                 itemClass="text-white"
-                list={['abc', 'efg', 'hij', 'klm', 'nop']}/>
+                list={new Array(5).fill(0).map((n, i) => `Team ${i+1}`)}/>
             </CenterContent>
           </aside>
           <main className="col">
