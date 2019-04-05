@@ -33,13 +33,16 @@ class Register extends Component {
     this.state = {
       username: '',
       password: '',
+      confirm: '',
     };
     bindMethods(this);
   }
 
   render() {
     return (
-      <AuthForm title="Register" onChange={this.onChange} onSubmit={this.onSubmit} values={this.state} btnClass="outline-success">
+      <AuthForm title="Register" onChange={this.onChange} onSubmit={this.onSubmit} values={this.state}
+                confirmPassword={true}
+                btnClass="outline-success">
         <label className="col-form-label float-right">
           Already Registered? <Link to="/login">Login</Link>
         </label>

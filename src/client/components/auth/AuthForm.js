@@ -14,11 +14,15 @@ import FormButton from '../form/FormButton';
 class AuthForm extends Component {
   btnText;
   onSubmit;
+  confirmPassword;
 
   render() {
     const action = this.props.action || "";
     const btnClass = this.props.btnClass || "outline-primary";
     const btnText = this.props.btnText || this.props.title;
+    const confirmPasswordField = this.props.confirmPassword &&
+      <FormGroup name="confirm-password" type="password" value={this.props.values.confirm}
+                 onChange={e => this.props.onChange({confirm: e.target.value})}/>;
 
     return (
       <CenterContent col="col-md-8 col-lg-6 col-xl-5">
@@ -29,6 +33,7 @@ class AuthForm extends Component {
                      onChange={e => this.props.onChange({username: e.target.value})}/>
           <FormGroup name="password" type="password" value={this.props.values.password}
                      onChange={e => this.props.onChange({password: e.target.value})}/>
+          {confirmPasswordField}
           <FormButton type="submit" text={btnText} btnClass={btnClass}>
             {this.props.children}
           </FormButton>

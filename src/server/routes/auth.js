@@ -15,17 +15,44 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const bcrypt = require("bcrypt");
 const responses = require("../responses");
+const {check, validationResult} = require('express-validator/check');
+
+const registrationValidations = [
+  check('username').exists({checkFalsy: true})
+    .custom(username => {
+      return new Promise(function (resolve, reject) {
+        User.findOne({username: username}).exec().then(user => {
+          if (user) {
+            reject("Username already taken.");
+          } else {
+            resolve();
+          }
+        }).catch(reject);
+      });
+    }),
+  check('password').isLength({min: 4})
+    .custom((password, {req}) => {
+      if (password !== req.body.confirm) {
+        // trow error if passwords do not match
+        throw new Error("Password and confirm password don't match");
+      }
+      return password;
+    }),
+];
 
 
 router.get('/user', authenticateJwt(), function (request, response) {
   response.json(request.user);
 });
 
-router.post('/register', function (request, response) {
+router.post('/register', registrationValidations, function (request, response) {
+  const errors = validationResult(request);
+  const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({status: 400, errors: errors.array()});
   const {username, password} = request.body;
+  const saltRounds = 10;
 
-  bcrypt
-    .hash(password, 10)
+  promise
+    .then(() => bcrypt.hash(password, saltRounds))
     .then(hashedPassword => {
       return User.create({
         username: username,
@@ -40,11 +67,11 @@ router.post('/register', function (request, response) {
       });
     })
     .catch(err => {
-      response.statusCode(err.statusCode || err.status || 500);
+      response.status(err.statusCode || err.status || 500);
       response.json({
         success: false,
         message: responses.auth.register.err,
-        err: err,
+        err: err.error || err.errors || err,
       });
     });
 });
