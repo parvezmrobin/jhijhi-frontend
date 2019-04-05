@@ -1,3 +1,4 @@
+const {describe} = require("mocha");
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 chai.should();
@@ -31,7 +32,7 @@ describe('Test JWT authentication', function () {
         res.should.have.status(200);
         res.body.should.be.an('object');
         res.body.username.should.be.equals('username');
-        res.body.password.should.be.equals('1234');
+        res.body.password.should.not.be.equals('1234');
 
         done();
       }));

@@ -10,9 +10,10 @@ const express = require('express');
  */
 const router = express.Router();
 const passport = require('passport');
-const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
+const authenticateJwt = passport.authenticate.bind(passport, 'jwt', {session: false});
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const bcrypt = require("bcrypt");
 
 
 router.get('/user', authenticateJwt(), function (request, response) {
@@ -20,12 +21,16 @@ router.get('/user', authenticateJwt(), function (request, response) {
 });
 
 router.post('/register', function (request, response) {
-  const { username, password } = request.body;
+  const {username, password} = request.body;
 
-  User.create({
-    username: username,
-    password: password,
-  })
+  bcrypt
+    .hash(password, 10)
+    .then(hashedPassword => {
+      return User.create({
+        username: username,
+        password: hashedPassword,
+      });
+    })
     .then(user => {
       response.json(user);
     })
@@ -35,22 +40,21 @@ router.post('/register', function (request, response) {
 });
 
 router.post('/login', function (request, response) {
-  const { username, password } = request.body;
+  const {username, password} = request.body;
 
   User
-    .findOne({ username })
+    .findOne({username})
     .exec()
     .then(user => {
-      if (user.password === password) {
-        const token = jwt.sign(user._id.toString(), request.app.get('db'));
-        return response.json({
-          success: true,
-          'token': token,
+      bcrypt
+        .compare(password, user.password)
+        .then(matched => {
+          if (matched) {
+            const token = jwt.sign(user._id.toString(), request.app.get('db'));
+            return response.json({success: true, 'token': token});
+          }
+          return response.json({success: false});
         });
-      }
-      return response.json({
-        success: false,
-      });
     });
 });
 
