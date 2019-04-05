@@ -7,17 +7,21 @@
 
 import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
+import FormGroup from '../components/form/FormGroup';
 
 
 class Home extends Component {
 
   render() {
+    const matches = [
+      'Choose Match',
+      ...Array(5)
+        .fill(0)
+        .map((v, i) => `Match ${i + 1}`)];
     return (
-      <CenterContent>
-        <h2 className="text-center">
-          A simple <span className="text-monospace">react</span> app
-          backed by <span className="text-monospace">Express JS</span> to maintain cricket score
-        </h2>
+      <CenterContent col="col-md-6 col-lg-4">
+        <FormGroup type="select" label={<h5 className="text-right mr-n3">Start</h5>}
+                   options={matches}/>
       </CenterContent>
     );
   }
