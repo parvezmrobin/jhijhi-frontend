@@ -23,7 +23,7 @@ describe('Test JWT authentication', function () {
 
   it('should make a new user', function (done) {
     chai.request(app)
-      .post('/auth/register')
+      .post('/api/auth/register')
       .send({
         username: 'username',
         password: '1234',
@@ -40,7 +40,7 @@ describe('Test JWT authentication', function () {
 
   it('should login with the new user', function (done) {
     chai.request(app)
-      .post('/auth/login')
+      .post('/api/auth/login')
       .send({
         username: 'username',
         password: '1234',
@@ -57,7 +57,7 @@ describe('Test JWT authentication', function () {
 
   it('should authenticate using token', function (done) {
     chai.request(app)
-      .get('/auth/user')
+      .get('/api/auth/user')
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.have.status(200);

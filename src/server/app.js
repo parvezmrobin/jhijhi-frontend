@@ -25,7 +25,7 @@ app.use(express.static(join(__dirname, '..', '..', 'public')));
 require('./authentication')(app);
 
 app.use('/', indexRouter);
-app.use('/auth', authRouter);
+app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 
 module.exports = app;
