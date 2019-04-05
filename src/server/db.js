@@ -19,6 +19,8 @@ module.exports = function (app) {
       app.use(session({
         secret: app.get('db'),
         store: new MongoStore({ mongooseConnection: mongoose.connection }),
+        resave: false,
+        saveUninitialized: false,
       }));
       app.use(passport.session({}));
     });
