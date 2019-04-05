@@ -14,6 +14,7 @@ const authenticateJwt = passport.authenticate.bind(passport, 'jwt', {session: fa
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const bcrypt = require("bcrypt");
+const responses = require("../responses");
 
 
 router.get('/user', authenticateJwt(), function (request, response) {
@@ -32,10 +33,19 @@ router.post('/register', function (request, response) {
       });
     })
     .then(user => {
-      response.json(user);
+      response.json({
+        success: true,
+        message: responses.auth.register.ok,
+        user: {_id: user._id},
+      });
     })
     .catch(err => {
-      response.json(err);
+      response.statusCode(err.statusCode || err.status || 500);
+      response.json({
+        success: false,
+        message: responses.auth.register.err,
+        err: err,
+      });
     });
 });
 

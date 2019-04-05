@@ -7,7 +7,7 @@
 
 import React, {Component} from 'react';
 import {BrowserRouter as Router, Route} from 'react-router-dom';
-import Registration from './pages/Registration';
+import Register from './pages/Register';
 import Login from './pages/Login';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -43,7 +43,7 @@ class App extends Component {
             <div className="col">
               <Route path="/" exact component={Home}/>
               <Route path="/contact" component={Contact}/>
-              <Route path="/register" component={Registration}/>
+              <Route path="/register" component={Register}/>
               <Route path="/login" component={Login}/>
 
               <Route path="/team" component={Team}/>

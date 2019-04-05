@@ -21,13 +21,14 @@ class FormGroup extends Component {
     const label = this.props.label || toTitleCase(this.props.name);
 
     const inputProps = {
-      name: this.props.name,
       id,
+      name: this.props.name,
+      onChange: this.props.onChange,
     };
 
-    let control = <InputControl type={type} {...inputProps}/>;
+    let control = <InputControl type={type} {...inputProps} value={this.props.value}/>;
     if (type === "select") {
-      control = <SelectControl {...inputProps} options={this.props.options}/>
+      control = <SelectControl {...inputProps} options={this.props.options} value={this.props.value}/>
     }
 
     return (<div className="form-group row">
