@@ -21,7 +21,7 @@ class AuthForm extends Component {
     const btnClass = this.props.btnClass || "outline-primary";
     const btnText = this.props.btnText || this.props.title;
     const confirmPasswordField = this.props.confirmPassword &&
-      <FormGroup name="confirm-password" type="password" value={this.props.values.confirm}
+      <FormGroup name="confirm" type="password" value={this.props.values.confirm}
                  onChange={e => this.props.onChange({confirm: e.target.value})}/>;
 
     return (
@@ -29,9 +29,12 @@ class AuthForm extends Component {
         <h2>{this.props.title}</h2>
         <hr/>
         <form onSubmit={e => {e.preventDefault(); this.props.onSubmit(e)}} action={action} method="post">
-          <FormGroup name="username" value={this.props.values.username}
+          <FormGroup name="username" value={this.props.values.username} isValid={this.props.isValid.username}
+                     feedback={this.props.feedback.username}
                      onChange={e => this.props.onChange({username: e.target.value})}/>
           <FormGroup name="password" type="password" value={this.props.values.password}
+                     isValid={this.props.isValid.password}
+                     feedback={this.props.feedback.password}
                      onChange={e => this.props.onChange({password: e.target.value})}/>
           {confirmPasswordField}
           <FormButton type="submit" text={btnText} btnClass={btnClass}>

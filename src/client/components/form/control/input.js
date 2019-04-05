@@ -9,11 +9,19 @@ import React, {Component} from "react";
 
 class InputControl extends Component {
 
-    render() {
-        return (
-            <input className="form-control" {...this.props}/>
-        );
+  render() {
+    const props = {...this.props};
+    let className = "form-control ";
+    if (props.isValid === true) {
+      className += "is-valid";
+    } else if (props.isValid === false) {
+      className += "is-invalid";
     }
+    delete props.isValid;
+    return (
+      <input className={className} {...props}/>
+    );
+  }
 
 }
 

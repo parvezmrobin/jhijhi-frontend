@@ -23,6 +23,7 @@ class FormGroup extends Component {
     const inputProps = {
       id,
       name: this.props.name,
+      isValid: this.props.isValid,
       onChange: this.props.onChange,
     };
 
@@ -37,6 +38,7 @@ class FormGroup extends Component {
       </label>
       <div className="col">
         {control}
+        <div className="invalid-feedback">{this.props.feedback}</div>
       </div>
     </div>);
   }
