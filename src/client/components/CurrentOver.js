@@ -17,7 +17,7 @@ class CurrentOver extends Component {
   render() {
     return (
       <Fragment>
-        <h4 className="mt-3 text-center text-white">
+        <h4 className="mt-2 pt-1 text-center text-white">
           <span className="font-italic">{this.props.bowler}</span> is bowling
         </h4>
         <ul className="list-group">
