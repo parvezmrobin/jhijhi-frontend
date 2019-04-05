@@ -10,9 +10,18 @@ import React, {Component} from "react";
 class SelectControl extends Component {
 
   render() {
+    const props = {...this.props};
+    let className = "form-control ";
+    if (props.isValid === true) {
+      className += "is-valid";
+    } else if (props.isValid === false) {
+      className += "is-invalid";
+    }
+    delete props.isValid;
+
     const options = this.props.options.map(option => <option key={option} value={option}>{option}</option>);
     return (
-      <select className="form-control" {...this.props}>{options}</select>
+      <select className={className} {...props}>{options}</select>
     );
   }
 

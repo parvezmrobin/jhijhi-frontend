@@ -19,8 +19,8 @@ class Register extends Component {
 
       axios
         .post('/api/auth/register', postData)
-        .then(response => {
-          console.log(response.data);
+        .then(() => {
+          window.location.href = "login";
         })
         .catch(err => {
           const isValid = {
