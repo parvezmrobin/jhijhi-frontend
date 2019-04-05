@@ -21,3 +21,16 @@ $border-radius-sm:            .1rem !default;
     }
   }
 }
+
+select#select-match{
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  font-size: 1.25rem;
+  color: var(--info);
+
+  &:focus{
+    outline: none;
+  }
+}

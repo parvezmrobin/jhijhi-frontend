@@ -5,9 +5,8 @@
  */
 
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import CenterContent from '../components/layouts/CenterContent';
-import FormGroup from '../components/form/FormGroup';
 
 
 class Home extends Component {
@@ -18,10 +17,20 @@ class Home extends Component {
       ...Array(5)
         .fill(0)
         .map((v, i) => `Match ${i + 1}`)];
+    const props = {
+      id: "select-match",
+      name: this.props.name,
+      onChange: this.props.onChange,
+    };
+    const options = matches.map(option => <option key={option} value={option}>{option}</option>);
+
     return (
-      <CenterContent col="col-md-6 col-lg-4">
-        <FormGroup type="select" label={<h5 className="text-right mr-n3">Start</h5>}
-                   options={matches}/>
+      <CenterContent col="col-md-6 col-lg-4 col-xl-3">
+        <div className="form-group row">
+          <div className="col">
+            <select className="form-control border-0" {...props}>{options}</select>
+          </div>
+        </div>
       </CenterContent>
     );
   }
