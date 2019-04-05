@@ -9,7 +9,7 @@
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
     "server": "nodemon src/server/bin/www",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "test": "mocha --timeout 10000 test/authentication.test.js"
+    "test": "mocha --timeout 20000 src/server/test"
   },
   "author": {
     "name": "Parvez M Robin",
