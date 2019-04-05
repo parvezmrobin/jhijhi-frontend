@@ -20,8 +20,8 @@ class Ball extends Component {
       badge = <span className="badge badge-danger badge-pill">{this.props.isWicket}</span>;
     } else if (this.props.boundary) {
       const isFour = this.props.boundary === 4;
-      className += isFour ? 'text-success' : 'text-primary';
-      run = <kbd className={isFour? "bg-success": "bg-primary"}>{this.props.boundary}</kbd>;
+      className += isFour ? 'text-info' : 'text-info';
+      run = <kbd className={isFour? "bg-info": "bg-info"}>{this.props.boundary}</kbd>;
     }
     if (!this.props.isWicket && (this.props.isWide || this.props.isNo)) {
       className += 'text-warning';

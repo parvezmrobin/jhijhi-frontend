@@ -30,7 +30,7 @@ class NextBall extends Component {
 
   render() {
     return (
-      <li className="list-group-item active rounded-0">{this.props.onCrease} is on crease{this.state.dots}</li>
+      <li className="list-group-item text-white bg-info rounded-0">{this.props.onCrease} is on crease{this.state.dots}</li>
     );
   }
 
