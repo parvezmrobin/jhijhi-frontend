@@ -5,12 +5,13 @@
  */
 
 
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
 import PlayerForm from "../components/PlayerForm";
 import fetcher from "../lib/fetcher";
 import {toTitleCase} from "../lib/utils";
+import {Link} from "react-router-dom";
 
 
 class Player extends Component {
@@ -29,6 +30,11 @@ class Player extends Component {
   }
 
   render() {
+    const renderPlayer = player => {
+      const playerText = `${toTitleCase(player.name)} (${player.jerseyNo})`;
+      const editButton = <Link to={"player/edit/" + player._id} class="float-right"><kbd>Edit</kbd></Link>;
+      return <Fragment>{playerText} {editButton}</Fragment>;
+    };
     return (
       <div className="container-fluid pl-0">
         <div className="row">
@@ -37,7 +43,7 @@ class Player extends Component {
               <SidebarList
                 title="Existing Players"
                 itemClass="text-white"
-                itemMapper={player => `${toTitleCase(player.name)} (${player.jerseyNo})`}
+                itemMapper={renderPlayer}
                 list={this.state.players}/>
             </CenterContent>
           </aside>
