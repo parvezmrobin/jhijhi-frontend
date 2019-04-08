@@ -31,7 +31,7 @@ class TeamForm extends Component {
               Choose Players
             </label>
             <div className="col">
-              <ul className="list-group list-group-horizontal bg-dark text-white rounded flex-wrap">{listItems}</ul>
+              <ul className="list-group-select">{listItems}</ul>
             </div>
           </div>
           <FormButton type="submit" text="Create" btnClass="outline-success">

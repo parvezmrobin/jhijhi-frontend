@@ -24,7 +24,7 @@ aside {
     max-height: calc(100vh - 12rem);
     overflow-y: auto;
   }
-  .vh-md-100{
+  .vh-md-100 {
     height: 100vh;
   }
 }
@@ -39,6 +39,27 @@ select#select-match {
 
   &:focus {
     outline: none;
+  }
+}
+
+.list-group-select {
+  @extend .list-group;
+  @extend .list-group-horizontal;
+  @extend .bg-dark;
+  @extend .text-white;
+  @extend .rounded;
+  @extend .flex-wrap;
+}
+
+@include media-breakpoint-up(md) {
+  .list-group-select {
+    max-height: calc(100vh - 20rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .list-group-item{
+      width: 50%;
+    }
   }
 }
 
