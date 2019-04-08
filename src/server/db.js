@@ -12,9 +12,11 @@ const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 
 module.exports = function (app) {
-  mongoose
+  return mongoose
     .connect(app.get('db'), { useNewUrlParser: true })
     .then(() => {
+      console.log("Connected to database: 'jhijhi'");
+
       // using db url as the secret key :P :P :P
       app.use(session({
         secret: app.get('db'),

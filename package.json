@@ -9,7 +9,8 @@
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
     "server": "nodemon src/server/bin/www",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "test": "mocha --timeout 20000 src/server/test"
+    "test": "mocha --timeout 20000 src/server/test",
+    "seed": "node src/server/console/seed.js"
   },
   "author": {
     "name": "Parvez M Robin",
