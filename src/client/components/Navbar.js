@@ -29,8 +29,8 @@ class Navbar extends Component {
           <div className="navbar-nav">
             <NavLink exact className="nav-item nav-link" to="/">Home</NavLink>
             <NavLink className="nav-item nav-link" to="/contact">Contact</NavLink>
-            <NavLink className="nav-item nav-link" to="/team">Team</NavLink>
             <NavLink className="nav-item nav-link" to="/player">Player</NavLink>
+            <NavLink className="nav-item nav-link" to="/team">Team</NavLink>
             <NavLink className="nav-item nav-link" to="/umpire">Umpire</NavLink>
             <NavLink className="nav-item nav-link" to="/match">Match</NavLink>
             <NavLink className="nav-item nav-link" to="/live">Live</NavLink>
