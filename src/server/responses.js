@@ -16,5 +16,9 @@ module.exports = {
     index: {
       err: "Error while retrieving player list",
     },
+    create: {
+      ok: "Successfully created player",
+      err: "Error while creating player",
+    },
   },
 };

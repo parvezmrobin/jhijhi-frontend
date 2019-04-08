@@ -21,6 +21,7 @@ fetcher.baseAxios = axios.create({
   headers: {Authorization: `Bearer ${fetcher.token}`},
 });
 
-fetcher.get = fetcher.baseAxios.get;
+fetcher.get = (...args) => fetcher.baseAxios.get(...args);
+fetcher.post = (...args) => fetcher.baseAxios.post(...args);
 
 export default fetcher;
