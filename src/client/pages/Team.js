@@ -29,7 +29,7 @@ class Team extends Component {
             </CenterContent>
           </aside>
           <main className="col-md-6">
-            <CenterContent col="col">
+            <CenterContent col="col mt-5">
               <TeamForm
                 players={Array(20).fill(0).map(generatePlayerName)}/>
             </CenterContent>
