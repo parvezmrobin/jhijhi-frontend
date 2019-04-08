@@ -9,9 +9,24 @@ import React, {Component} from 'react';
 import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
 import PlayerForm from "../components/PlayerForm";
+import fetcher from "../lib/fetcher";
+import {toTitleCase} from "../lib/utils";
 
 
 class Player extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      players: [],
+    }
+  }
+
+  componentDidMount() {
+    fetcher.get('players')
+      .then(response => {
+        this.setState({players: response.data});
+      });
+  }
 
   render() {
     return (
@@ -22,7 +37,8 @@ class Player extends Component {
               <SidebarList
                 title="Existing Players"
                 itemClass="text-white"
-                list={new Array(20).fill(0).map((n, i) => `Player ${i+1}`)}/>
+                itemMapper={player => `${toTitleCase(player.name)} (${player.jerseyNo})`}
+                list={this.state.players}/>
             </CenterContent>
           </aside>
           <main className="col">

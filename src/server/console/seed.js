@@ -10,7 +10,7 @@ const mongoose = require("mongoose");
 
 
 mongoose.connection.on('connected', function () {
-  const seeders = ['user'];
+  const seeders = ['user', 'player'];
 
   const promises = seeders.map((fileName) => {
     const seeder = require(`../seeders/${fileName}Seeder`);
@@ -20,7 +20,7 @@ mongoose.connection.on('connected', function () {
       .deleteMany({})
       .exec()
       .then(seeder)
-      .then((res) => console.log(`seeded ${res.lenght} items of ${fileName}Seeder.`))
+      .then((res) => console.log(`seeded ${res.length} items of ${fileName}Seeder.`))
       .catch(console.error);
   });
 

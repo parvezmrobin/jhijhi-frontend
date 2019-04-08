@@ -12,4 +12,9 @@ module.exports = {
       err: "Error while registering as a new user.",
     },
   },
+  players: {
+    index: {
+      err: "Error while retrieving player list",
+    },
+  },
 };

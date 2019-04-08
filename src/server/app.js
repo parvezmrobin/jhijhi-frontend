@@ -2,11 +2,12 @@ const express = require('express');
 const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const { join } = require('path');
+const {join} = require('path');
 
 const authRouter = require('./routes/auth');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const playersRouter = require('./routes/player');
 const config = require('./config');
 
 const app = express();
@@ -19,7 +20,7 @@ require('./db')(app);
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(join(__dirname, '..', '..', 'public')));
 
@@ -28,6 +29,7 @@ require('./authentication')(app);
 app.use('/', indexRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/players', playersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -50,7 +52,7 @@ app.use(function (err, req, res, next) {
   // only providing error in development
   res.json({
     message: error.message,
-    error: req.app.get('env') === 'development' ? error : {}
+    error: req.app.get('env') === 'development' ? error : {},
   });
 });
 

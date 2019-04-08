@@ -15,7 +15,7 @@ class SidebarList extends Component {
   render() {
     const className = "list-group-item bg-transparent " + (this.props.itemClass || "");
     const mapper = this.props.itemMapper || (item => item);
-    const items = this.props.list.map(((item, i) => <li key={item} className={className}>{mapper(item, i)}</li>));
+    const items = this.props.list.map(((item, i) => <li key={item._id} className={className}>{mapper(item, i)}</li>));
     return (
       <Fragment>
         <h3 className="text-center text-info">{this.props.title}</h3>
