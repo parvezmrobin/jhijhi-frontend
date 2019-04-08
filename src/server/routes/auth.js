@@ -83,7 +83,10 @@ router.post('/login', function (request, response) {
     .findOne({username})
     .exec()
     .then(user => {
-      bcrypt
+      if (!user) {
+        return response.json({success: false});
+      }
+      return bcrypt
         .compare(password, user.password)
         .then(matched => {
           if (matched) {
