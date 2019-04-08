@@ -98,7 +98,7 @@ class Live extends Component {
                   <h4 className="mt-3 text-white">Team 1 - 43 / 4</h4>
                   <h5>
                     <small>After</small>
-                    3 overs 4 bawls
+                    &nbsp;3 overs 4 bawls
                   </h5>
                   <h6>Innings 1</h6>
                 </div>

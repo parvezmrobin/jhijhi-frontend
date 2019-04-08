@@ -13,7 +13,7 @@ class PreviousOver extends Component {
     let className = 'rounded-0 list-group-item ';
     let runs = this.props.runs;
     const badges = this.props.wickets.map(
-      wicket => (<span className="badge badge-danger badge-pill">{wicket}</span>),
+      wicket => (<span key={wicket} className="badge badge-danger badge-pill">{wicket}</span>),
     );
 
     return (
