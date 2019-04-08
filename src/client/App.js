@@ -19,6 +19,7 @@ import Match from "./pages/Match";
 import {toTitleCase} from "./lib/utils";
 import Live from "./pages/Live";
 import fetcher from "./lib/fetcher";
+import ErrorBoundary from "./ErrorBoundary";
 
 
 class App extends Component {
@@ -41,16 +42,18 @@ class App extends Component {
 
           <div className="row">
             <div className="col">
-              <Route path="/" exact component={Home}/>
-              <Route path="/contact" component={Contact}/>
-              <Route path="/register" component={Register}/>
-              <Route path="/login" component={Login}/>
+              <ErrorBoundary>
+                <Route path="/" exact component={Home}/>
+                <Route path="/contact" component={Contact}/>
+                <Route path="/register" component={Register}/>
+                <Route path="/login" component={Login}/>
 
-              <Route path="/team" component={Team}/>
-              <Route path="/player" component={Player}/>
-              <Route path="/umpire" component={Umpire}/>
-              <Route path="/match" component={Match}/>
-              <Route path="/live" component={Live}/>
+                <Route path="/team" component={Team}/>
+                <Route path="/player" component={Player}/>
+                <Route path="/umpire" component={Umpire}/>
+                <Route path="/match" component={Match}/>
+                <Route path="/live" component={Live}/>
+              </ErrorBoundary>
             </div>
           </div>
         </div>
