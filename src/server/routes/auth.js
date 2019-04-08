@@ -42,7 +42,7 @@ const registrationValidations = [
 
 
 router.get('/user', authenticateJwt(), function (request, response) {
-  response.json(request.user);
+  response.json({username: request.user.username});
 });
 
 router.post('/register', registrationValidations, function (request, response) {

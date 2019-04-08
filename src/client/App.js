@@ -28,8 +28,8 @@ class App extends Component {
   };
 
   componentDidMount() {
-    fetcher.get('users')
-      .then(response => this.setState({username: toTitleCase(response.data[0].username)}));
+    fetcher.get('auth/user')
+      .then(response => this.setState({username: toTitleCase(response.data.username)}));
   }
 
   render() {
