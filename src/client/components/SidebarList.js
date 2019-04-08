@@ -18,7 +18,7 @@ class SidebarList extends Component {
     const items = this.props.list.map(((item, i) => <li key={item._id} className={className}>{mapper(item, i)}</li>));
     return (
       <Fragment>
-        <h3 className="text-center text-info">{this.props.title}</h3>
+        <h3 className="text-center text-info mt-10 mt-md-0">{this.props.title}</h3>
         <hr/>
         <ul className="list-group">{items}</ul>
       </Fragment>
