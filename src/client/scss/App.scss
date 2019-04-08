@@ -38,3 +38,14 @@ select#select-match{
     outline: none;
   }
 }
+
+.mt-10{
+  margin-top: 5rem;
+}
+
+.toast{
+  position: absolute;
+  top: 5rem;
+  right: 1rem;
+  z-index: 1024;
+}

@@ -17,7 +17,7 @@ module.exports = {
       err: "Error while retrieving player list",
     },
     create: {
-      ok: "Successfully created player",
+      ok: (name) => `Successfully created player ${name}`,
       err: "Error while creating player",
     },
   },

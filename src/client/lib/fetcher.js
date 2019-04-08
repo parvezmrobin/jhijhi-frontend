@@ -5,7 +5,7 @@
  */
 
 
-import * as axios from "axios";
+import * as axios from "axios/index";
 
 const fetcher = {
   get token() {

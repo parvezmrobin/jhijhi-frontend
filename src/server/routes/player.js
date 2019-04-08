@@ -68,7 +68,7 @@ router.post('/', authenticateJwt(), playerCreateValidations, (request, response)
     .then(createdPlayer => {
       response.json({
         success: true,
-        message: responses.players.create.ok,
+        message: responses.players.create.ok(name),
         player: {_id: createdPlayer._id},
       });
     })
