@@ -33,3 +33,8 @@ export function bindMethods(object, property = "handlers") {
     }
   }
 }
+
+export function logout() {
+  window.localStorage.removeItem('token');
+  window.location.pathname = 'login';
+}

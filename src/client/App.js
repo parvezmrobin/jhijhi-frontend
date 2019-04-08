@@ -18,6 +18,7 @@ import Umpire from "./pages/Umpire";
 import Match from "./pages/Match";
 import {toTitleCase} from "./lib/utils";
 import Live from "./pages/Live";
+import fetcher from "./lib/fetcher";
 
 
 class App extends Component {
@@ -26,16 +27,15 @@ class App extends Component {
   };
 
   componentDidMount() {
-    fetch('/api/users')
-      .then(res => res.json())
-      .then(users => this.setState({username: toTitleCase(users[0].username)}));
+    fetcher.get('users')
+      .then(response => this.setState({username: toTitleCase(response.data[0].username)}));
   }
 
   render() {
     const {username} = this.state;
     return (
       <Router>
-        <Navbar username={username}/>
+        <Navbar isLoggedIn={fetcher.isLoggedIn} username={username}/>
 
         <div className="container-fluid">
 

@@ -6,53 +6,38 @@
 
 import React, {Component} from 'react';
 import {NavLink} from 'react-router-dom';
+import {logout} from "../lib/utils";
 
 
 class Navbar extends Component {
 
-  render() {
-    return (
-      <nav className="navbar navbar-expand-md navbar-light bg-light fixed-top">
-        <NavLink exact className="navbar-brand" to="/">Jhijhi</NavLink>
-        <button className="navbar-toggler" type="button" data-toggle="collapse"
-                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"/>
-        </button>
 
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav mr-auto">
-            <li className="nav-item" id="home">
-              <NavLink exact className="nav-link" to="/">Home</NavLink>
-            </li>
-            <li className="nav-item" id="contact">
-              <NavLink className="nav-link" to="/contact">Contact</NavLink>
-            </li>
-            <li className="nav-item" id="team">
-              <NavLink className="nav-link" to="/team">Team</NavLink>
-            </li>
-            <li className="nav-item" id="player">
-              <NavLink className="nav-link" to="/player">Player</NavLink>
-            </li>
-            <li className="nav-item" id="umpire">
-              <NavLink className="nav-link" to="/umpire">Umpire</NavLink>
-            </li>
-            <li className="nav-item" id="match">
-              <NavLink className="nav-link" to="/match">Match</NavLink>
-            </li>
-            <li className="nav-item" id="live">
-              <NavLink className="nav-link" to="/live">Live</NavLink>
-            </li>
-          </ul>
-          <ul className="navbar-nav">
-            <li className="nav-item" id="register">
-              <NavLink className="nav-link" to="/register">Register</NavLink>
-            </li>
-            <li className="nav-item" id="login">
-              <NavLink className="nav-link" to="/login">Login</NavLink>
-            </li>
-            <li className="nav-item dropdown" id="user">
-              <NavLink className="nav-link dropdown-toggle" to="#" id="navbarDropdown" role="button"
+  componentDidMount() {
+    const guestUrls = ['/register', '/login'];
+
+    if (!this.props.isLoggedIn &&  guestUrls.indexOf(window.location.pathname) === -1) {
+      window.location.pathname = 'login';
+    }
+  }
+
+
+  render() {
+    let nav;
+    if (this.props.isLoggedIn) {
+      nav = (
+        <div className="collapse navbar-collapse" id="navbar">
+          <div className="navbar-nav">
+            <NavLink exact className="nav-item nav-link" to="/">Home</NavLink>
+            <NavLink className="nav-item nav-link" to="/contact">Contact</NavLink>
+            <NavLink className="nav-item nav-link" to="/team">Team</NavLink>
+            <NavLink className="nav-item nav-link" to="/player">Player</NavLink>
+            <NavLink className="nav-item nav-link" to="/umpire">Umpire</NavLink>
+            <NavLink className="nav-item nav-link" to="/match">Match</NavLink>
+            <NavLink className="nav-item nav-link" to="/live">Live</NavLink>
+          </div>
+          <div className="navbar-nav ml-auto">
+            <div className="nav-item dropdown" id="user">
+              <NavLink className="nav-item nav-link dropdown-toggle" to="#" id="navbarDropdown" role="button"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {this.props.username}
               </NavLink>
@@ -60,11 +45,33 @@ class Navbar extends Component {
                 <NavLink className="dropdown-item" to="#">Change Password</NavLink>
                 <NavLink className="dropdown-item" to="#">Manage Account</NavLink>
                 <div className="dropdown-divider"/>
-                <NavLink className="dropdown-item text-warning" to="#">Logout</NavLink>
+                <NavLink className="dropdown-item text-warning" onClick={logout} to="#">Logout</NavLink>
               </div>
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
+      );
+    } else {
+      nav = (
+        <div className="collapse navbar-collapse" id="navbar">
+          <div className="navbar-nav ml-auto">
+            <NavLink className="nav-item nav-link" to="/register">Register</NavLink>
+            <NavLink className="nav-item nav-link" to="/login">Login</NavLink>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <nav className="navbar navbar-expand-md navbar-light bg-light fixed-top">
+        <NavLink exact className="navbar-brand" to="/">Jhijhi</NavLink>
+        <button className="navbar-toggler" type="button" data-toggle="collapse"
+                data-target="#navbar" aria-controls="navbar"
+                aria-expanded="false" aria-label="Toggle navigation">
+          <span className="navbar-toggler-icon"/>
+        </button>
+
+        {nav}
+
       </nav>
     );
   }
