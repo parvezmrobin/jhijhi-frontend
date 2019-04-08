@@ -6,6 +6,7 @@
 
 
 const Player = require("../models/player");
+const User = require("../models/user");
 
 
 module.exports = function () {
@@ -20,7 +21,15 @@ module.exports = function () {
     {name: 'purnam', jerseyNo: 420},
     {name: 'sahad', jerseyNo: 12},
     {name: 'buira', jerseyNo: 2},
+    {name: 'gomez', jerseyNo: 2},
   ];
 
-  return Player.insertMany(players);
+  return User.find({})
+    .then(users => {
+      const creatorWisePlayers = users.map(
+        creator => players.map(player => ({...player, creator: creator._id})),
+      );
+      const playersWithCreators = [].concat(...creatorWisePlayers);
+      return Player.insertMany(playersWithCreators);
+    })
 };

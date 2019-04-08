@@ -8,23 +8,28 @@
 require("../app");
 const mongoose = require("mongoose");
 
+const seed = function (fileName) {
+  const seeder = require(`../seeders/${fileName}Seeder`);
+  const Model = require(`../models/${fileName}`);
+
+  return Model
+    .deleteMany({})
+    .exec()
+    .then(seeder)
+    .then((res) => console.log(`seeded ${!res ? res : res.length} items of ${fileName}Seeder.`))
+    .catch(console.error);
+};
+
 
 mongoose.connection.on('connected', function () {
-  const seeders = ['user', 'player'];
+  const seeders = ['player'];
 
-  const promises = seeders.map((fileName) => {
-    const seeder = require(`../seeders/${fileName}Seeder`);
-    const Model = require(`../models/${fileName}`);
+  seed('user')
+    .then(() => {
+      const promises = seeders.map(seed);
 
-    return Model
-      .deleteMany({})
-      .exec()
-      .then(seeder)
-      .then((res) => console.log(`seeded ${res.length} items of ${fileName}Seeder.`))
-      .catch(console.error);
-  });
-
-  Promise.all(promises).then(() => process.exit(0));
+      Promise.all(promises).then(() => process.exit(0));
+    })
 });
 
 

@@ -10,12 +10,14 @@ const express = require('express');
 const router = express.Router();
 const Player = require("../models/player");
 const responses = require("../responses");
+const passport = require('passport');
+const authenticateJwt = passport.authenticate.bind(passport, 'jwt', {session: false});
 
 
-/* GET users listing. */
-router.get('/', (request, response) => {
+/* GET players listing. */
+router.get('/', authenticateJwt(), (request, response) => {
   Player
-    .find({})
+    .find({creator: request.user._id})
     .lean()
     .then(players => response.json(players))
     .catch(err => {
