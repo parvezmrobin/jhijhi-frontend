@@ -7,7 +7,7 @@ const {join} = require('path');
 const authRouter = require('./routes/auth');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const playersRouter = require('./routes/player');
+const playersRouter = require('./routes/players');
 const config = require('./config');
 
 const app = express();
