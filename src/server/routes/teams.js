@@ -28,7 +28,10 @@ const teamCreateValidations = [
           return Promise.resolve();
         });
     }),
-  check('shortName').isInt({min: 1})
+  check('shortName', 'Short name should be at least 2 characters')
+    .isAscii({min: 1})
+    .isLength({min: 2}),
+  check('shortName')
     .custom(shortName => {
       return Team
         .findOne({shortName: shortName})

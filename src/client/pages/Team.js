@@ -10,6 +10,8 @@ import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
 import TeamForm from '../components/TeamForm';
 import fetcher from "../lib/fetcher";
+import {bindMethods} from "../lib/utils";
+import {Toast, ToastBody, ToastHeader} from "reactstrap";
 
 
 class Team extends Component {
@@ -22,15 +24,109 @@ class Team extends Component {
       },
       players: [],
       teams: [],
-      selectedPlayerIndices: [],
-    }
+      selectedPlayers: [],
+      isValid: {
+        name: null,
+        shortName: null,
+      },
+      feedback: {
+        name: null,
+        shortName: null,
+      },
+      message: null,
+    };
+    bindMethods(this);
   }
+
+  handlers = {
+    /**
+     * change event handler
+     * @param action
+     * @param action.select
+     * @param action.unselect
+     */
+    onChange(action) {
+      this.setState(prevState => {
+        // action.select is an index
+        if (typeof action.select === 'number') {
+          return {
+            selectedPlayers: prevState.selectedPlayers.map(((prevVal, i) => (i === action.select) ? true : prevVal)),
+          };
+        }
+        // action.unselect is an index
+        if (typeof action.unselect === 'number') {
+          return {
+            selectedPlayers: prevState.selectedPlayers.map(((prevVal, i) => (i === action.unselect) ? false : prevVal)),
+          };
+        }
+        return {team: {...prevState.team, ...action}};
+      });
+    },
+
+    onSubmit() {
+      const postData = {...this.state.team};
+      const selectedPlayers = this.state.players.filter((player, i) => this.state.selectedPlayers[i]);
+      const selectedPlayerIds = selectedPlayers.map((player) => player._id);
+      postData.players = selectedPlayerIds;
+
+      fetcher
+        .post('teams', postData)
+        .then(response => {
+          this.setState(prevState => ({
+            ...prevState,
+            teams: prevState.teams.concat({
+              ...prevState.team,
+              _id: response.data.team._id,
+            }),
+            team: {
+              name: '',
+              shortName: '',
+            },
+            message: response.data.message,
+            isValid: {
+              name: null,
+              shortName: null,
+            },
+            feedback: {
+              name: null,
+              shortName: null,
+            },
+          }));
+        })
+        .catch(err => {
+          const isValid = {
+            name: true,
+            shortName: true,
+          };
+          const feedback = {
+            name: null,
+            shortName: null,
+          };
+          for (const error of err.response.data.err) {
+            if (isValid[error.param]) {
+              isValid[error.param] = false;
+            }
+            if (!feedback[error.param]) {
+              feedback[error.param] = error.msg;
+            }
+          }
+
+          this.setState({
+            isValid,
+            feedback,
+          });
+        });
+    },
+  };
 
   componentDidMount() {
     fetcher
       .get('players')
       .then(response => {
-        this.setState({players: response.data})
+        this.setState({
+          players: response.data,
+          selectedPlayers: Array(response.data.length).fill(false),
+        });
       });
     fetcher
       .get('teams')
@@ -42,6 +138,16 @@ class Team extends Component {
   render() {
     return (
       <div className="container-fluid px-0">
+
+        <Toast isOpen={!!this.state.message}>
+          <ToastHeader icon="primary" toggle={() => this.setState({message: null})}>
+            Jhijhi
+          </ToastHeader>
+          <ToastBody>
+            {this.state.message}
+          </ToastBody>
+        </Toast>
+
         <div className="row">
           <aside className="col-md-3">
             <CenterContent col="col">
@@ -54,7 +160,9 @@ class Team extends Component {
           </aside>
           <main className="col-md-6">
             <CenterContent col="col mt-5">
-              <TeamForm players={this.state.players}/>
+              <TeamForm players={this.state.players} onChange={this.onChange} onSubmit={this.onSubmit}
+                        team={this.state.team} selectedPlayers={this.state.selectedPlayers}
+                        isValid={this.state.isValid} feedback={this.state.feedback}/>
             </CenterContent>
           </main>
         </div>
