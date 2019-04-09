@@ -54,7 +54,7 @@ class App extends Component {
                 <Route path="/team/:id" component={TeamPlayers}/>
                 <Route path="/umpire" component={Umpire}/>
                 <Route path="/match" component={Match}/>
-                <Route path="/live" component={Live}/>
+                <Route path="/live/:id" component={Live}/>
               </ErrorBoundary>
             </div>
           </div>

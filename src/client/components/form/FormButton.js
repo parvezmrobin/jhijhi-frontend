@@ -20,7 +20,7 @@ class FormButton extends Component {
     return (
       <div className="form-group row">
         <div className={'col ' + offsetCol}>
-          <input type={type} className={'btn btn-' + btnClass} value={this.props.text}/>
+          <input type={type} className={'btn btn-' + btnClass} value={this.props.text} onClick={this.props.onClick}/>
           {this.props.children}
         </div>
       </div>

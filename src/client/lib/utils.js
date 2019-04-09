@@ -34,6 +34,23 @@ export function bindMethods(object, property = "handlers") {
   }
 }
 
+/**
+ * Subtract array2 from array1
+ * @param array1
+ * @param array2
+ * @param matcher
+ */
+export function subtract(array1, array2, matcher = ((el1, el2) => el1 === el2)) {
+  return array1.filter(el1 => {
+    for (const el2 of array2) {
+      if (matcher(el1, el2)) {
+        return false;
+      }
+    }
+    return true;
+  })
+}
+
 export function logout() {
   window.localStorage.removeItem('token');
   window.location.pathname = 'login';

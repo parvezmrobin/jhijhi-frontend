@@ -40,6 +40,22 @@ const matchCreateValidations = [
   check('overs', 'Overs must be greater than 0').isInt({min: 1}),
 ];
 
+router.get('/:id', authenticateJwt(), (request, response) => {
+  Match
+    .findOne({creator: request.user._id, _id: request.params.id})
+    .populate('team1')
+    .populate('team2')
+    .lean()
+    .then(match => response.json(match))
+    .catch(err => {
+      response.status(err.statusCode || err.status || 500);
+      response.json({
+        success: false,
+        message: responses.matches.get.err,
+        err: err.error || err.errors || err,
+      });
+    })
+});
 
 /* GET matches listing. */
 router.get('/', authenticateJwt(), (request, response) => {

@@ -38,6 +38,9 @@ module.exports = {
       ok: (name) => `Successfully created match ${name}`,
       err: "Error while creating match",
     },
+    get: {
+      err: "Error while retrieving match",
+    },
   },
   umpires: {
     index: {

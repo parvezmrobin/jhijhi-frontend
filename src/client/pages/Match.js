@@ -12,6 +12,7 @@ import MatchForm from "../components/MatchForm";
 import {bindMethods} from "../lib/utils";
 import fetcher from "../lib/fetcher";
 import {Toast, ToastBody, ToastHeader} from "reactstrap";
+import {Link} from "react-router-dom";
 
 
 class Match extends Component {
@@ -157,7 +158,7 @@ class Match extends Component {
               <SidebarList
                 title="Upcoming Matches"
                 itemClass="text-white"
-                itemMapper={(match) => match.name}
+                itemMapper={(match) => <Link className="text-info" to={`live/${match._id}`}>{match.name}</Link>}
                 list={this.state.matches}/>
             </CenterContent>
           </aside>
