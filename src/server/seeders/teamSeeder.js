@@ -7,21 +7,29 @@
 
 const Team = require("../models/team");
 const User = require("../models/user");
+const Player = require("../models/player");
 
 
-module.exports = function () {
+module.exports = async function () {
   const teams = [
     {name: 'Dhaka Gladiators', shortName: 'DG'},
     {name: 'Khulna Titans', shortName: 'KT'},
     {name: 'CricPlatoon CC', shortName: 'CCC'},
   ];
 
-  return User.find({})
-    .then(users => {
-      const creatorWiseTeams = users.map(
-        creator => teams.map(team => ({...team, creator: creator._id})),
-      );
-      const teamsWithCreators = [].concat(...creatorWiseTeams);
-      return Team.insertMany(teamsWithCreators);
-    })
+  const users = await User.find({});
+  const creatorWiseTeamPromises = users.map(
+    async creator => {
+      const players = await Player.find({creator: creator._id});
+
+      return teams.map(team => {
+        const selectedPlayers = players.filter(() => Math.random() > .5).map(player => player._id);
+        return ({...team, players: selectedPlayers, creator: creator._id});
+      });
+    },
+  );
+  const teamsWithCreatorPromises = [].concat(...creatorWiseTeamPromises);
+  const teamsWithCreators = await Promise.all(teamsWithCreatorPromises);
+  const flattenedTeams = [].concat(...teamsWithCreators);
+  return Team.insertMany(flattenedTeams);
 };

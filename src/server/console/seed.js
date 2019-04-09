@@ -21,15 +21,16 @@ const seed = function (fileName) {
 };
 
 
-mongoose.connection.on('connected', function () {
+mongoose.connection.on('connected', async function () {
   const seeders = ['player', 'team'];
 
-  seed('user')
-    .then(() => {
-      const promises = seeders.map(seed);
+  await seed('user');
 
-      Promise.all(promises).then(() => process.exit(0));
-    })
+  for (const seeder of seeders) {
+    await seed(seeder);
+  }
+  process.exit(0);
+
 });
 
 
