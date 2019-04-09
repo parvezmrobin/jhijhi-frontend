@@ -5,7 +5,44 @@
  */
 
 
-const { Schema } = require('mongoose');
+const {Schema} = require('mongoose');
+
+const inningsSchema = new Schema({
+  overs: {
+    bowledBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'Player',
+    },
+    bowls: [{
+      playedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'Player',
+      },
+      isWicket: String,
+      singles: {
+        type: Number,
+        default: 0,
+      },
+      by: {
+        type: Number,
+        default: 0,
+      },
+      legBy: {
+        type: Number,
+        default: 0,
+      },
+      boundary: {
+        run: Number,
+        kind: {
+          type: String,
+          enum: ['regular', 'by', 'legBy'],
+        },
+      },
+      isWide: Boolean,
+      isNo: String, // containing the reason of no
+    }],
+  },
+});
 
 module.exports = new Schema({
   name: String,
@@ -54,33 +91,12 @@ module.exports = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
-
-  innings: [{
-    overs: {
-      bowledBy: {
-        type: Schema.Types.ObjectId,
-        ref: 'Player',
-      },
-      bowls: [{
-        playedBy: {
-          type: Schema.Types.ObjectId,
-          ref: 'Player',
-        },
-        isWicket: String,
-        singles: {
-          type: Number,
-          default: 0,
-        },
-        boundary: {
-          run: Number,
-          kind: {
-            type: String,
-            enum: ['regular', 'by', 'legBy'],
-          },
-        },
-        isWide: Boolean,
-        isNo: String, // containing the reason of no
-      }],
-    },
-  }],
+  innings1: {
+    type: inningsSchema,
+    default: null,
+  },
+  innings2: {
+    type: inningsSchema,
+    default: null,
+  },
 });
