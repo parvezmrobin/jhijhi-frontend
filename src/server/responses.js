@@ -30,4 +30,22 @@ module.exports = {
       err: "Error while creating team",
     },
   },
+  matches: {
+    index: {
+      err: "Error while retrieving match list",
+    },
+    create: {
+      ok: (name) => `Successfully created match ${name}`,
+      err: "Error while creating match",
+    },
+  },
+  umpires: {
+    index: {
+      err: "Error while retrieving umpire list",
+    },
+    create: {
+      ok: (name) => `Successfully created umpire ${name}`,
+      err: "Error while creating umpire",
+    },
+  },
 };

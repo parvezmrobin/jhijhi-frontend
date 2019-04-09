@@ -19,7 +19,7 @@ class SelectControl extends Component {
     }
     delete props.isValid;
 
-    const options = this.props.options.map(option => <option key={option} value={option}>{option}</option>);
+    const options = this.props.options.map(option => <option key={option._id} value={option._id}>{option.name}</option>);
     return (
       <select className={className} {...props}>{options}</select>
     );
