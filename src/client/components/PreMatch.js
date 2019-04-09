@@ -5,13 +5,14 @@
  */
 
 
-import React, {Component} from "react";
-import CenterContent from "./layouts/CenterContent";
-import CheckBoxControl from "./form/control/checkbox";
-import {bindMethods, subtract, toTitleCase} from "../lib/utils";
-import FormGroup from "./form/FormGroup";
-import FormButton from "./form/FormButton";
-import fetcher from "../lib/fetcher";
+import React, { Component } from 'react';
+import CenterContent from './layouts/CenterContent';
+import CheckBoxControl from './form/control/checkbox';
+import { bindMethods, subtract, toTitleCase } from '../lib/utils';
+import FormGroup from './form/FormGroup';
+import FormButton from './form/FormButton';
+import fetcher from '../lib/fetcher';
+
 
 export default class PreMatch extends Component {
   constructor(props) {
@@ -38,32 +39,31 @@ export default class PreMatch extends Component {
     onButtonClick() {
 
     },
-    onTeamPlayerChange(action) {
+    onTeam1PlayerChange(action) {
       this.setState(prevState => {
         if (action.select) {
-          if (action.team === 1) {
-            if (prevState.team1Players.indexOf(action.select) === -1) {
-              return {team1Players: prevState.team1Players.concat(action.select)};
-            }
-            return {team1Players: prevState.team1Players};
-          } else if (action.team === 2) {
-            if (prevState.team2Players.indexOf(action.select) === -1) {
-              return {team2Players: prevState.team2Players.concat(action.select)};
-            }
-            return {team2Players: prevState.team2Players};
-          } else {
-            throw new Error("Unknown Team");
+          if (prevState.team1Players.indexOf(action.select) === -1) {
+            return { team1Players: prevState.team1Players.concat(action.select) };
           }
+          return { team1Players: prevState.team1Players };
         } else if (action.unselect) {
-          if (action.team === 1) {
-            return {team1Players: prevState.team1Players.filter(player => player._id !== action.unselect)};
-          } else if (action.team === 2) {
-            return {team2Players: prevState.team2Players.filter(player => player._id !== action.unselect)};
-          } else {
-            throw new Error("Unknown Team");
-          }
+          return { team1Players: prevState.team1Players.filter(player => player !== action.unselect) };
         } else {
-          throw new Error("Unknown Action");
+          throw new Error('Unknown Action');
+        }
+      });
+    },
+    onTeam2PlayerChange(action) {
+      this.setState(prevState => {
+        if (action.select) {
+          if (prevState.team2Players.indexOf(action.select) === -1) {
+            return { team2Players: prevState.team2Players.concat(action.select) };
+          }
+          return { team2Players: prevState.team2Players };
+        } else if (action.unselect) {
+          return { team2Players: prevState.team2Players.filter(player => player !== action.unselect) };
+        } else {
+          throw new Error('Unknown Action');
         }
       });
     },
@@ -74,28 +74,36 @@ export default class PreMatch extends Component {
     fetcher
       .get('players')
       .then(response => {
-        this.setState({players: response.data})
+        this.setState({ players: response.data });
       });
   }
 
 
   render() {
     const getCheckboxOnChangeForTeam = (team, id) => {
-      return (e) => this.onTeamPlayerChange({[e.target.checked ? 'select' : 'unselect']: id, team});
-    };
-    // if checkbox is checked, key is 'select' and 'unselect otherwise. value is the index
-    const mapToCheckbox = (team, player) => {
-      return (
-        <CheckBoxControl name={`cb-${player.jerseyNo}`} onChange={getCheckboxOnChangeForTeam(team, player._id)}>
-          {`${toTitleCase(player.name)} (${player.jerseyNo})`}
-        </CheckBoxControl>
-      );
+      // if checkbox is checked, key is 'select' and 'unselect otherwise. value is the index
+      if (team === 1) {
+        return (e) => this.onTeam1PlayerChange({
+          [e.target.checked ? 'select' : 'unselect']: id,
+        });
+      } else if (team === 2) {
+        return (e) => this.onTeam2PlayerChange({
+          [e.target.checked ? 'select' : 'unselect']: id,
+        });
+      } else {
+        throw new Error('Unknown Team');
+      }
     };
 
     const matcher = (el1, el2) => el1._id === el2;
 
-    const getListItemMapperForTeam = team => (player, i) => (
-      <li key={player._id} className="list-group-item bg-transparent flex-fill">{mapToCheckbox(team, player, i)}</li>
+    const getListItemMapperForTeam = team => (player) => (
+      <li key={player._id} className="list-group-item bg-transparent flex-fill">
+        <CheckBoxControl name={`cb-${player.jerseyNo}-${team}`}
+                         onChange={getCheckboxOnChangeForTeam(team, player._id)}>
+          {`${toTitleCase(player.name)} (${player.jerseyNo})`}
+        </CheckBoxControl>
+      </li>
     );
 
     const team1CandidatePlayers = subtract(this.state.players, this.state.team2Players, matcher)
@@ -111,9 +119,11 @@ export default class PreMatch extends Component {
             <h2 className="text-center text-primary">{this.props.team1.name}</h2>
             <hr/>
             <FormGroup label="Captain" type="select"
-                       options={this.state.players.filter(el => this.state.team1Players.indexOf(el._id) !== -1)}
+                       options={this.state.players.filter(
+                         el => this.state.team1Players.indexOf(el._id) !== -1,
+                       )}
                        name="team1-captain" value={this.state.team1Captain}
-                       onChange={(e) => this.onChange({team1Captain: e.target.value})}
+                       onChange={(e) => this.onChange({ team1Captain: e.target.value })}
                        isValid={this.state.isValid.team1Captain}
                        feedback={this.state.feedback.team1Captain}/>
             <div className="form-group row">
@@ -129,9 +139,11 @@ export default class PreMatch extends Component {
             <h2 className="text-center text-primary">{this.props.team2.name}</h2>
             <hr/>
             <FormGroup label="Captain" type="select"
-                       options={this.state.players.filter(el => this.state.team2Players.indexOf(el._id) !== -1)}
+                       options={this.state.players.filter(
+                         el => this.state.team2Players.indexOf(el._id) !== -1,
+                       )}
                        name="team2-captain" value={this.state.team2Captain}
-                       onChange={(e) => this.onChange({team2Captain: e.target.value})}
+                       onChange={(e) => this.onChange({ team2Captain: e.target.value })}
                        isValid={this.state.isValid.team2Captain}
                        feedback={this.state.feedback.team2Captain}/>
             <div className="form-group row">
