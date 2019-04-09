@@ -60,7 +60,15 @@ router.get('/', authenticateJwt(), (request, response) => {
 router.post('/', authenticateJwt(), matchCreateValidations, (request, response) => {
   const errors = validationResult(request);
   const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({status: 400, errors: errors.array()});
-  const {name, team1, team2, umpire1, umpire2, umpire3, overs} = request.body;
+  const params = request.body;
+  for (const key in params) {
+    if (params.hasOwnProperty(key)) {
+      if (!params[key]) {
+        params[key] = null;
+      }
+    }
+  }
+  const {name, team1, team2, umpire1, umpire2, umpire3, overs} = params;
 
   promise
     .then(() => Match.create({

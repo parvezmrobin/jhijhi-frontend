@@ -21,14 +21,17 @@ module.exports = new Schema({
   team1BatFirst: Boolean,
   umpire1: {
     type: Schema.Types.ObjectId,
+    default: null,
     ref: 'Umpire',
   },
   umpire2: {
     type: Schema.Types.ObjectId,
+    default: null,
     ref: 'Umpire',
   },
   umpire3: {
     type: Schema.Types.ObjectId,
+    default: null,
     ref: 'Umpire',
   },
   team1Players: [{
