@@ -22,7 +22,7 @@ const seed = function (fileName) {
 
 
 mongoose.connection.on('connected', function () {
-  const seeders = ['player'];
+  const seeders = ['player', 'team'];
 
   seed('user')
     .then(() => {

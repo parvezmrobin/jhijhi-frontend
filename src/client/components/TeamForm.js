@@ -15,9 +15,11 @@ class TeamForm extends Component {
   players;
 
   render() {
-    const mapper = (item, i) => <CheckBoxControl name={`player${i}`}>{item}</CheckBoxControl>;
+    const mapper = (player) => <CheckBoxControl name={`cb-${player.shortName}`}>{player.name}</CheckBoxControl>;
     const listItems = this.props.players.map(
-      (item, i) => <li key={i} className="list-group-item bg-transparent flex-fill">{mapper(item, i)}</li>,
+      (player, i) => {
+        return (<li key={player._id} className="list-group-item bg-transparent flex-fill">{mapper(player, i)}</li>);
+      },
     );
     return (
       <Fragment>

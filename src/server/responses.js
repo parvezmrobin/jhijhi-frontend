@@ -21,4 +21,13 @@ module.exports = {
       err: "Error while creating player",
     },
   },
+  teams: {
+    index: {
+      err: "Error while retrieving team list",
+    },
+    create: {
+      ok: (name) => `Successfully created team ${name}`,
+      err: "Error while creating team",
+    },
+  },
 };
