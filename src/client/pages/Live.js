@@ -12,8 +12,13 @@ import CheckBoxControl from '../components/form/control/checkbox';
 import SelectControl from '../components/form/control/select';
 import CurrentOver from '../components/CurrentOver';
 import PreviousOvers from '../components/PreviousOvers';
+import $ from 'jquery';
 
 class Live extends Component {
+
+  componentDidMount() {
+    $('[title]').tooltip();
+  }
 
   render() {
     const playerItemMapper = (item, i) => {
@@ -37,7 +42,10 @@ class Live extends Component {
       'Obstructing the field',
       'Timed out',
       'Retired',
-    ];
+    ].map(wicket => ({_id: wicket, name: wicket}));
+
+    const singles = [{_id: null, name: 'Run'}]
+      .concat([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((el, i) => ({_id: i, name: i})));
 
     const balls = [
       {batsman: "Player 5", run: 1},
@@ -76,18 +84,24 @@ class Live extends Component {
               <div
                 className="col-12 d-flex pl-3 justify-content-between align-items-center bg-dark text-white rounded">
 
-                <CheckBoxControl name="by">By</CheckBoxControl>
+                <div
+                  title="By runs will be added to previous bawl. Insert a zero run first to add bawl with only by run.">
+                  <CheckBoxControl name="by">By</CheckBoxControl>
+                </div>
 
                 <CheckBoxControl name="leg-by">Leg By</CheckBoxControl>
+
+                <CheckBoxControl name="wide">Wide</CheckBoxControl>
+
+                <CheckBoxControl name="no">No Ball</CheckBoxControl>
+
+                <div>
+                  <SelectControl name="singles" className="form-control" options={singles}/>
+                </div>
 
                 <button type="button" className="btn btn-info m-2">Four</button>
 
                 <button type="button" className="btn btn-info m-2">Six</button>
-
-                <div>
-                  <SelectControl name="singles" className="form-control" options={[...Array(11)
-                    .keys()]}/>
-                </div>
 
                 <div className="rounded">
                   <SelectControl name="wicket" className="form-control text-danger" options={wickets}/>
