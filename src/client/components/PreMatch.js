@@ -39,6 +39,9 @@ export default class PreMatch extends Component {
     onButtonClick() {
 
     },
+    onChange(action) {
+      this.setState({ ...action });
+    },
     onTeam1PlayerChange(action) {
       this.setState(prevState => {
         if (action.select) {
@@ -50,6 +53,12 @@ export default class PreMatch extends Component {
           return { team1Players: prevState.team1Players.filter(player => player !== action.unselect) };
         } else {
           throw new Error('Unknown Action');
+        }
+      }, () => {
+        if (this.state.team1Players.length === 1) {
+          this.setState({ team1Captain: this.state.team1Players[0] });
+        } else if (!this.state.team1Players.length) {
+          this.setState({ team1Captain: '' });
         }
       });
     },
@@ -64,6 +73,12 @@ export default class PreMatch extends Component {
           return { team2Players: prevState.team2Players.filter(player => player !== action.unselect) };
         } else {
           throw new Error('Unknown Action');
+        }
+      }, () => {
+        if (this.state.team2Players.length === 1) {
+          this.setState({ team2Captain: this.state.team2Players[0] });
+        }else if (!this.state.team2Players.length) {
+          this.setState({ team2Captain: '' });
         }
       });
     },
