@@ -12,6 +12,7 @@ import TeamForm from '../components/TeamForm';
 import fetcher from "../lib/fetcher";
 import {bindMethods} from "../lib/utils";
 import {Toast, ToastBody, ToastHeader} from "reactstrap";
+import {Link} from "react-router-dom";
 
 
 class Team extends Component {
@@ -82,6 +83,7 @@ class Team extends Component {
               name: '',
               shortName: '',
             },
+            selectedPlayers: Array(this.state.players.length).fill(false),
             message: response.data.message,
             isValid: {
               name: null,
@@ -154,7 +156,9 @@ class Team extends Component {
               <SidebarList
                 title="Existing Teams"
                 itemClass="text-white"
-                itemMapper={(team) => `${team.name} (${team.shortName})`}
+                itemMapper={(team) => {
+                  return <Link className="text-info" to={`team/${team._id}`}>{team.name} ({team.shortName})</Link>;
+                }}
                 list={this.state.teams}/>
             </CenterContent>
           </aside>

@@ -13,6 +13,7 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Contact from './pages/Contact';
 import Team from './pages/Team';
+import TeamPlayers from './pages/Team/Players';
 import Player from "./pages/Player";
 import Umpire from "./pages/Umpire";
 import Match from "./pages/Match";
@@ -48,8 +49,9 @@ class App extends Component {
                 <Route path="/register" component={Register}/>
                 <Route path="/login" component={Login}/>
 
-                <Route path="/team" component={Team}/>
                 <Route path="/player" component={Player}/>
+                <Route path="/team" exact component={Team}/>
+                <Route path="/team/:id" component={TeamPlayers}/>
                 <Route path="/umpire" component={Umpire}/>
                 <Route path="/match" component={Match}/>
                 <Route path="/live" component={Live}/>

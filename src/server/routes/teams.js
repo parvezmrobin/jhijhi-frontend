@@ -13,6 +13,7 @@ const responses = require("../responses");
 const passport = require('passport');
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', {session: false});
 const {check, validationResult} = require('express-validator/check');
+const {Types: {ObjectId}} = require("mongoose");
 
 
 const teamCreateValidations = [
@@ -45,6 +46,22 @@ const teamCreateValidations = [
     }),
 ];
 
+router.get('/:id', authenticateJwt(), (request, response) => {
+  Team
+    .findOne({_id: request.params.id})
+    .lean()
+    .populate('players')
+    .then(teams => response.json(teams))
+    .catch(err => {
+      response.status(err.statusCode || err.status || 500);
+      response.json({
+        success: false,
+        message: responses.teams.index.err,
+        err: err.error || err.errors || err,
+      });
+    })
+});
+
 /* GET teams listing. */
 router.get('/', authenticateJwt(), (request, response) => {
   Team
@@ -64,10 +81,15 @@ router.get('/', authenticateJwt(), (request, response) => {
 router.post('/', authenticateJwt(), teamCreateValidations, (request, response) => {
   const errors = validationResult(request);
   const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({status: 400, errors: errors.array()});
-  const {name, shortName} = request.body;
+  const {name, shortName, players} = request.body;
 
   promise
-    .then(() => Team.create({name, shortName, creator: request.user._id}))
+    .then(() => Team.create({
+      name,
+      shortName,
+      players: players.map(playerId => new ObjectId(playerId)),
+      creator: request.user._id,
+    }))
     .then(createdTeam => {
       response.json({
         success: true,
