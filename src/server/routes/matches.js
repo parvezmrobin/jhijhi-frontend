@@ -47,12 +47,12 @@ const matchBeginValidations = [
   check('team1Captain', 'No captain selected').exists({checkFalsy: true}),
   check('team1Captain', 'Team 1 captain should be a team 1 player')
     .custom((team1Captain, {req}) => {
-      return req.body.team1Players || req.body.team1Players.indexOf(team1Captain) !== -1;
+      return req.body.team1Players && req.body.team1Players.indexOf(team1Captain) !== -1;
     }),
   check('team2Captain', 'No captain selected').exists({checkFalsy: true}),
   check('team2Captain', 'Team 2 captain should be a team 2 player')
     .custom((team2Captain, {req}) => {
-      return req.body.team2Players || req.body.team2Players.indexOf(team2Captain) !== -1;
+      return req.body.team2Players && req.body.team2Players.indexOf(team2Captain) !== -1;
     }),
 ];
 
