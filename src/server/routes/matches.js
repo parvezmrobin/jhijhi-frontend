@@ -61,7 +61,8 @@ router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, res
   const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({status: 400, errors: errors.array()});
   const params = nullEmptyValues(request.body);
 
-  const {id, team1Players, team1Captain, team2Players, team2Captain} = params;
+  const {team1Players, team1Captain, team2Players, team2Captain} = params;
+  const id = request.params.id;
 
   promise
     .then(() => {
