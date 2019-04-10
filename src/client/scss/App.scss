@@ -15,6 +15,15 @@ $dark: #151520 !default;
 
 @import "~bootstrap/scss/bootstrap";
 
+.home{
+  background: url(../assets/home-bg.jpg) no-repeat fixed center center;
+  background-size: cover;
+
+  & > div{
+    background-color: #000000aa;
+  }
+}
+
 aside {
   background-color: #11111a;
 }

@@ -6,7 +6,6 @@
 
 
 import React, {Component} from 'react';
-import CenterContent from '../components/layouts/CenterContent';
 import fetcher from "../lib/fetcher";
 
 
@@ -19,11 +18,17 @@ class Home extends Component {
   }
 
   componentDidMount() {
+    document.getElementsByTagName('body')[0].classList.add('home');
+
     fetcher
       .get('matches')
       .then(response => {
         this.setState({matches: [{_id: '', name: 'Select Match'}].concat(response.data)})
       });
+  }
+
+  componentWillUnmount() {
+    document.getElementsByTagName('body')[0].classList.remove('home');
   }
 
 
@@ -39,12 +44,18 @@ class Home extends Component {
         style.display = "none";
       }
       return <option key={match._id} value={match._id} style={style}>{match.name}</option>;
-      });
+    });
 
     return (
-      <CenterContent col="col-auto">
-        <select className="form-control border-0" style={{fontSize: "2rem"}} {...props}>{options}</select>
-      </CenterContent>
+      <div className="d-flex align-items-center vh-100">
+        <div className="col-12 bg-dark rounded">
+          <div className="d-flex justify-content-center vw-100">
+            <div className="col-auto">
+              <select className="form-control bg-dark border-0" style={{fontSize: "2rem"}} {...props}>{options}</select>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
