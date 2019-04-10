@@ -7,30 +7,43 @@
 
 import React, {Component} from 'react';
 import CenterContent from '../components/layouts/CenterContent';
+import fetcher from "../lib/fetcher";
 
 
 class Home extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      matches: [],
+    };
+  }
+
+  componentDidMount() {
+    fetcher
+      .get('matches')
+      .then(response => {
+        this.setState({matches: [{_id: '', name: 'Select Match'}].concat(response.data)})
+      });
+  }
+
 
   render() {
-    const matches = [
-      'Choose Match',
-      ...Array(5)
-        .fill(0)
-        .map((v, i) => `Match ${i + 1}`)];
     const props = {
       id: "select-match",
       name: this.props.name,
       onChange: this.props.onChange,
     };
-    const options = matches.map(option => <option key={option} value={option}>{option}</option>);
+    const options = this.state.matches.map((match, i) => {
+      const style = {fontSize: "1.5rem"};
+      if (i === 0) {
+        style.display = "none";
+      }
+      return <option key={match._id} value={match._id} style={style}>{match.name}</option>;
+      });
 
     return (
-      <CenterContent col="col-md-6 col-lg-4 col-xl-3">
-        <div className="form-group row">
-          <div className="col">
-            <select className="form-control border-0" {...props}>{options}</select>
-          </div>
-        </div>
+      <CenterContent col="col-auto">
+        <select className="form-control border-0" style={{fontSize: "2rem"}} {...props}>{options}</select>
       </CenterContent>
     );
   }
