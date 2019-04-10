@@ -43,6 +43,7 @@ export default class PreMatch extends Component {
       this.setState({ ...action });
     },
     onTeam1PlayerChange(action) {
+
       this.setState(prevState => {
         if (action.select) {
           if (prevState.team1Players.indexOf(action.select) === -1) {
@@ -59,6 +60,11 @@ export default class PreMatch extends Component {
           this.setState({ team1Captain: this.state.team1Players[0] });
         } else if (!this.state.team1Players.length) {
           this.setState({ team1Captain: '' });
+        }
+
+        // if the selected captain is removed from the team
+        if (action.unselect === this.state.team1Captain && this.state.team1Players.length){
+          this.setState({team1Captain: this.state.team1Players[0]});
         }
       });
     },
@@ -79,6 +85,11 @@ export default class PreMatch extends Component {
           this.setState({ team2Captain: this.state.team2Players[0] });
         }else if (!this.state.team2Players.length) {
           this.setState({ team2Captain: '' });
+        }
+
+        // if the selected captain is removed from the team
+        if (action.unselect === this.state.team2Captain && this.state.team2Players.length){
+          this.setState({team2Captain: this.state.team2Players[0]});
         }
       });
     },
