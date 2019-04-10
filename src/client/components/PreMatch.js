@@ -15,6 +15,7 @@ import fetcher from '../lib/fetcher';
 
 
 export default class PreMatch extends Component {
+  matchId;
   constructor(props) {
     super(props);
     this.state = {
@@ -24,10 +25,14 @@ export default class PreMatch extends Component {
       team1Captain: '',
       team2Captain: '',
       isValid: {
+        team1Players: null,
+        team2Players: null,
         team1Captain: null,
         team2Captain: null,
       },
       feedback: {
+        team1Players: null,
+        team2Players: null,
         team1Captain: null,
         team2Captain: null,
       },
@@ -37,7 +42,45 @@ export default class PreMatch extends Component {
 
   handlers = {
     onButtonClick() {
+      const postData = {
+        team1Players: this.state.team1Players,
+        team2Players: this.state.team2Players,
+        team1Captain: this.state.team1Captain,
+        team2Captain: this.state.team2Captain,
+      };
 
+      fetcher
+        .put(`matches/${this.props.matchId}/begin`, postData)
+        .then(response => {
+          this.props.onMatchBegin(postData, response.data.message);
+        })
+        .catch(err => {
+          const isValid = {
+            team1Players: true,
+            team2Players: true,
+            team1Captain: true,
+            team2Captain: true,
+          };
+          const feedback = {
+            team1Players: null,
+            team2Players: null,
+            team1Captain: null,
+            team2Captain: null,
+          };
+          for (const error of err.response.data.err) {
+            if (isValid[error.param]) {
+              isValid[error.param] = false;
+            }
+            if (!feedback[error.param]) {
+              feedback[error.param] = error.msg;
+            }
+          }
+
+          this.setState({
+            isValid,
+            feedback,
+          });
+        });
     },
     onChange(action) {
       this.setState({ ...action });

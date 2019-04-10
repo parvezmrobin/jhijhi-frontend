@@ -38,6 +38,14 @@ module.exports = {
       ok: (name) => `Successfully created match ${name}`,
       err: "Error while creating match",
     },
+    begin: {
+      ok: `Successfully started match`,
+      err: "Error while starting match",
+    },
+    toss: {
+      ok: `Successfully tossed match`,
+      err: "Error while tossing match",
+    },
     get: {
       err: "Error while retrieving match",
     },

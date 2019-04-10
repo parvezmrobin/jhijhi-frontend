@@ -23,5 +23,7 @@ fetcher.baseAxios = axios.create({
 
 fetcher.get = (...args) => fetcher.baseAxios.get(...args);
 fetcher.post = (...args) => fetcher.baseAxios.post(...args);
+fetcher.put = (...args) => fetcher.baseAxios.put(...args);
+fetcher.delete = (...args) => fetcher.baseAxios.delete(...args);
 
 export default fetcher;
