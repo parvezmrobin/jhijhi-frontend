@@ -13,7 +13,7 @@ const responses = require("../responses");
 const passport = require('passport');
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', {session: false});
 const {check, validationResult} = require('express-validator/check');
-const {sendErrorResponse, nullEmptyValues} = require("../lib/utils");
+const {sendErrorResponse, send404Response, nullEmptyValues} = require("../lib/utils");
 
 
 const matchCreateValidations = [
@@ -70,8 +70,11 @@ router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, res
         $set: {team1Captain, team2Captain, team1Players, team2Players},
       }).exec();
     })
-    .then(() => {
-      response.json({
+    .then((match) => {
+      if (!match) {
+        return send404Response(response, responses.matches.e404);
+      }
+      return response.json({
         success: true,
         message: responses.matches.begin.ok,
       });

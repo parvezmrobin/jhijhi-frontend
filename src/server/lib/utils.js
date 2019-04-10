@@ -14,6 +14,15 @@ module.exports.sendErrorResponse = function (response, err, message) {
   });
 };
 
+module.exports.send404Response = function (response, message) {
+  response.status(404);
+  response.json({
+    success: false,
+    message: message,
+    err: [message],
+  });
+};
+
 module.exports.nullEmptyValues = function (request, container = 'body') {
   const params = Object.assign({}, request[container]);
   for (const key in params) {

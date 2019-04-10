@@ -49,6 +49,7 @@ module.exports = {
     get: {
       err: "Error while retrieving match",
     },
+    e404: "Could not find a match with given id",
   },
   umpires: {
     index: {
