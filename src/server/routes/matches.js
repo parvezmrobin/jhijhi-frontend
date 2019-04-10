@@ -14,6 +14,7 @@ const passport = require('passport');
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', {session: false});
 const {check, validationResult} = require('express-validator/check');
 const {sendErrorResponse, send404Response, nullEmptyValues} = require("../lib/utils");
+const Error404 = require("../lib/Error404");
 
 
 const matchCreateValidations = [
@@ -56,6 +57,23 @@ const matchBeginValidations = [
     }),
 ];
 
+const matchTossValidations = [
+  check('won')
+    .custom((won, {req}) => {
+      return Match
+        .findById(req.params.id)
+        .exec()
+        .then(match => {
+          if (won === match.team1.toString() || won === match.team2.toString()) {
+            return Promise.resolve("Select a team");
+          }
+          return Promise.reject();
+        });
+    }),
+  check('choice')
+    .isIn(['Bat', 'Bawl']),
+];
+
 router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, response) => {
   const errors = validationResult(request);
   const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({status: 400, errors: errors.array()});
@@ -80,6 +98,35 @@ router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, res
       });
     })
     .catch(err => sendErrorResponse(response, err, responses.matches.begin.err));
+});
+
+router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, response) => {
+  const errors = validationResult(request);
+  const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({status: 400, errors: errors.array()});
+  const params = nullEmptyValues(request.body);
+
+  const {won, choice} = params;
+  const id = request.params.id;
+
+  promise
+    .then(() => {
+      return Match.findById(id).exec();
+    })
+    .then(match => {
+      if (!match) {
+        throw new Error404(responses.matches.e404);
+      }
+      match.team1WonToss = match.team1 === won;
+      match.team1BatFirst = (match.team1WonToss && choice === 'Bat') || (!match.team1WonToss && choice === 'Bawl');
+      return match.save();
+    })
+    .then(() => {
+      response.json({
+        success: true,
+        message: responses.matches.toss.ok,
+      });
+    })
+    .catch(err => sendErrorResponse(response, err, responses.matches.toss.err));
 });
 
 router.get('/:id', authenticateJwt(), (request, response) => {

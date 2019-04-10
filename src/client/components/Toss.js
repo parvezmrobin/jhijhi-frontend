@@ -9,21 +9,22 @@ import React, {Component} from "react";
 import CenterContent from "./layouts/CenterContent";
 import SelectControl from "./form/control/select";
 import {bindMethods} from "../lib/utils";
+import fetcher from "../lib/fetcher";
 
 export default class Toss extends Component {
   constructor(props) {
     super(props);
     this.state = {
       values: {
-        own: '',
-        choice: '',
+        won: '',
+        choice: 'Bat',
       },
       isValid: {
-        own: null,
+        won: null,
         choice: null,
       },
       feedback: {
-        own: null,
+        won: null,
         choice: null,
       },
     };
@@ -32,10 +33,45 @@ export default class Toss extends Component {
   }
 
   handlers = {
-    onChange(action){
+    onChange(action) {
       this.setState(prevState => {
         return {values: {...prevState.values, ...action}}
       });
+    },
+    onClick() {
+      const postData = {
+        won: this.state.values.won,
+        choice: this.state.values.choice,
+      };
+      fetcher
+        .put(`matches/${this.props.matchId}/toss`, postData)
+        .then(response => {
+          this.props.onToss(postData, response.data.message);
+        })
+        .catch(err => {
+          const isValid = {
+            won: true,
+            choice: true,
+          };
+          const feedback = {
+            won: null,
+            choice: null,
+          };
+          for (const error of err.response.data.err) {
+            if (isValid[error.param]) {
+              isValid[error.param] = false;
+            }
+            if (!feedback[error.param]) {
+              feedback[error.param] = error.msg;
+            }
+          }
+
+          this.setState({
+            isValid,
+            feedback,
+          });
+        });
+
     },
   };
 
@@ -43,8 +79,8 @@ export default class Toss extends Component {
     const teams = [{_id: '', name: 'None'}].concat(this.props.teams);
     const options = ['Bat', 'Bawl'].map(el => ({_id: el, name: el}));
     const ownControl = <SelectControl options={teams} id="own"
-                                      onChange={(e) => this.onChange({own: e.target.value})}
-                                      value={this.state.values.own} isValid={this.state.isValid.own}/>;
+                                      onChange={(e) => this.onChange({won: e.target.value})}
+                                      value={this.state.values.won} isValid={this.state.isValid.won}/>;
     const choiceControl = <SelectControl options={options} id="choice"
                                          onChange={(e) => this.onChange({choice: e.target.value})}
                                          value={this.state.values.choice} isValid={this.state.isValid.choice}/>;
@@ -56,17 +92,17 @@ export default class Toss extends Component {
           </label>
           <div className="col-auto">
             {ownControl}
-            <div className="invalid-feedback">{this.state.feedback.own}</div>
+            <div className="invalid-feedback">{this.state.feedback.won}</div>
           </div>
           <label htmlFor="choice" className="col-form-label col-auto">
             <h5>and chose to</h5>
           </label>
           <div className="col-auto">
             {choiceControl}
-            <div className="invalid-feedback">{this.state.feedback.own}</div>
+            <div className="invalid-feedback">{this.state.feedback.won}</div>
           </div>
           <div className="col-auto">
-            <input type="button" className="btn btn-outline-primary" value="Continue" onClick={this.props.onClick}/>
+            <input type="button" className="btn btn-outline-primary" value="Continue" onClick={this.onClick}/>
           </div>
         </div>
       </CenterContent>

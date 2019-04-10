@@ -54,7 +54,7 @@ module.exports = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Team',
   },
-  team1OwnToss: Boolean,
+  team1WonToss: Boolean,
   team1BatFirst: Boolean,
   umpire1: {
     type: Schema.Types.ObjectId,

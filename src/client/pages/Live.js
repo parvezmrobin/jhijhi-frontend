@@ -34,6 +34,10 @@ class Live extends Component {
       this.setState({state: "toss"});
       console.log(params);
     },
+    onToss(params) {
+      this.setState({state: "running"});
+      console.log(params);
+    },
   };
 
 
@@ -92,7 +96,8 @@ class Live extends Component {
         {this.state.state === "pre" &&
         <PreMatch team1={this.state.match.team1} team2={this.state.match.team2} name={this.state.match.name}
                   matchId={this.props.match.params.id} onMatchBegin={this.onMatchBegin}/>}
-        {this.state.state === "toss" && <Toss teams={[this.state.match.team1, this.state.match.team2]}/>}
+        {this.state.state === "toss" && <Toss teams={[this.state.match.team1, this.state.match.team2]}
+                                              matchId={this.props.match.params.id} onToss={this.onToss}/>}
         {this.state.state === "running" &&
         <div className="row">
           <aside className="col-md-3">
