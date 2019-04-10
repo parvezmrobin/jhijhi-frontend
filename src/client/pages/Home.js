@@ -52,7 +52,7 @@ class Home extends Component {
 
     return (
       <div className="d-flex align-items-center vh-100">
-        <div className="col-12 bg-dark rounded">
+        <div className="col-8 offset-2 bg-dark-trans rounded">
           <div className="d-flex justify-content-center v-100">
             <div className="col-auto">
               <Dropdown isOpen={this.state.isDropdownOpen} toggle={this.toggle}>
