@@ -12,6 +12,7 @@ $warning: #f19b65 !default;
 $danger: #e31f31 !default;
 $success: #127b8b !default;
 $dark: #151520 !default;
+$primary: #3788e1 !default;
 
 @import "~bootstrap/scss/bootstrap";
 
@@ -75,7 +76,7 @@ select#select-match {
     overflow-y: auto;
     overflow-x: hidden;
 
-    .list-group-item {
+    .list-group-item{
       width: 50%;
     }
   }
