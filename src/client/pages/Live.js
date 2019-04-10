@@ -97,6 +97,7 @@ class Live extends Component {
         <PreMatch team1={this.state.match.team1} team2={this.state.match.team2} name={this.state.match.name}
                   matchId={this.props.match.params.id} onMatchBegin={this.onMatchBegin}/>}
         {this.state.state === "toss" && <Toss teams={[this.state.match.team1, this.state.match.team2]}
+                                              name={this.state.match.name}
                                               matchId={this.props.match.params.id} onToss={this.onToss}/>}
         {this.state.state === "running" &&
         <div className="row">

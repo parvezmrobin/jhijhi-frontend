@@ -86,6 +86,7 @@ export default class Toss extends Component {
                                          value={this.state.values.choice} isValid={this.state.isValid.choice}/>;
     return (
       <CenterContent>
+        <h2 className="text-center text-white bg-success py-3 mb-5 rounded">{this.props.name}</h2>
         <div className="form-group row justify-content-center">
           <label htmlFor="won" className="col-form-label col-auto">
             <h5>Toss Won By</h5>
