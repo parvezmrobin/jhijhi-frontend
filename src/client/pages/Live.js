@@ -16,12 +16,13 @@ import $ from 'jquery';
 import PreMatch from "../components/PreMatch";
 import fetcher from "../lib/fetcher";
 import {bindMethods} from "../lib/utils";
+import Toss from "../components/Toss";
 
 class Live extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isPreMatch: null,
+      state: null,
       match: {},
     };
 
@@ -30,7 +31,7 @@ class Live extends Component {
 
   handlers = {
     onMatchBegin(params) {
-      this.setState({isPreMatch: false});
+      this.setState({state: "toss"});
       console.log(params);
     },
   };
@@ -41,7 +42,7 @@ class Live extends Component {
     fetcher
       .get(`matches/${this.props.match.params.id}`)
       .then(response => {
-        this.setState({match: response.data, isPreMatch: true});
+        this.setState({match: response.data, state: "pre"});
       });
   }
 
@@ -88,10 +89,11 @@ class Live extends Component {
 
     return (
       <div className="container-fluid pl-0 pr-1">
-        {this.state.isPreMatch === true &&
+        {this.state.state === "pre" &&
         <PreMatch team1={this.state.match.team1} team2={this.state.match.team2} name={this.state.match.name}
                   matchId={this.props.match.params.id} onMatchBegin={this.onMatchBegin}/>}
-        {this.state.isPreMatch === false &&
+        {this.state.state === "toss" && <Toss teams={[this.state.match.team1, this.state.match.team2]}/>}
+        {this.state.state === "running" &&
         <div className="row">
           <aside className="col-md-3">
             <CenterContent col="col">
