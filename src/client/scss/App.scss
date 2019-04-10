@@ -15,17 +15,26 @@ $dark: #151520 !default;
 
 @import "~bootstrap/scss/bootstrap";
 
-.home{
+body.home {
   background: url(../assets/home-bg.jpg) no-repeat fixed center center;
   background-size: cover;
 
-  & > div{
+  & > div {
     background-color: #000000aa;
+  }
+
+  nav {
+    @extend .bg-dark;
+    @extend .navbar-dark;
   }
 }
 
 aside {
   background-color: #11111a;
+}
+
+.fs-2 {
+  font-size: 2rem !important;
 }
 
 @include media-breakpoint-up(md) {
@@ -66,7 +75,7 @@ select#select-match {
     overflow-y: auto;
     overflow-x: hidden;
 
-    .list-group-item{
+    .list-group-item {
       width: 50%;
     }
   }

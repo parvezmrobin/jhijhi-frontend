@@ -6,18 +6,30 @@
 
 
 import React, { Component } from 'react';
-import CenterContent from '../components/layouts/CenterContent';
 
 
 class Contact extends Component {
+  componentDidMount() {
+    document.getElementsByTagName('body')[0].classList.add('home');
+  }
+
+  componentWillUnmount() {
+    document.getElementsByTagName('body')[0].classList.remove('home');
+  }
 
   render() {
     return (
-      <CenterContent>
-        <h2 className="text-center">
-          Mail me at <a href="mailto:parvezmrobin@gmail.com">parvezmrobin@gmail.com</a>
-        </h2>
-      </CenterContent>
+      <div className="d-flex align-items-center vh-100">
+        <div className="col-12 bg-dark rounded">
+          <div className="d-flex justify-content-center v-100">
+            <div className="col-auto text-white p-1 fs-2">
+                <span className="">
+                  Mail me at <a href="mailto:parvezmrobin@gmail.com">parvezmrobin@gmail.com</a>
+                </span>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 

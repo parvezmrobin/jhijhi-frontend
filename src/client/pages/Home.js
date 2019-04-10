@@ -5,8 +5,10 @@
  */
 
 
-import React, {Component} from 'react';
-import fetcher from "../lib/fetcher";
+import React, { Component } from 'react';
+import fetcher from '../lib/fetcher';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
+import { bindMethods } from '../lib/utils';
 
 
 class Home extends Component {
@@ -14,8 +16,18 @@ class Home extends Component {
     super(props);
     this.state = {
       matches: [],
+      isDropdownOpen: false,
     };
+    bindMethods(this);
   }
+
+  handlers = {
+    toggle() {
+      this.setState(prevState => ({
+        isDropdownOpen: !prevState.isDropdownOpen,
+      }));
+    },
+  };
 
   componentDidMount() {
     document.getElementsByTagName('body')[0].classList.add('home');
@@ -23,7 +35,9 @@ class Home extends Component {
     fetcher
       .get('matches')
       .then(response => {
-        this.setState({matches: [{_id: '', name: 'Select Match'}].concat(response.data)})
+        this.setState({
+          matches: response.data,
+        });
       });
   }
 
@@ -31,27 +45,24 @@ class Home extends Component {
     document.getElementsByTagName('body')[0].classList.remove('home');
   }
 
-
   render() {
-    const props = {
-      id: "select-match",
-      name: this.props.name,
-      onChange: this.props.onChange,
-    };
-    const options = this.state.matches.map((match, i) => {
-      const style = {fontSize: "1.5rem"};
-      if (i === 0) {
-        style.display = "none";
-      }
-      return <option key={match._id} value={match._id} style={style}>{match.name}</option>;
+    const options = this.state.matches.map((match) => {
+      return <DropdownItem className="text-primary" key={match._id}>{match.name}</DropdownItem>;
     });
 
     return (
       <div className="d-flex align-items-center vh-100">
         <div className="col-12 bg-dark rounded">
-          <div className="d-flex justify-content-center vw-100">
+          <div className="d-flex justify-content-center v-100">
             <div className="col-auto">
-              <select className="form-control bg-dark border-0" style={{fontSize: "2rem"}} {...props}>{options}</select>
+              <Dropdown isOpen={this.state.isDropdownOpen} toggle={this.toggle}>
+                <DropdownToggle className="fs-2 p-1 text-info bg-transparent border-0" caret>
+                  Select Match
+                </DropdownToggle>
+                <DropdownMenu className="bg-dark w-100">
+                  {options}
+                </DropdownMenu>
+              </Dropdown>
             </div>
           </div>
         </div>
