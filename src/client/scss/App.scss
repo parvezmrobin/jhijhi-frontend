@@ -14,6 +14,7 @@ $success: #127b8b !default;
 $dark: #151520 !default;
 $primary: #3788e1 !default;
 
+
 @import "~bootstrap/scss/bootstrap";
 
 body.home {
@@ -37,7 +38,9 @@ aside {
 .fs-2 {
   font-size: 2rem !important;
 }
-
+.bg-dark-trans{
+  background-color: #151520d6;
+}
 @include media-breakpoint-up(md) {
   aside .list-group {
     max-height: calc(100vh - 12rem);
