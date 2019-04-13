@@ -20,7 +20,7 @@ class Contact extends Component {
   render() {
     return (
       <div className="d-flex align-items-center vh-100">
-        <div className="col-12 bg-dark rounded">
+        <div className="col-8 offset-2 bg-dark-trans rounded">
           <div className="d-flex justify-content-center v-100">
             <div className="col-auto text-white p-1 fs-2">
                 <span className="">
