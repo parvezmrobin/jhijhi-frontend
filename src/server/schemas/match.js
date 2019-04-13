@@ -5,7 +5,7 @@
  */
 
 
-const {Schema} = require('mongoose');
+const { Schema } = require('mongoose');
 
 const inningsSchema = new Schema({
   overs: {
@@ -54,8 +54,6 @@ module.exports = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Team',
   },
-  team1WonToss: Boolean,
-  team1BatFirst: Boolean,
   umpire1: {
     type: Schema.Types.ObjectId,
     default: null,
@@ -86,6 +84,12 @@ module.exports = new Schema({
   team2Captain: {
     type: Schema.Types.ObjectId,
     ref: 'Player',
+  },
+  team1WonToss: Boolean,
+  team1BatFirst: Boolean,
+  state: {
+    type: String,
+    enum: ['', 'toss', 'running', 'done'],
   },
   creator: {
     type: Schema.Types.ObjectId,

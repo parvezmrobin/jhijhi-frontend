@@ -22,20 +22,19 @@ class Live extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      state: null,
-      match: {},
+      match: {
+        state: 'loading',
+      },
     };
 
     bindMethods(this);
   }
 
   handlers = {
-    onMatchBegin(params) {
-      this.setState({state: "toss"});
-      console.log(params);
-    },
-    onToss(params) {
-      this.setState({state: "running"});
+    onStateChange(params) {
+      this.setState(prevState => {
+        return {match: {...prevState.match, ...params}}
+      });
       console.log(params);
     },
   };
@@ -46,7 +45,7 @@ class Live extends Component {
     fetcher
       .get(`matches/${this.props.match.params.id}`)
       .then(response => {
-        this.setState({match: response.data, state: "pre"});
+        this.setState({match: response.data});
       });
   }
 
@@ -93,13 +92,13 @@ class Live extends Component {
 
     return (
       <div className="container-fluid pl-0 pr-1">
-        {this.state.state === "pre" &&
+        {!this.state.match.state &&
         <PreMatch team1={this.state.match.team1} team2={this.state.match.team2} name={this.state.match.name}
-                  matchId={this.props.match.params.id} onMatchBegin={this.onMatchBegin}/>}
-        {this.state.state === "toss" && <Toss teams={[this.state.match.team1, this.state.match.team2]}
+                  matchId={this.props.match.params.id} onMatchBegin={this.onStateChange}/>}
+        {this.state.match.state === "toss" && <Toss teams={[this.state.match.team1, this.state.match.team2]}
                                               name={this.state.match.name}
-                                              matchId={this.props.match.params.id} onToss={this.onToss}/>}
-        {this.state.state === "running" &&
+                                              matchId={this.props.match.params.id} onToss={this.onStateChange}/>}
+        {this.state.match.state === "running" &&
         <div className="row">
           <aside className="col-md-3">
             <CenterContent col="col">

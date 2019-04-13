@@ -79,13 +79,13 @@ router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, res
   const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({status: 400, errors: errors.array()});
   const params = nullEmptyValues(request.body);
 
-  const {team1Players, team1Captain, team2Players, team2Captain} = params;
+  const {team1Players, team1Captain, team2Players, team2Captain, state='toss'} = params;
   const id = request.params.id;
 
   promise
     .then(() => {
       return Match.findByIdAndUpdate(id, {
-        $set: {team1Captain, team2Captain, team1Players, team2Players},
+        $set: {team1Captain, team2Captain, team1Players, team2Players, state},
       }).exec();
     })
     .then((match) => {
@@ -105,7 +105,7 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
   const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({status: 400, errors: errors.array()});
   const params = nullEmptyValues(request.body);
 
-  const {won, choice} = params;
+  const {won, choice, state='running'} = params;
   const id = request.params.id;
 
   promise
@@ -118,6 +118,7 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
       }
       match.team1WonToss = match.team1 === won;
       match.team1BatFirst = (match.team1WonToss && choice === 'Bat') || (!match.team1WonToss && choice === 'Bawl');
+      match.state = state;
       return match.save();
     })
     .then(() => {

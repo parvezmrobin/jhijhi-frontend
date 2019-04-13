@@ -16,6 +16,7 @@ import fetcher from '../lib/fetcher';
 
 export default class PreMatch extends Component {
   matchId;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -47,12 +48,13 @@ export default class PreMatch extends Component {
         team2Players: this.state.team2Players,
         team1Captain: this.state.team1Captain,
         team2Captain: this.state.team2Captain,
+        state: 'toss',
       };
 
       fetcher
         .put(`matches/${this.props.matchId}/begin`, postData)
         .then(response => {
-          this.props.onMatchBegin(postData, response.data.message);
+          this.props.onMatchBegin({ ...postData }, response.data.message);
         })
         .catch(err => {
           const isValid = {
@@ -106,8 +108,8 @@ export default class PreMatch extends Component {
         }
 
         // if the selected captain is removed from the team
-        if (action.unselect === this.state.team1Captain && this.state.team1Players.length){
-          this.setState({team1Captain: this.state.team1Players[0]});
+        if (action.unselect === this.state.team1Captain && this.state.team1Players.length) {
+          this.setState({ team1Captain: this.state.team1Players[0] });
         }
       });
     },
@@ -126,13 +128,13 @@ export default class PreMatch extends Component {
       }, () => {
         if (this.state.team2Players.length === 1) {
           this.setState({ team2Captain: this.state.team2Players[0] });
-        }else if (!this.state.team2Players.length) {
+        } else if (!this.state.team2Players.length) {
           this.setState({ team2Captain: '' });
         }
 
         // if the selected captain is removed from the team
-        if (action.unselect === this.state.team2Captain && this.state.team2Players.length){
-          this.setState({team2Captain: this.state.team2Players[0]});
+        if (action.unselect === this.state.team2Captain && this.state.team2Players.length) {
+          this.setState({ team2Captain: this.state.team2Players[0] });
         }
       });
     },
