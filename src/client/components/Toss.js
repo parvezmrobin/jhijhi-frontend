@@ -42,6 +42,7 @@ export default class Toss extends Component {
       const postData = {
         won: this.state.values.won,
         choice: this.state.values.choice,
+        state: 'running',
       };
       fetcher
         .put(`matches/${this.props.matchId}/toss`, postData)
