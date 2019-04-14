@@ -5,8 +5,8 @@
  */
 
 
-require("../app");
-const mongoose = require("mongoose");
+require('../app');
+const mongoose = require('mongoose');
 
 const seed = function (fileName) {
   const seeder = require(`../seeders/${fileName}Seeder`);
@@ -16,21 +16,23 @@ const seed = function (fileName) {
     .deleteMany({})
     .exec()
     .then(seeder)
-    .then((res) => console.log(`seeded ${!res ? res : res.length} items of ${fileName}Seeder.`))
+    .then((res) => {
+      console.log(`seeded ${!res ? res : res.length} items of ${fileName}Seeder.`);
+    })
     .catch(console.error);
 };
 
 
 mongoose.connection.on('connected', async function () {
-  const seeders = ['player', 'team'];
+  const seeders = ['player', 'team', 'match'];
 
   await seed('user');
 
   for (const seeder of seeders) {
     await seed(seeder);
   }
-  process.exit(0);
 
+  process.exit(0);
 });
 
 
