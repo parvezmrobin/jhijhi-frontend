@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import fetcher from '../lib/fetcher';
 import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
 import { bindMethods } from '../lib/utils';
+import { Link } from 'react-router-dom';
 
 
 class Home extends Component {
@@ -47,7 +48,9 @@ class Home extends Component {
 
   render() {
     const options = this.state.matches.map((match) => {
-      return <DropdownItem className="text-primary" key={match._id}>{match.name}</DropdownItem>;
+      return <Link key={match._id} to={`live/${match._id}`}>
+        <DropdownItem className="text-primary">{match.name}</DropdownItem>
+      </Link>;
     });
 
     return (
