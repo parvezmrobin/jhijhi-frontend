@@ -37,17 +37,32 @@ const dividePlayers = function (players) {
 
 module.exports = async function () {
   const matches = [{
-    name: 'Running Match',
+    name: 'Running Match 1',
     state: 'running',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
   }, {
-    name: 'On Toss Match',
+    name: 'Running Match 2',
+    state: 'running',
+    team1WonToss: Math.random() < .5,
+    team1BatFirst: Math.random() < .5,
+  }, {
+    name: 'On Toss Match 1',
     state: 'toss',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
   }, {
-    name: 'To Begin Match',
+    name: 'On Toss Match 2',
+    state: 'toss',
+    team1WonToss: Math.random() < .5,
+    team1BatFirst: Math.random() < .5,
+  }, {
+    name: 'To Begin Match 1',
+    state: '',
+    team1WonToss: Math.random() < .5,
+    team1BatFirst: Math.random() < .5,
+  }, {
+    name: 'To Begin Match 2',
     state: '',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
@@ -55,26 +70,30 @@ module.exports = async function () {
 
   const users = await User.find({});
   const creatorWiseMatchPromises = users.map(
-    async creator => {
-      const players = await Player.find({ creator: creator._id }, '_id');
-      const teams = await Team.find({ creator: creator._id }, '_id');
+    creator => {
+      const playersPromise = Player.find({ creator: creator._id }, '_id').exec();
+      const teamsPromise = Team.find({ creator: creator._id }, '_id').exec();
 
-      return matches.map(match => {
-        [match.team1, match.team2] = chooseTeams(teams);
-        [match.team1Players, match.team2Players] = dividePlayers(players);
-        match.team1Captain = match.team1Players[0];
-        match.team2Captain = match.team2Players[0];
-        match.creator = creator._id;
+      return Promise.all([playersPromise, teamsPromise])
+        .then(([players, teams]) => {
+          console.log(creator._id);
 
-        return match;
-      });
+          return matches.map(match => {
+            [match.team1, match.team2] = chooseTeams(teams);
+            [match.team1Players, match.team2Players] = dividePlayers(players);
+            match.team1Captain = match.team1Players[0];
+            match.team2Captain = match.team2Players[0];
+            match.creator = creator._id;
+
+            return {...match};
+          });
+        });
     },
   );
 
   const matchWithCreatorPromises = [].concat(...creatorWiseMatchPromises);
   const matchWithCreators = await Promise.all(matchWithCreatorPromises);
   const flattenedMatches = [].concat(...matchWithCreators);
-  console.log(flattenedMatches[0]);
 
   return Match.insertMany(flattenedMatches);
 };
