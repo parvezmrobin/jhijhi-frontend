@@ -138,15 +138,19 @@ router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, res
 
 router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, response) => {
   const errors = validationResult(request);
-  const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({status: 400, errors: errors.array()});
-  const params = nullEmptyValues(request.body);
+  const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({
+    status: 400,
+    errors: errors.array(),
+  });
+  const params = nullEmptyValues(request);
 
-  const {won, choice, state='running'} = params;
+  const { won, choice, state = 'running' } = params;
   const id = request.params.id;
 
   promise
     .then(() => {
-      return Match.findById(id).exec();
+      return Match.findById(id)
+        .exec();
     })
     .then(match => {
       if (!match) {
@@ -155,13 +159,18 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
       match.team1WonToss = match.team1 === won;
       match.team1BatFirst = (match.team1WonToss && choice === 'Bat') || (!match.team1WonToss && choice === 'Bawl');
       match.state = state;
-      return match.save();
-    })
-    .then(() => {
-      response.json({
-        success: true,
-        message: responses.matches.toss.ok,
-      });
+      return match.save()
+        .then(() => {
+          response.json({
+            success: true,
+            message: responses.matches.toss.ok,
+            match: {
+              team1WonToss: match.team1WonToss,
+              team1BatFirst: match.team1BatFirst,
+              state: 'running',
+            },
+          });
+        });
     })
     .catch(err => sendErrorResponse(response, err, responses.matches.toss.err));
 });
