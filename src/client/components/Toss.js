@@ -47,7 +47,7 @@ export default class Toss extends Component {
       fetcher
         .put(`matches/${this.props.matchId}/toss`, postData)
         .then(response => {
-          this.props.onToss(postData, response.data.message);
+          this.props.onToss(response.data.match, response.data.message);
         })
         .catch(err => {
           const isValid = {

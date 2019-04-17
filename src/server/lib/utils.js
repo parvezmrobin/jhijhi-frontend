@@ -6,6 +6,8 @@
 
 
 module.exports.sendErrorResponse = function (response, err, message) {
+  console.log(err);
+
   response.status(err.statusCode || err.status || 500);
   response.json({
     success: false,

@@ -76,7 +76,6 @@ module.exports = async function () {
 
       return Promise.all([playersPromise, teamsPromise])
         .then(([players, teams]) => {
-          console.log(creator._id);
 
           return matches.map(match => {
             [match.team1, match.team2] = chooseTeams(teams);

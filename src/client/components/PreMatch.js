@@ -54,7 +54,7 @@ export default class PreMatch extends Component {
       fetcher
         .put(`matches/${this.props.matchId}/begin`, postData)
         .then(response => {
-          this.props.onMatchBegin({ ...postData }, response.data.message);
+          this.props.onMatchBegin(response.data.match, response.data.message);
         })
         .catch(err => {
           const isValid = {
