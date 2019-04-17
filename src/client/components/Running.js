@@ -77,6 +77,8 @@ export class Running extends Component {
       },
     ];
 
+    const {team1, team2, team1WonToss, team1BatFirst} = this.props;
+
 
     return <div className="row">
       <aside className="col-md-3">
@@ -123,7 +125,7 @@ export class Running extends Component {
           </div>
           <div className="col-md-4">
             <div className='bg-dark text-info p-2 mt-5'>
-              <h4 className="mt-3 text-white">Team 1 - 43 / 4</h4>
+              <h4 className="mt-3 text-white">{team1.name} - 43 / 4</h4>
               <h5>
                 <small>After</small>
                 &nbsp;3 overs 4 bawls
@@ -132,7 +134,9 @@ export class Running extends Component {
             </div>
             <div className="mt-3 text-white">
               <h5>
-                <small>Team 1 won the toss & chose to <span className="font-weight-bold">bat</span>
+                <small>
+                  {team1WonToss? team1.name: team2.name} won the toss. <br/>
+                  {team1BatFirst? team1.name: team2.name} will bat first.
                 </small>
               </h5>
 

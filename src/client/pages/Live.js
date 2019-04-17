@@ -28,7 +28,7 @@ class Live extends Component {
   handlers = {
     onStateChange(params) {
       this.setState(prevState => {
-        return {match: {...prevState.match, ...params}}
+        return { match: { ...prevState.match, ...params } };
       });
       console.log(params);
     },
@@ -36,25 +36,28 @@ class Live extends Component {
 
 
   componentDidMount() {
-    $('[title]').tooltip();
+    $('[title]')
+      .tooltip();
     fetcher
       .get(`matches/${this.props.match.params.id}`)
       .then(response => {
-        this.setState({match: response.data});
+        this.setState({ match: response.data });
       });
   }
 
   render() {
+    const { match } = this.state;
     return (
       <div className="container-fluid pl-0 pr-1">
-        {!this.state.match.state &&
-        <PreMatch team1={this.state.match.team1} team2={this.state.match.team2} name={this.state.match.name}
-                  matchId={this.props.match.params.id} onMatchBegin={this.onStateChange}/>}
-        {this.state.match.state === "toss" && <Toss teams={[this.state.match.team1, this.state.match.team2]}
-                                              name={this.state.match.name}
-                                              matchId={this.props.match.params.id} onToss={this.onStateChange}/>}
-        {this.state.match.state === "running" &&
-        <Running players={this.state.match.team1Players}/>}
+        {!match.state && <PreMatch team1={match.team1} team2={match.team2} name={match.name}
+                                   matchId={this.props.match.params.id}
+                                   onMatchBegin={this.onStateChange}/>}
+        {match.state === 'toss' &&
+        <Toss teams={[match.team1, match.team2]} name={match.name}
+              matchId={this.props.match.params.id} onToss={this.onStateChange}/>}
+        {match.state === 'running' &&
+        <Running players={this.state.match.team1Players} team1={match.team1} team2={match.team2}
+                 team1WonToss={match.team1WonToss} team1BatFirst={match.team1BatFirst}/>}
       </div>
     );
   }
