@@ -10,15 +10,15 @@ import React, { Component } from 'react';
 class PreviousOver extends Component {
 
   render() {
-    let className = 'rounded-0 list-group-item ';
-    let runs = this.props.runs;
+    const className = 'rounded-0 list-group-item ';
+    const {runs, bowler} = this.props;
     const badges = this.props.wickets.map(
-      wicket => (<span key={wicket} className="badge badge-danger badge-pill">{wicket}</span>),
+      wicket => (<span key={wicket} className="badge badge-danger mr-1">{wicket}</span>),
     );
 
     return (
       <li className={className}>
-        <strong>{this.props.bowler}</strong> - {runs} {badges}
+        <strong>{bowler}</strong> - {runs} {badges}
       </li>
     );
   }
