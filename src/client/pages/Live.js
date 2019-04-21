@@ -48,7 +48,7 @@ class Live extends Component {
   render() {
     const { match } = this.state;
     return (
-      <div className="container-fluid pl-0 pr-1">
+      <div className="container-fluid px-0">
         {!match.state && <PreMatch team1={match.team1} team2={match.team2} name={match.name}
                                    matchId={this.props.match.params.id}
                                    onMatchBegin={this.onStateChange}/>}
@@ -56,7 +56,7 @@ class Live extends Component {
         <Toss teams={[match.team1, match.team2]} name={match.name}
               matchId={this.props.match.params.id} onToss={this.onStateChange}/>}
         {match.state === 'running' &&
-        <Running players={this.state.match.team1Players} team1={match.team1} team2={match.team2}
+        <Running name={match.name} players={match.team1Players} team1={match.team1} team2={match.team2}
                  team1WonToss={match.team1WonToss} team1BatFirst={match.team1BatFirst}/>}
       </div>
     );

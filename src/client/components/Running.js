@@ -1,40 +1,13 @@
 import React, { Component } from 'react';
 import CenterContent from './layouts/CenterContent';
 import SidebarList from './SidebarList';
-import CheckBoxControl from './form/control/checkbox';
-import SelectControl from './form/control/select';
 import CurrentOver from './CurrentOver';
 import PreviousOvers from './PreviousOvers';
+import ScoreInput from './ScoreInput';
 
 export class Running extends Component {
 
   render() {
-
-    const wickets = [
-      'Wicket',
-      'Bowled',
-      'Caught',
-      'Leg before wicket',
-      'Run out',
-      'Stumped',
-      'Hit the ball twice',
-      'Hit wicket',
-      'Obstructing the field',
-      'Timed out',
-      'Retired',
-    ].map(wicket => ({
-      _id: wicket,
-      name: wicket,
-    }));
-
-    const singles = [{
-      _id: null,
-      name: 'Run',
-    }]
-      .concat([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((el, i) => ({
-        _id: i,
-        name: i,
-      })));
 
     const balls = [
       {
@@ -77,7 +50,7 @@ export class Running extends Component {
       },
     ];
 
-    const {team1, team2, team1WonToss, team1BatFirst} = this.props;
+    const { name, team1, team2, team1WonToss, team1BatFirst } = this.props;
 
 
     return <div className="row">
@@ -91,38 +64,12 @@ export class Running extends Component {
         </CenterContent>
       </aside>
       <main className="col bg-success">
-        <div className="row pl-1">
+        <div className="row px-1">
           <header className="text-center text-white col-12 mt-5 pt-2">
-            <h2 className="my-3"><span className="font-italic">CricPlatoon</span> Friendly</h2>
+            <h2 className="my-3">{name}</h2>
           </header>
           <hr/>
-          <div
-            className="col-12 d-flex pl-3 justify-content-between align-items-center bg-dark text-white rounded">
-
-            <div
-              title="By runs will be added to previous bawl. Insert a zero run first to add bawl with only by run.">
-              <CheckBoxControl name="by">By</CheckBoxControl>
-            </div>
-
-            <CheckBoxControl name="leg-by">Leg By</CheckBoxControl>
-
-            <CheckBoxControl name="wide">Wide</CheckBoxControl>
-
-            <CheckBoxControl name="no">No Ball</CheckBoxControl>
-
-            <div>
-              <SelectControl name="singles" className="form-control" options={singles}/>
-            </div>
-
-            <button type="button" className="btn btn-info m-2">Four</button>
-
-            <button type="button" className="btn btn-info m-2">Six</button>
-
-            <div className="rounded">
-              <SelectControl name="wicket" className="form-control text-danger"
-                             options={wickets}/>
-            </div>
-          </div>
+          <ScoreInput/>
           <div className="col-md-4">
             <div className='bg-dark text-info p-2 mt-5'>
               <h4 className="mt-3 text-white">{team1.name} - 43 / 4</h4>
@@ -135,8 +82,8 @@ export class Running extends Component {
             <div className="mt-3 text-white">
               <h5>
                 <small>
-                  {team1WonToss? team1.name: team2.name} won the toss. <br/>
-                  {team1BatFirst? team1.name: team2.name} will bat first.
+                  {team1WonToss ? team1.name : team2.name} won the toss. <br/>
+                  {team1BatFirst ? team1.name : team2.name} will bat first.
                 </small>
               </h5>
 
