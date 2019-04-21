@@ -4,6 +4,7 @@ import SidebarList from './SidebarList';
 import CurrentOver from './CurrentOver';
 import PreviousOvers from './PreviousOvers';
 import ScoreInput from './ScoreInput';
+import { toTitleCase } from '../lib/utils';
 
 export class Running extends Component {
 
@@ -39,7 +40,7 @@ export class Running extends Component {
           <SidebarList
             title="Players of Team"
             itemClass="text-white"
-            itemMapper={player => player.name}
+            itemMapper={player => toTitleCase(player.name)}
             list={match.team1Players}/>
         </CenterContent>
       </aside>

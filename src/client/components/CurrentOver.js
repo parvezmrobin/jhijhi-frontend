@@ -8,6 +8,7 @@
 import React, { Component, Fragment } from 'react';
 import Ball from './Ball';
 import NextBall from './NextBall';
+import { toTitleCase } from '../lib/utils';
 
 class CurrentOver extends Component {
   balls;
@@ -20,7 +21,7 @@ class CurrentOver extends Component {
     return (
       <Fragment>
         <h4 className="mt-2 pt-1 text-center text-white">
-          <span className="font-italic">{bowler.name}</span> is bowling
+          <span className="font-italic">{toTitleCase(bowler.name)}</span> is bowling
         </h4>
         <ul className="list-group">
           {balls.map(

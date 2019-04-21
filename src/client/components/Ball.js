@@ -17,7 +17,7 @@ function Ball(props) {
 
   if (props.isWicket) {
     className += 'text-danger';
-    badge = <span className="badge badge-danger badge-pill">{isWicket}</span>;
+    badge = <kbd className="bg-danger">{isWicket}</kbd>;
   } else if (boundary.run) {
     const isFour = props.boundary === 4;
     className += isFour ? 'text-info' : 'text-info';
@@ -35,9 +35,9 @@ function Ball(props) {
   }
   if (!props.isWicket && (props.isWide || props.isNo)) {
     className += 'text-warning';
-    badge = <span className="badge badge-warning">
+    badge = <kbd className="bg-warning">
         {isWide ? 'Wide' : 'No'}
-      </span>;
+      </kbd>;
   }
   if (badge) {
     run = run || '';
