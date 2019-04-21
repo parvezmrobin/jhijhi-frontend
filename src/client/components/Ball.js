@@ -11,22 +11,23 @@ class Ball extends Component {
   batsman;
 
   render() {
-    let className = 'rounded-0 list-group-item ';
+    let className = 'list-group-item ';
     let badge;
     let run = this.props.run;
+    const {isWicket, boundary, isWide, batsman} = this.props;
 
     if (this.props.isWicket) {
       className += 'text-danger';
-      badge = <span className="badge badge-danger badge-pill">{this.props.isWicket}</span>;
+      badge = <span className="badge badge-danger badge-pill">{isWicket}</span>;
     } else if (this.props.boundary) {
       const isFour = this.props.boundary === 4;
       className += isFour ? 'text-info' : 'text-info';
-      run = <kbd className={isFour? "bg-info": "bg-info"}>{this.props.boundary}</kbd>;
+      run = <kbd className={isFour? "bg-info": "bg-info"}>{boundary}</kbd>;
     }
     if (!this.props.isWicket && (this.props.isWide || this.props.isNo)) {
       className += 'text-warning';
       badge = <span className="badge badge-warning badge-pill">
-        {this.props.isWide ? 'Wide' : 'No'}
+        {isWide ? 'Wide' : 'No'}
       </span>;
     }
 
@@ -36,7 +37,7 @@ class Ball extends Component {
 
     return (
       <li className={className}>
-        <strong>{this.props.batsman}</strong> - {run} {badge} {closeButton}
+        <strong>{batsman}</strong> - {run} {badge} {closeButton}
       </li>
     );
   }
