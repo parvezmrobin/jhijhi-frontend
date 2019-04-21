@@ -8,31 +8,11 @@ import ScoreInput from './ScoreInput';
 export class Running extends Component {
 
   render() {
+    const { match } = this.props;
+    const { innings1: { overs } } = match;
+    const lastOver = overs[overs.length - 1];
 
-    const balls = [
-      {
-        batsman: 'Player 5',
-        run: 1,
-      },
-      {
-        batsman: 'Player 4',
-        boundary: 4,
-      },
-      {
-        batsman: 'Player 4',
-        boundary: 6,
-      },
-      {
-        batsman: 'Player 4',
-        isWide: true,
-      },
-      {
-        batsman: 'Player 4',
-        isWicket: 'bold',
-      },
-    ];
-
-    const overs = [
+    const endedOvers = [
       {
         bowler: 'Bowler 2',
         runs: 17,
@@ -50,7 +30,7 @@ export class Running extends Component {
       },
     ];
 
-    const { name, team1, team2, team1WonToss, team1BatFirst } = this.props;
+    const { name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players } = match;
 
 
     return <div className="row">
@@ -60,7 +40,7 @@ export class Running extends Component {
             title="Players of Team"
             itemClass="text-white"
             itemMapper={player => player.name}
-            list={this.props.players}/>
+            list={match.team1Players}/>
         </CenterContent>
       </aside>
       <main className="col bg-success">
@@ -90,10 +70,11 @@ export class Running extends Component {
             </div>
           </div>
           <div className="col-md-4">
-            <CurrentOver balls={balls} bowler="Bowler 1" onCrease="Player 6"/>
+            <CurrentOver balls={lastOver.bowls} bowler={team2Players[lastOver.bowledBy]}
+                         battingTeam={team1Players} onCrease="Player 6"/>
           </div>
           <div className="col-md-4">
-            <PreviousOvers overs={overs}/>
+            <PreviousOvers overs={endedOvers}/>
           </div>
         </div>
       </main>

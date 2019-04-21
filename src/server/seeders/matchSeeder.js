@@ -68,11 +68,50 @@ module.exports = async function () {
     team1BatFirst: Math.random() < .5,
   }];
 
+  const firstOver = {
+    bowledBy: 0,
+    bowls: [{
+      playedBy: 0,
+      singles: 2,
+    }, {
+      playedBy: 0,
+      singles: 3,
+      by: 1,
+    }, {
+      playedBy: 0,
+      legBy: 1,
+      by: 1,
+    }, {
+      playedBy: 0,
+      singles: 2,
+      boundary: {
+        run: 4,
+        kind: 'by',
+      },
+    }, {
+      playedBy: 0,
+      isNo: 'overStep',
+    }, {
+      playedBy: 0,
+      boundary: {
+        run: 6,
+      },
+    }, {
+      playedBy: 0,
+      isWide: true,
+    }, {
+      playedBy: 0,
+      isWicket: 'bold',
+    }],
+  };
+
   const users = await User.find({});
   const creatorWiseMatchPromises = users.map(
     creator => {
-      const playersPromise = Player.find({ creator: creator._id }, '_id').exec();
-      const teamsPromise = Team.find({ creator: creator._id }, '_id').exec();
+      const playersPromise = Player.find({ creator: creator._id }, '_id')
+        .exec();
+      const teamsPromise = Team.find({ creator: creator._id }, '_id')
+        .exec();
 
       return Promise.all([playersPromise, teamsPromise])
         .then(([players, teams]) => {
@@ -84,7 +123,12 @@ module.exports = async function () {
             match.team2Captain = match.team2Players[0];
             match.creator = creator._id;
 
-            return {...match};
+            if (match.name.startsWith('Running')) {
+              const firstOverCopy = Object.assign({}, firstOver);
+              match.innings1 = {overs: [firstOverCopy]};
+            }
+
+            return { ...match };
           });
         });
     },
@@ -94,5 +138,11 @@ module.exports = async function () {
   const matchWithCreators = await Promise.all(matchWithCreatorPromises);
   const flattenedMatches = [].concat(...matchWithCreators);
 
-  return Match.insertMany(flattenedMatches);
+  let createdMatches = [];
+  try {
+    createdMatches = await Match.insertMany(flattenedMatches);
+  } catch (e) {
+    console.log(e.errors.innings1);
+  }
+  return createdMatches;
 };

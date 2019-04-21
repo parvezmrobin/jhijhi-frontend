@@ -8,15 +8,17 @@
 const { Schema } = require('mongoose');
 
 const inningsSchema = new Schema({
-  overs: {
+  overs: [{
     bowledBy: {
-      type: Schema.Types.ObjectId,
-      ref: 'Player',
+      type: Number,
+      required: true,
+      min: 0,
     },
     bowls: [{
       playedBy: {
-        type: Schema.Types.ObjectId,
-        ref: 'Player',
+        type: Number,
+        required: true,
+        min: 0,
       },
       isWicket: String,
       singles: {
@@ -36,12 +38,13 @@ const inningsSchema = new Schema({
         kind: {
           type: String,
           enum: ['regular', 'by', 'legBy'],
+          default: 'regular',
         },
       },
       isWide: Boolean,
       isNo: String, // containing the reason of no
     }],
-  },
+  }],
 });
 
 module.exports = new Schema({

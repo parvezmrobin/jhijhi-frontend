@@ -6,7 +6,6 @@
 
 
 import React, { Component } from 'react';
-import $ from 'jquery';
 import PreMatch from '../components/PreMatch';
 import fetcher from '../lib/fetcher';
 import { bindMethods } from '../lib/utils';
@@ -36,8 +35,6 @@ class Live extends Component {
 
 
   componentDidMount() {
-    $('[title]')
-      .tooltip();
     fetcher
       .get(`matches/${this.props.match.params.id}`)
       .then(response => {
@@ -56,8 +53,7 @@ class Live extends Component {
         <Toss teams={[match.team1, match.team2]} name={match.name}
               matchId={this.props.match.params.id} onToss={this.onStateChange}/>}
         {match.state === 'running' &&
-        <Running name={match.name} players={match.team1Players} team1={match.team1} team2={match.team2}
-                 team1WonToss={match.team1WonToss} team1BatFirst={match.team1BatFirst}/>}
+        <Running match={match}/>}
       </div>
     );
   }

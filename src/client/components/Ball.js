@@ -5,43 +5,53 @@
  */
 
 
-import React, { Component } from 'react';
+import React from 'react';
+import { toTitleCase } from '../lib/utils';
 
-class Ball extends Component {
-  batsman;
+function Ball(props) {
+  let className = 'list-group-item ';
+  let badge;
+  let run = props.singles;
+  const { isWicket, boundary, isWide, playedBy, battingTeam, by, legBy } = props;
+  const batsman = battingTeam[playedBy];
 
-  render() {
-    let className = 'list-group-item ';
-    let badge;
-    let run = this.props.run;
-    const {isWicket, boundary, isWide, batsman} = this.props;
-
-    if (this.props.isWicket) {
-      className += 'text-danger';
-      badge = <span className="badge badge-danger badge-pill">{isWicket}</span>;
-    } else if (this.props.boundary) {
-      const isFour = this.props.boundary === 4;
-      className += isFour ? 'text-info' : 'text-info';
-      run = <kbd className={isFour? "bg-info": "bg-info"}>{boundary}</kbd>;
-    }
-    if (!this.props.isWicket && (this.props.isWide || this.props.isNo)) {
-      className += 'text-warning';
-      badge = <span className="badge badge-warning badge-pill">
+  if (props.isWicket) {
+    className += 'text-danger';
+    badge = <span className="badge badge-danger badge-pill">{isWicket}</span>;
+  } else if (boundary.run) {
+    const isFour = props.boundary === 4;
+    className += isFour ? 'text-info' : 'text-info';
+    run = <>
+      {run || ''} <kbd className="bg-info">
+      {boundary.run} {(boundary.kind === 'by') ? '(By)' : (boundary.kind === 'legBy') ? '(Leg By)' : ''}
+    </kbd>
+    </>;
+  }
+  if (legBy) {
+    run = <>{run || ''} <kbd className="bg-dark-trans">Leg by {legBy}</kbd></>;
+  }
+  if (by) {
+    run = <>{run || ''} <kbd className="bg-dark-trans">By {by}</kbd></>;
+  }
+  if (!props.isWicket && (props.isWide || props.isNo)) {
+    className += 'text-warning';
+    badge = <span className="badge badge-warning">
         {isWide ? 'Wide' : 'No'}
       </span>;
-    }
-
-    const closeButton = <button type="button" className="close" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>;
-
-    return (
-      <li className={className}>
-        <strong>{batsman}</strong> - {run} {badge} {closeButton}
-      </li>
-    );
+  }
+  if (badge) {
+    run = run || '';
   }
 
+  const closeButton = <button type="button" className="close" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>;
+
+  return (
+    <li className={className}>
+      <strong>{toTitleCase(batsman.name)}</strong> - {run} {badge} {closeButton}
+    </li>
+  );
 }
 
 export default Ball;
