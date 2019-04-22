@@ -69,7 +69,7 @@ export class Running extends Component {
     return <div className="row">
       <aside className="col-md-3 d-none d-lg-block">
         <CenterContent col="col">
-          <SidebarList title="Players of Team" itemClass="text-white"
+          <SidebarList title={battingTeamName} itemClass="text-white"
                        itemMapper={sidebarPlayerMapper} list={sidebarPlayerList}/>
         </CenterContent>
       </aside>
