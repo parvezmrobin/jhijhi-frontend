@@ -50,8 +50,8 @@ export default class Score extends Component {
         </h5>
         <h6>Innings {inningsNo}</h6>
       </div>
-      <div className="mt-3 text-white">
-        <h5>
+      <div className="mt-2 text-white">
+        <h5 className="px-2">
           <small>
             <em>{tossOwner}</em> won the toss <br/>
             and chose to <em>{choice}</em>.
