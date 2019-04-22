@@ -90,6 +90,8 @@ module.exports = async function () {
       },
     }, {
       playedBy: 0,
+      singles: 2,
+      by: 2,
       isNo: 'overStep',
     }, {
       playedBy: 0,
@@ -99,6 +101,10 @@ module.exports = async function () {
     }, {
       playedBy: 0,
       isWide: true,
+      boundary: {
+        run: 4,
+        kind: 'by',
+      },
     }, {
       playedBy: 0,
       isWicket: 'bold',
@@ -125,7 +131,7 @@ module.exports = async function () {
 
             if (match.name.startsWith('Running')) {
               const firstOverCopy = Object.assign({}, firstOver);
-              match.innings1 = {overs: [firstOverCopy]};
+              match.innings1 = { overs: [firstOverCopy] };
             }
 
             return { ...match };

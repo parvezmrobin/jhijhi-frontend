@@ -16,8 +16,8 @@ class CurrentOver extends Component {
   onCrease;
 
   render() {
-    const {bowler, battingTeam, balls} = this.props;
-
+    const { bowler, battingTeam, balls } = this.props;
+    let bowlNo = 1;
     return (
       <Fragment>
         <h4 className="mt-2 pt-1 text-center text-white">
@@ -25,8 +25,10 @@ class CurrentOver extends Component {
         </h4>
         <ul className="list-group">
           {balls.map(
-            (ball, i) => {
-              return (<Ball key={i} {...ball} battingTeam={battingTeam}/>);
+            (bowl, i) => {
+              return (
+                <Ball bowlNo={(bowl.isNo || bowl.isWide) ? bowlNo : bowlNo++} key={i} {...bowl}
+                      battingTeam={battingTeam}/>);
             },
           )}
           <NextBall onCrease={this.props.onCrease}/>

@@ -12,15 +12,14 @@ function Ball(props) {
   let className = 'list-group-item ';
   let badge;
   let run = props.singles;
-  const { isWicket, boundary, isWide, playedBy, battingTeam, by, legBy } = props;
+  const {bowlNo, isWicket, boundary, isWide, playedBy, battingTeam, by, legBy } = props;
   const batsman = battingTeam[playedBy];
 
   if (props.isWicket) {
     className += 'text-danger';
     badge = <kbd className="bg-danger">{isWicket}</kbd>;
   } else if (boundary.run) {
-    const isFour = props.boundary === 4;
-    className += isFour ? 'text-info' : 'text-info';
+    className += 'text-info ';
     run = <>
       {run || ''} <kbd className="bg-info">
       {boundary.run} {(boundary.kind === 'by') ? '(By)' : (boundary.kind === 'legBy') ? '(Leg By)' : ''}
@@ -49,7 +48,7 @@ function Ball(props) {
 
   return (
     <li className={className}>
-      <strong>{toTitleCase(batsman.name)}</strong> - {run} {badge} {closeButton}
+      {bowlNo}. <strong>{toTitleCase(batsman.name)}</strong> - {run} {badge} {closeButton}
     </li>
   );
 }
