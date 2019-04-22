@@ -16,12 +16,14 @@ module.exports = function () {
     {name: 'pacada', jerseyNo: 6},
     {name: 'akib', jerseyNo: 7},
     {name: 'mati', jerseyNo: 8},
+    {name: 'shamma', jerseyNo: 80},
     {name: 'dibyo', jerseyNo: 9},
     {name: 'tanin', jerseyNo: 1},
     {name: 'purnam', jerseyNo: 420},
     {name: 'sahad', jerseyNo: 12},
     {name: 'buira', jerseyNo: 2},
     {name: 'gomez', jerseyNo: 440},
+    {name: 'ashar', jerseyNo: 40},
   ];
 
   return User.find({})

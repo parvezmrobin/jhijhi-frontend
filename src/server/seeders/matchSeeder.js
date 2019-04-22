@@ -68,31 +68,93 @@ module.exports = async function () {
     team1BatFirst: Math.random() < .5,
   }];
 
-  const firstOver = {
+  const lastOver = {
     bowledBy: 0,
     bowls: [{
-      playedBy: 0,
+      playedBy: 3,
       singles: 2,
     }, {
-      playedBy: 0,
+      playedBy: 3,
       singles: 3,
       by: 1,
     }, {
-      playedBy: 0,
+      playedBy: 3,
       legBy: 1,
       by: 1,
     }, {
-      playedBy: 0,
+      playedBy: 3,
       singles: 2,
       boundary: {
         run: 4,
         kind: 'by',
       },
     }, {
-      playedBy: 0,
+      playedBy: 3,
       singles: 2,
-      by: 2,
+      by: 1,
       isNo: 'overStep',
+    }, {
+      playedBy: 4,
+      boundary: {
+        run: 6,
+      },
+    }, {
+      playedBy: 4,
+      isWide: true,
+      by: 1,
+    }, {
+      playedBy: 3,
+      singles: 1,
+      isWicket: 'run out',
+    }],
+  };
+  const secondOver = {
+    bowledBy: 1,
+    bowls: [{
+      playedBy: 2,
+      singles: 2,
+    }, {
+      playedBy: 2,
+      singles: 3,
+      by: 1,
+    }, {
+      playedBy: 2,
+      legBy: 1,
+      by: 1,
+    }, {
+      playedBy: 2,
+      singles: 2,
+      boundary: {
+        run: 4,
+        kind: 'by',
+      },
+    }, {
+      playedBy: 2,
+      boundary: {
+        run: 6,
+      },
+    }, {
+      playedBy: 0,
+      isWicket: 'bold',
+    }],
+  };
+  const firstOver = {
+    bowledBy: 1,
+    bowls: [{
+      playedBy: 0,
+    }, {
+      playedBy: 0,
+      by: 1,
+    }, {
+      playedBy: 1,
+      isWicket: 'bold',
+    }, {
+      playedBy: 2,
+      singles: 1,
+      boundary: {
+        run: 4,
+        kind: 'by',
+      },
     }, {
       playedBy: 0,
       boundary: {
@@ -100,14 +162,7 @@ module.exports = async function () {
       },
     }, {
       playedBy: 0,
-      isWide: true,
-      boundary: {
-        run: 4,
-        kind: 'by',
-      },
-    }, {
-      playedBy: 0,
-      isWicket: 'bold',
+      isWicket: 'caught',
     }],
   };
 
@@ -130,8 +185,7 @@ module.exports = async function () {
             match.creator = creator._id;
 
             if (match.name.startsWith('Running')) {
-              const firstOverCopy = Object.assign({}, firstOver);
-              match.innings1 = { overs: [firstOverCopy] };
+              match.innings1 = { overs: [firstOver, secondOver, lastOver] };
             }
 
             return { ...match };
