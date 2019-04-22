@@ -14,10 +14,11 @@ export class Running extends Component {
     const { innings1: { overs } } = match;
     const lastOver = overs[overs.length - 1];
 
-    const { name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players, innings1, state } = match;
+    const { name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players, innings1, innings2, state } = match;
     const battingTeamName = (state === 'running')
       ? (team1BatFirst ? team1.name : team2.name)
       : (team1BatFirst ? team2.name : team1.name);
+    const [innings, inningsNo] = (state === 'running') ? [innings1, 1] : [innings2, 2];
     const tossOwnerChoice = team1WonToss ? (team1BatFirst ? 'bat' : 'bowl') : (team1BatFirst ? 'bowl' : 'bat');
 
     return <div className="row">
@@ -40,7 +41,7 @@ export class Running extends Component {
           <div className="col-md-4">
             <Score battingTeamName={battingTeamName}
                    tossOwner={team1WonToss ? team1.name : team2.name}
-                   choice={tossOwnerChoice} innings={innings1} inningsNo={1}/>
+                   choice={tossOwnerChoice} innings={innings} inningsNo={inningsNo}/>
           </div>
           <div className="col-md-4">
             <CurrentOver balls={lastOver.bowls} bowler={team2Players[lastOver.bowledBy]}
