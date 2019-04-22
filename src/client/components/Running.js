@@ -5,6 +5,7 @@ import CurrentOver from './CurrentOver';
 import PreviousOvers from './PreviousOvers';
 import ScoreInput from './ScoreInput';
 import { toTitleCase } from '../lib/utils';
+import Score from './Score';
 
 export class Running extends Component {
 
@@ -13,7 +14,7 @@ export class Running extends Component {
     const { innings1: { overs } } = match;
     const lastOver = overs[overs.length - 1];
 
-    const { name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players } = match;
+    const { name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players, innings1 } = match;
 
 
     return <div className="row">
@@ -34,23 +35,9 @@ export class Running extends Component {
           <hr/>
           <ScoreInput/>
           <div className="col-md-4">
-            <div className='bg-dark text-info p-2 mt-5'>
-              <h4 className="mt-3 text-white">{team1.name} - 43 / 4</h4>
-              <h5>
-                <small>After</small>
-                &nbsp;3 overs 4 bawls
-              </h5>
-              <h6>Innings 1</h6>
-            </div>
-            <div className="mt-3 text-white">
-              <h5>
-                <small>
-                  {team1WonToss ? team1.name : team2.name} won the toss. <br/>
-                  {team1BatFirst ? team1.name : team2.name} will bat first.
-                </small>
-              </h5>
-
-            </div>
+            <Score battingTeamName={team1.name} tossOwner={team1WonToss ? team1.name : team2.name}
+                   firstBat={team1BatFirst ? team1.name : team2.name} team2={team2}
+                   innings={innings1} inningsNo={1}/>
           </div>
           <div className="col-md-4">
             <CurrentOver balls={lastOver.bowls} bowler={team2Players[lastOver.bowledBy]}
