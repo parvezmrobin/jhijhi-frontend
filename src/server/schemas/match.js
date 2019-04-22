@@ -20,7 +20,13 @@ const inningsSchema = new Schema({
         required: true,
         min: 0,
       },
-      isWicket: String,
+      isWicket: {
+        kind: String,
+        player: { // for runout player other than `playedBy` can be out
+          type: Number,
+          min: 0,
+        },
+      },
       singles: {
         type: Number,
         default: 0,

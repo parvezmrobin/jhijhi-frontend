@@ -47,12 +47,17 @@ module.exports = async function () {
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
   }, {
-    name: 'On Toss Match 1',
-    state: 'toss',
+    name: 'Running Match 3',
+    state: 'running',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
   }, {
-    name: 'On Toss Match 2',
+    name: 'Running Match 4',
+    state: 'running',
+    team1WonToss: Math.random() < .5,
+    team1BatFirst: Math.random() < .5,
+  }, {
+    name: 'On Toss Match 1',
     state: 'toss',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
@@ -61,35 +66,30 @@ module.exports = async function () {
     state: '',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
-  }, {
-    name: 'To Begin Match 2',
-    state: '',
-    team1WonToss: Math.random() < .5,
-    team1BatFirst: Math.random() < .5,
   }];
 
   const lastOver = {
     bowledBy: 0,
     bowls: [{
-      playedBy: 3,
+      playedBy: 2,
       singles: 2,
     }, {
-      playedBy: 3,
+      playedBy: 2,
       singles: 3,
       by: 1,
     }, {
-      playedBy: 3,
+      playedBy: 2,
       legBy: 1,
       by: 1,
     }, {
-      playedBy: 3,
+      playedBy: 2,
       singles: 2,
       boundary: {
         run: 4,
         kind: 'by',
       },
     }, {
-      playedBy: 3,
+      playedBy: 2,
       singles: 2,
       by: 1,
       isNo: 'overStep',
@@ -103,9 +103,12 @@ module.exports = async function () {
       isWide: true,
       by: 1,
     }, {
-      playedBy: 3,
+      playedBy: 2,
       singles: 1,
-      isWicket: 'run out',
+      isWicket: {
+        kind: 'run out',
+        player: 4,
+      },
     }],
   };
   const secondOver = {
@@ -134,8 +137,10 @@ module.exports = async function () {
         run: 6,
       },
     }, {
-      playedBy: 0,
-      isWicket: 'bold',
+      playedBy: 3,
+      isWicket: {
+        kind: 'bold',
+      },
     }],
   };
   const firstOver = {
@@ -147,7 +152,9 @@ module.exports = async function () {
       by: 1,
     }, {
       playedBy: 1,
-      isWicket: 'bold',
+      isWicket: {
+        kind: 'bold',
+      },
     }, {
       playedBy: 2,
       singles: 1,
@@ -162,7 +169,9 @@ module.exports = async function () {
       },
     }, {
       playedBy: 0,
-      isWicket: 'caught',
+      isWicket: {
+        kind: 'caught',
+      },
     }],
   };
 

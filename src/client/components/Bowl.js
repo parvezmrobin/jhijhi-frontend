@@ -17,7 +17,7 @@ function Bowl(props) {
 
   if (props.isWicket) {
     className += 'text-danger';
-    badge = <kbd className="bg-danger">{toTitleCase(isWicket, ' ')}</kbd>;
+    badge = <kbd className="bg-danger">{toTitleCase(isWicket.kind, ' ')}</kbd>;
   } else if (boundary.run) {
     className += 'text-info ';
     run = <>

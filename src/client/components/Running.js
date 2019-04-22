@@ -21,14 +21,56 @@ export class Running extends Component {
     const [innings, inningsNo] = (state === 'running') ? [innings1, 1] : [innings2, 2];
     const tossOwnerChoice = team1WonToss ? (team1BatFirst ? 'bat' : 'bowl') : (team1BatFirst ? 'bowl' : 'bat');
 
+    const [battingTeamPlayers, bowlingTeamPlayers] = (battingTeamName === team1.name)
+      ? [team1Players, team2Players] : [team2Players, team1Players];
+
+    const sidebarContent = {};
+    for (const over of innings.overs) {
+      for (const bowl of over.bowls) {
+        const batsmanName = battingTeamPlayers[bowl.playedBy].name;
+        if (!sidebarContent[batsmanName]) {
+          sidebarContent[batsmanName] = {
+            run: 0,
+            isOut: null,
+          };
+        }
+
+        if (bowl.singles) {
+          sidebarContent[batsmanName].run += bowl.singles;
+        } else if (bowl.boundary.run && bowl.boundary.kind === 'regular') {
+          sidebarContent[batsmanName].run += bowl.boundary.run;
+        }
+        if (bowl.isWicket) {
+
+          const outBatsmanName = bowl.isWicket.player ? battingTeamPlayers[bowl.isWicket.player].name : batsmanName;
+          sidebarContent[outBatsmanName].isOut = bowl.isWicket.kind;
+        }
+      }
+    }
+
+    const sidebarPlayerMapper = ({ name }) => {
+      if (!sidebarContent[name]) {
+        return toTitleCase(name, ' ');
+      }
+
+      const isOut = sidebarContent[name].isOut;
+      const className = isOut ? 'text-secondary' : 'text-primary';
+      return <span className={className}>
+        {toTitleCase(name, ' ')} ({sidebarContent[name].run}) - {isOut ? toTitleCase(isOut, ' ') : 'Playing'}
+      </span>;
+    };
+
+    const sidebarPlayerList = battingTeamPlayers
+      .map(({ _id, name }) => ({
+        _id,
+        name,
+      }));
+
     return <div className="row">
       <aside className="col-md-3 d-none d-lg-block">
         <CenterContent col="col">
-          <SidebarList
-            title="Players of Team"
-            itemClass="text-white"
-            itemMapper={player => toTitleCase(player.name)}
-            list={match.team1Players}/>
+          <SidebarList title="Players of Team" itemClass="text-white"
+                       itemMapper={sidebarPlayerMapper} list={sidebarPlayerList}/>
         </CenterContent>
       </aside>
       <main className="col bg-success">
@@ -44,11 +86,11 @@ export class Running extends Component {
                    choice={tossOwnerChoice} innings={innings} inningsNo={inningsNo}/>
           </div>
           <div className="col-md-4">
-            <CurrentOver balls={lastOver.bowls} bowler={team2Players[lastOver.bowledBy]}
-                         battingTeam={team1Players} onCrease="Player 6"/>
+            <CurrentOver balls={lastOver.bowls} bowler={bowlingTeamPlayers[lastOver.bowledBy]}
+                         battingTeam={battingTeamPlayers} onCrease="Player 6"/>
           </div>
           <div className="col-md-4">
-            <PreviousOvers overs={overs.slice(0, -1)} bowlingTeam={team2Players}/>
+            <PreviousOvers overs={overs.slice(0, -1)} bowlingTeam={bowlingTeamPlayers}/>
           </div>
         </div>
       </main>
