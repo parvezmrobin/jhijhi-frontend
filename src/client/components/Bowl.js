@@ -8,7 +8,7 @@
 import React from 'react';
 import { toTitleCase } from '../lib/utils';
 
-function Ball(props) {
+function Bowl(props) {
   let className = 'list-group-item ';
   let badge;
   let run = props.singles;
@@ -53,4 +53,4 @@ function Ball(props) {
   );
 }
 
-export default Ball;
+export default Bowl;

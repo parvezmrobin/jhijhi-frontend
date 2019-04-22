@@ -6,7 +6,7 @@
 
 
 import React, { Component, Fragment } from 'react';
-import Ball from './Ball';
+import Bowl from './Bowl';
 import NextBall from './NextBall';
 import { toTitleCase } from '../lib/utils';
 
@@ -27,7 +27,7 @@ class CurrentOver extends Component {
           {balls.map(
             (bowl, i) => {
               return (
-                <Ball bowlNo={(bowl.isNo || bowl.isWide) ? bowlNo : bowlNo++} key={i} {...bowl}
+                <Bowl bowlNo={(bowl.isNo || bowl.isWide) ? bowlNo : bowlNo++} key={i} {...bowl}
                       battingTeam={battingTeam}/>);
             },
           )}
