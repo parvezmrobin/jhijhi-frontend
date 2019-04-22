@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 
 export default class Score extends Component {
   render() {
-    const {battingTeamName, tossOwner, firstBat, innings, inningsNo} = this.props;
-    let totalRun = 0, totalWicket = 0;
+    const { battingTeamName, tossOwner, choice, innings, inningsNo } = this.props;
+    let totalRun = 0,
+      totalWicket = 0;
     for (const over of innings.overs) {
       for (const bowl of over.bowls) {
         if (bowl.isWicket) {
@@ -45,15 +46,15 @@ export default class Score extends Component {
         <h4 className="mt-3 text-white">{battingTeamName} - {totalRun} / {totalWicket}</h4>
         <h5>
           <small>After</small>
-          &nbsp;{numOvers} overs {numBowls && `${numBowls} bowl${(numBowls > 1)? 's': ''}`}
+          &nbsp;{numOvers} overs {numBowls && `${numBowls} bowl${(numBowls > 1) ? 's' : ''}`}
         </h5>
         <h6>Innings {inningsNo}</h6>
       </div>
       <div className="mt-3 text-white">
         <h5>
           <small>
-            {tossOwner} won the toss. <br/>
-            {firstBat} will bat first.
+            <em>{tossOwner}</em> won the toss <br/>
+            and chose to <em>{choice}</em>.
           </small>
         </h5>
 
