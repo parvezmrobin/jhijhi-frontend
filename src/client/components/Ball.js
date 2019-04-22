@@ -17,17 +17,17 @@ function Ball(props) {
 
   if (props.isWicket) {
     className += 'text-danger';
-    badge = <kbd className="bg-danger">{isWicket}</kbd>;
+    badge = <kbd className="bg-danger">{toTitleCase(isWicket, ' ')}</kbd>;
   } else if (boundary.run) {
     className += 'text-info ';
     run = <>
       {run || ''} <kbd className="bg-info">
-      {boundary.run} {(boundary.kind === 'by') ? '(By)' : (boundary.kind === 'legBy') ? '(Leg By)' : ''}
+      {boundary.run}{(boundary.kind === 'by') ? '(By)' : (boundary.kind === 'legBy') ? '(Leg By)' : ''}
     </kbd>
     </>;
   }
   if (legBy) {
-    run = <>{run || ''} <kbd className="bg-dark-trans">Leg by {legBy}</kbd></>;
+    run = <>{run || ''} <kbd className="bg-dark-trans">Leg By {legBy}</kbd></>;
   }
   if (by) {
     run = <>{run || ''} <kbd className="bg-dark-trans">By {by}</kbd></>;
