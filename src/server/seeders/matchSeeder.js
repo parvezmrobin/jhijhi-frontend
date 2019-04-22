@@ -139,7 +139,7 @@ module.exports = async function () {
     }],
   };
   const firstOver = {
-    bowledBy: 1,
+    bowledBy: 0,
     bowls: [{
       playedBy: 0,
     }, {

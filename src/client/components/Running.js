@@ -13,24 +13,6 @@ export class Running extends Component {
     const { innings1: { overs } } = match;
     const lastOver = overs[overs.length - 1];
 
-    const endedOvers = [
-      {
-        bowler: 'Bowler 2',
-        runs: 17,
-        wickets: [],
-      },
-      {
-        bowler: 'Bowler 3',
-        runs: 5,
-        wickets: ['run out'],
-      },
-      {
-        bowler: 'Bowler 2',
-        runs: 9,
-        wickets: ['bold', 'caught'],
-      },
-    ];
-
     const { name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players } = match;
 
 
@@ -75,7 +57,7 @@ export class Running extends Component {
                          battingTeam={team1Players} onCrease="Player 6"/>
           </div>
           <div className="col-md-4">
-            <PreviousOvers overs={endedOvers}/>
+            <PreviousOvers overs={overs.slice(0, -1)} bowlingTeam={team2Players}/>
           </div>
         </div>
       </main>
