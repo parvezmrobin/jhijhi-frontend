@@ -72,9 +72,6 @@ module.exports = async function () {
     bowledBy: 0,
     bowls: [{
       playedBy: 2,
-      singles: 2,
-    }, {
-      playedBy: 2,
       singles: 3,
       by: 1,
     }, {
