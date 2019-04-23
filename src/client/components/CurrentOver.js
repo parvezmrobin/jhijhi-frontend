@@ -11,18 +11,17 @@ import NextBall from './NextBall';
 import { toTitleCase } from '../lib/utils';
 
 class CurrentOver extends Component {
-  balls;
-  bowler;
-  onCrease;
 
   render() {
     const { bowler, battingTeam, balls, onCrease } = this.props;
     let bowlNo = 1;
     return (
       <Fragment>
+        {bowler &&
         <h4 className="mt-2 pt-1 text-center text-white">
           <span className="font-italic">{toTitleCase(bowler.name)}</span> is bowling
         </h4>
+        }
         <ul className="list-group">
           {balls.map(
             (bowl, i) => {

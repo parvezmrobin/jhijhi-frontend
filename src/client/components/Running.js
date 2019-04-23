@@ -1,12 +1,12 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import CenterContent from './layouts/CenterContent';
 import SidebarList from './SidebarList';
 import CurrentOver from './CurrentOver';
 import PreviousOvers from './PreviousOvers';
 import ScoreInput from './ScoreInput';
-import {bindMethods, toTitleCase} from '../lib/utils';
+import { bindMethods, optional, toTitleCase } from '../lib/utils';
 import Score from './Score';
-import {Button, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 
 export class Running extends Component {
   constructor(props) {
@@ -23,20 +23,31 @@ export class Running extends Component {
 
   handlers = {
     openModal(i) {
-      this.setState({modal: {open: true, overNo: i + 1, over: this.props.match.innings1.overs[i]}})
+      this.setState({
+        modal: {
+          open: true,
+          overNo: i + 1,
+          over: this.props.match.innings1.overs[i],
+        },
+      });
     },
     closeModal() {
-      this.setState(prevState => ({modal: {...prevState.modal, open: false}}))
+      this.setState(prevState => ({
+        modal: {
+          ...prevState.modal,
+          open: false,
+        },
+      }));
     },
   };
 
   render() {
-    const {match} = this.props;
-    const {modal} = this.state;
-    const {innings1: {overs}} = match;
+    const { match } = this.props;
+    const { modal } = this.state;
+    const { innings1: { overs } } = match;
     const lastOver = overs[overs.length - 1];
 
-    const {name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players, innings1, innings2, state} = match;
+    const { name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players, innings1, innings2, state } = match;
     const battingTeamName = (state === 'running')
       ? (team1BatFirst ? team1.name : team2.name)
       : (team1BatFirst ? team2.name : team1.name);
@@ -70,7 +81,7 @@ export class Running extends Component {
       }
     }
 
-    const sidebarPlayerMapper = ({name}) => {
+    const sidebarPlayerMapper = ({ name }) => {
       if (!sidebarContent[name]) {
         return toTitleCase(name, ' ');
       }
@@ -83,7 +94,7 @@ export class Running extends Component {
     };
 
     const sidebarPlayerList = battingTeamPlayers
-      .map(({_id, name}) => ({
+      .map(({ _id, name }) => ({
         _id,
         name,
       }));
@@ -112,15 +123,21 @@ export class Running extends Component {
                          battingTeam={battingTeamPlayers} onCrease="Player 6"/>
           </div>
           <div className="col-md-4">
-            <PreviousOvers overs={overs.slice(0, -1)} bowlingTeam={bowlingTeamPlayers} onOverClick={this.openModal}/>
+            <PreviousOvers overs={overs.slice(0, -1)} bowlingTeam={bowlingTeamPlayers}
+                           onOverClick={this.openModal}/>
           </div>
         </div>
       </main>
       <Modal isOpen={this.state.modal.open} toggle={this.closeModal}>
-        <ModalHeader toggle={this.closeModal}>Bowls of Over {modal.overNo}</ModalHeader>
+        <ModalHeader toggle={this.closeModal} className="text-primary">
+          Bowled by&nbsp;
+          <span className="font-italic">
+            {toTitleCase(optional(bowlingTeamPlayers[modal.over.bowledBy]).name)}
+          </span>
+          (Over {modal.overNo})
+        </ModalHeader>
         <ModalBody>
-          <CurrentOver balls={modal.over.bowls} bowler={bowlingTeamPlayers[modal.over.bowledBy]}
-                       battingTeam={battingTeamPlayers}/>
+          <CurrentOver balls={modal.over.bowls} battingTeam={battingTeamPlayers}/>
         </ModalBody>
         <ModalFooter>
           <Button color="secondary" onClick={this.closeModal}>Close</Button>
