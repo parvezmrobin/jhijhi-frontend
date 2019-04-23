@@ -12,10 +12,23 @@
  * @return {string}
  */
 export function toTitleCase(str, delimiter = '-') {
+  if (typeof str !== 'string') {
+    return str;
+  }
   return str
     .split(delimiter)
     .map(word => word[0].toUpperCase() + word.substr(1).toLowerCase())
     .join(' ');
+}
+
+/**
+ * Prevents access to property of undefined
+ * by changing undefined variable by {}
+ * @param object
+ * @returns {*}
+ */
+export function optional(object) {
+  return object || {};
 }
 
 /**
