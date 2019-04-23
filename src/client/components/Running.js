@@ -45,6 +45,15 @@ export class Running extends Component {
         },
       }));
     },
+    onBatsmenSelect(batsmenValues) {
+      this.setState(prevState => ({
+        ...prevState,
+        ...batsmenValues,
+        batsmanModal: {
+          open: false,
+        },
+      }));
+    },
   };
 
 
