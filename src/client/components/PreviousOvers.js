@@ -47,7 +47,7 @@ class PreviousOvers extends Component {
         <h4 className="mt-2 pt-1 text-center text-white">
           Previous Overs
         </h4>
-        <ul className="list-group">
+        <ul className="list-group clickable">
           {overs.map(
             (over, i) => {
               const props = {

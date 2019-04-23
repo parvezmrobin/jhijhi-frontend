@@ -101,3 +101,7 @@ select#select-match {
   right: 1rem;
   z-index: 1024;
 }
+
+.list-group.clickable .list-group-item{
+  cursor: pointer;
+}
