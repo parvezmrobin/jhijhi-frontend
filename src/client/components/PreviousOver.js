@@ -12,13 +12,13 @@ class PreviousOver extends Component {
 
   render() {
     const className = 'list-group-item ';
-    const {overNo, runs, bowler} = this.props;
+    const {overNo, runs, bowler, onOverClick} = this.props;
     const badges = this.props.wickets.map(
       wicket => (<kbd key={wicket.kind} className="bg-danger mr-1">{toTitleCase(wicket.kind, ' ')}</kbd>),
     );
 
     return (
-      <li className={className}>
+      <li onClick={() => onOverClick(overNo - 1)} className={className}>
         {overNo}. <strong>{toTitleCase(bowler, ' ')}</strong> - {runs} {badges}
       </li>
     );

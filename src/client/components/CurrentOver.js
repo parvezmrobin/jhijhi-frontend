@@ -16,7 +16,7 @@ class CurrentOver extends Component {
   onCrease;
 
   render() {
-    const { bowler, battingTeam, balls } = this.props;
+    const { bowler, battingTeam, balls, onCrease } = this.props;
     let bowlNo = 1;
     return (
       <Fragment>
@@ -31,7 +31,7 @@ class CurrentOver extends Component {
                       battingTeam={battingTeam}/>);
             },
           )}
-          <NextBall onCrease={this.props.onCrease}/>
+          {onCrease && <NextBall onCrease={onCrease}/>}
         </ul>
       </Fragment>
     );

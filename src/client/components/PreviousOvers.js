@@ -11,7 +11,7 @@ import PreviousOver from './PreviousOver';
 class PreviousOvers extends Component {
 
   render() {
-    const { overs, bowlingTeam } = this.props;
+    const { overs, bowlingTeam, onOverClick } = this.props;
     const getWickets = (over) => {
       return over.bowls.reduce((wickets, bowl) => {
         if (bowl.isWicket) {
@@ -56,6 +56,7 @@ class PreviousOvers extends Component {
                 bowler: bowlingTeam[over.bowledBy].name,
                 runs: getRuns(over),
                 wickets: getWickets(over),
+                onOverClick: onOverClick,
               };
               return (<PreviousOver {...props}/>);
             },
