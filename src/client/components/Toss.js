@@ -42,7 +42,7 @@ export default class Toss extends Component {
       const postData = {
         won: this.state.values.won,
         choice: this.state.values.choice,
-        state: 'running',
+        state: 'innings1',
       };
       fetcher
         .put(`matches/${this.props.matchId}/toss`, postData)
@@ -77,6 +77,8 @@ export default class Toss extends Component {
   };
 
   render() {
+    const {name} = this.props;
+    const {feedback} = this.state;
     const teams = [{_id: '', name: 'None'}].concat(this.props.teams);
     const options = ['Bat', 'Bawl'].map(el => ({_id: el, name: el}));
     const ownControl = <SelectControl options={teams} id="own"
@@ -87,21 +89,21 @@ export default class Toss extends Component {
                                          value={this.state.values.choice} isValid={this.state.isValid.choice}/>;
     return (
       <CenterContent>
-        <h2 className="text-center text-white bg-success py-3 mb-5 rounded">{this.props.name}</h2>
+        <h2 className="text-center text-white bg-success py-3 mb-5 rounded">{name}</h2>
         <div className="form-group row justify-content-center">
           <label htmlFor="won" className="col-form-label col-auto">
             <h5>Toss Won By</h5>
           </label>
           <div className="col-auto">
             {ownControl}
-            <div className="invalid-feedback">{this.state.feedback.won}</div>
+            <div className="invalid-feedback">{feedback.won}</div>
           </div>
           <label htmlFor="choice" className="col-form-label col-auto">
             <h5>and chose to</h5>
           </label>
           <div className="col-auto">
             {choiceControl}
-            <div className="invalid-feedback">{this.state.feedback.won}</div>
+            <div className="invalid-feedback">{feedback.choice}</div>
           </div>
           <div className="col-auto">
             <input type="button" className="btn btn-outline-primary" value="Continue" onClick={this.onClick}/>

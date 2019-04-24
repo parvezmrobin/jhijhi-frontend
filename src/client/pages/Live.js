@@ -52,7 +52,7 @@ class Live extends Component {
         {match.state === 'toss' &&
         <Toss teams={[match.team1, match.team2]} name={match.name}
               matchId={this.props.match.params.id} onToss={this.onStateChange}/>}
-        {match.state === 'running' &&
+        {((match.state === 'innings1') || (match.state === 'innings2')) &&
         <Running match={match}/>}
       </div>
     );

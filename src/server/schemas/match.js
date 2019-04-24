@@ -98,7 +98,8 @@ module.exports = new Schema({
   team1BatFirst: Boolean,
   state: {
     type: String,
-    enum: ['', 'toss', 'running', 'done'],
+    enum: ['', 'toss', 'innings1', 'innings1', 'done'],
+    default: '',
   },
   creator: {
     type: Schema.Types.ObjectId,

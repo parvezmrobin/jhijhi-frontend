@@ -15,7 +15,6 @@ const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: f
 const { check, validationResult } = require('express-validator/check');
 const { sendErrorResponse, send404Response, nullEmptyValues } = require('../lib/utils');
 const Error404 = require('../lib/Error404');
-const { Types: { ObjectId } } = require('mongoose');
 
 
 const matchCreateValidations = [
@@ -144,7 +143,7 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
   });
   const params = nullEmptyValues(request);
 
-  const { won, choice, state = 'running' } = params;
+  const { won, choice, state = 'innings1' } = params;
   const id = request.params.id;
 
   promise
@@ -167,7 +166,7 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
             match: {
               team1WonToss: match.team1WonToss,
               team1BatFirst: match.team1BatFirst,
-              state: 'running',
+              state: 'innings1',
             },
           });
         });

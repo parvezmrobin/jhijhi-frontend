@@ -38,22 +38,22 @@ const dividePlayers = function (players) {
 module.exports = async function () {
   const matches = [{
     name: 'Running Match 1',
-    state: 'running',
+    state: 'innings1',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
   }, {
     name: 'Running Match 2',
-    state: 'running',
+    state: 'innings1',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
   }, {
     name: 'Running Match 3',
-    state: 'running',
+    state: 'innings1',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
   }, {
     name: 'Running Match 4',
-    state: 'running',
+    state: 'innings1',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
   }, {

@@ -113,13 +113,13 @@ export class Running extends Component {
 
   _getCurrentInnings() {
     const { state, innings1, innings2 } = this.state.match;
-    const innings = (state === 'running') ? innings1 : innings2;
+    const innings = (state === 'innings1') ? innings1 : innings2;
     return innings;
   }
 
   _getBattingTeamPlayers() {
     const { state, team1BatFirst, team1Players, team2Players } = this.state.match;
-    const battingTeamPlayers = (state === 'running')
+    const battingTeamPlayers = (state === 'innings1')
       ? (team1BatFirst ? team1Players : team2Players)
       : (team1BatFirst ? team2Players : team1Players);
     return battingTeamPlayers;
@@ -168,10 +168,10 @@ export class Running extends Component {
     const lastOver = overs[overs.length - 1];
 
     const { name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players, innings1, innings2, state } = match;
-    const [battingTeamName, battingTeamShortName] = (state === 'running')
+    const [battingTeamName, battingTeamShortName] = (state === 'innings1')
       ? (team1BatFirst ? [team1.name, team1.shortName] : [team2.name, team2.shortName])
       : (team1BatFirst ? [team2.name, team2.shortName] : [team1.name, team1.shortName]);
-    const [innings, inningsNo] = (state === 'running') ? [innings1, 1] : [innings2, 2];
+    const [innings, inningsNo] = (state === 'innings1') ? [innings1, 1] : [innings2, 2];
     const tossOwnerChoice = team1WonToss ? (team1BatFirst ? 'bat' : 'bowl')
       : (team1BatFirst ? 'bowl' : 'bat');
 
