@@ -13,7 +13,7 @@ import { toTitleCase } from '../lib/utils';
 class CurrentOver extends Component {
 
   render() {
-    const { bowler, battingTeam, balls, onCrease } = this.props;
+    const { bowler, battingTeam, balls, onCrease, onBowlersEnd } = this.props;
     let bowlNo = 1;
     return (
       <Fragment>
@@ -30,7 +30,7 @@ class CurrentOver extends Component {
                       battingTeam={battingTeam}/>);
             },
           )}
-          {onCrease && <NextBall onCrease={onCrease}/>}
+          <NextBall onCrease={onCrease} onBowlersEnd={onBowlersEnd}/>
         </ul>
       </Fragment>
     );

@@ -151,6 +151,7 @@ export class Running extends Component {
       }));
 
     const onCreaseBatsmanName = toTitleCase(battingTeamPlayers[batsman1] && battingTeamPlayers[batsman1].name, ' ');
+    const onBowlersEnd = toTitleCase(battingTeamPlayers[batsman2] && battingTeamPlayers[batsman2].name, ' ');
     return <div className="row">
       <aside className="col-md-3 d-none d-lg-block">
         <CenterContent col="col">
@@ -172,8 +173,8 @@ export class Running extends Component {
           </div>
           <div className="col-md-4">
             <CurrentOver balls={lastOver.bowls} bowler={bowlingTeamPlayers[lastOver.bowledBy]}
-                         battingTeam={battingTeamPlayers}
-                         onCrease={onCreaseBatsmanName}/>
+                         battingTeam={battingTeamPlayers} onCrease={onCreaseBatsmanName}
+                         onBowlersEnd={onBowlersEnd}/>
           </div>
           <div className="col-md-4">
             <PreviousOvers overs={overs.slice(0, -1)} bowlingTeam={bowlingTeamPlayers}
