@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import CenterContent from './layouts/CenterContent';
 import SidebarList from './SidebarList';
 import CurrentOver from './CurrentOver';
 import PreviousOvers from './PreviousOvers';
 import ScoreInput from './ScoreInput';
-import { bindMethods, optional, toTitleCase } from '../lib/utils';
+import {bindMethods, optional, toTitleCase} from '../lib/utils';
 import Score from './Score';
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import {Button, Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap';
 import BatsmanSelectModal from './BatsmanSelectModal';
 
 
@@ -46,32 +46,93 @@ export class Running extends Component {
       }));
     },
     onBatsmenSelect(batsmenValues) {
+      const [errors, indices] = this.validateAndGetSelectedBatsmen(batsmenValues);
+      if (errors) {
+        return errors;
+      }
+      console.log(indices);
+
       this.setState(prevState => ({
         ...prevState,
-        ...batsmenValues,
+        ...indices,
         batsmanModal: {
           open: false,
         },
       }));
+      return {batsman1: null, batsman2: null};
     },
   };
 
 
+  validateAndGetSelectedBatsmen(batsmenValues) {
+    const {innings, battingTeamPlayers} = this.getCurrentInningsDescription();
+    const errors = {};
+
+    for (const over of innings.overs) {
+      for (const bowl of over.bowls) {
+        const batsman = battingTeamPlayers[bowl.playedBy]._id;
+        if (bowl.isWicket) {
+          const outBatsman = bowl.isWicket.player ? battingTeamPlayers[bowl.isWicket.player]._id : batsman;
+          if (outBatsman === batsmenValues.batsman1) {
+            errors.batsman1 = 'Already Out';
+          } else if (outBatsman === batsmenValues.batsman2) {
+            errors.batsman2 = 'Already Out';
+          }
+
+          if (errors.batsman1 && errors.batsman2) {
+            return [errors];
+          }
+        }
+      }
+    }
+    if (errors.batsman1 || errors.batsman2) {
+      return [errors];
+    }
+    return [null, {
+      batsman1: battingTeamPlayers.reduce((i, player, playerI) => {
+        return (i !== -1) ? i : (player._id === batsmenValues.batsman1) ? playerI : -1;
+      }, -1),
+      batsman2: battingTeamPlayers.reduce((i, player, playerI) => {
+        return (i !== -1) ? i : (player._id === batsmenValues.batsman2) ? playerI : -1;
+      }, -1),
+    }];
+  }
+
+  getCurrentInningsDescription() {
+    const innings = this.getCurrentInnings();
+    const battingTeamPlayers = this.getBattingTeamPlayers();
+    return {innings, battingTeamPlayers};
+  }
+
+  getCurrentInnings() {
+    const {state, innings1, innings2} = this.state.match;
+    const innings = (state === 'running') ? innings1 : innings2;
+    return innings;
+  }
+
+  getBattingTeamPlayers() {
+    const {state, team1BatFirst, team1Players, team2Players} = this.state.match;
+    const battingTeamPlayers = (state === 'running')
+      ? (team1BatFirst ? team1Players : team2Players)
+      : (team1BatFirst ? team2Players : team1Players);
+    return battingTeamPlayers;
+  }
+
   componentDidMount() {
-    const { batsman1, batsman2 } = this.state;
+    const {batsman1, batsman2} = this.state;
     this.setState(prevState => ({
       ...prevState,
-      batsmanModal: { open: !(batsman1 && batsman2) },
+      batsmanModal: {open: !(batsman1 && batsman2)},
     }));
   }
 
 
   render() {
-    const { match, overModal, batsman1, batsman2 } = this.state;
-    const { innings1: { overs } } = match;
+    const {match, overModal, batsman1, batsman2} = this.state;
+    const {innings1: {overs}} = match;
     const lastOver = overs[overs.length - 1];
 
-    const { name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players, innings1, innings2, state } = match;
+    const {name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players, innings1, innings2, state} = match;
     const battingTeamName = (state === 'running')
       ? (team1BatFirst ? team1.name : team2.name)
       : (team1BatFirst ? team2.name : team1.name);
@@ -84,17 +145,12 @@ export class Running extends Component {
     const sidebarPlayerMapper = this.genSidebarPlayerMapper(innings, battingTeamPlayers);
 
     const sidebarPlayerList = battingTeamPlayers
-      .map(({ _id, name }) => ({
+      .map(({_id, name}) => ({
         _id,
         name,
       }));
 
-    const selectBatsmanModal = (
-      <BatsmanSelectModal isOpen={this.state.batsmanModal.open} batsman1={batsman1}
-                          batsman2={batsman2} options={battingTeamPlayers}
-                          onSelect={this.onBatsmenSelect}/>
-    );
-
+    const onCreaseBatsmanName = toTitleCase(battingTeamPlayers[batsman1] && battingTeamPlayers[batsman1].name, ' ');
     return <div className="row">
       <aside className="col-md-3 d-none d-lg-block">
         <CenterContent col="col">
@@ -116,7 +172,8 @@ export class Running extends Component {
           </div>
           <div className="col-md-4">
             <CurrentOver balls={lastOver.bowls} bowler={bowlingTeamPlayers[lastOver.bowledBy]}
-                         battingTeam={battingTeamPlayers} onCrease="Player 6"/>
+                         battingTeam={battingTeamPlayers}
+                         onCrease={onCreaseBatsmanName}/>
           </div>
           <div className="col-md-4">
             <PreviousOvers overs={overs.slice(0, -1)} bowlingTeam={bowlingTeamPlayers}
@@ -139,7 +196,9 @@ export class Running extends Component {
           <Button color="secondary" onClick={this.closeOverModal}>Close</Button>
         </ModalFooter>
       </Modal>
-      {selectBatsmanModal}
+      <BatsmanSelectModal isOpen={this.state.batsmanModal.open} batsman1={batsman1}
+                          batsman2={batsman2} options={battingTeamPlayers}
+                          onSelect={this.onBatsmenSelect}/>
     </div>;
   }
 
@@ -168,7 +227,7 @@ export class Running extends Component {
       }
     }
 
-    const sidebarPlayerMapper = ({ name }) => {
+    const sidebarPlayerMapper = ({name}) => {
       if (!sidebarContent[name]) {
         return toTitleCase(name, ' ');
       }
