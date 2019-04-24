@@ -18,9 +18,6 @@ export class Running extends Component {
         open: false,
         over: {},
       },
-      batsmanModal: {
-        open: false,
-      },
       match: this.props.match,
     };
 
@@ -50,14 +47,10 @@ export class Running extends Component {
       if (errors) {
         return errors;
       }
-      console.log(indices);
 
       this.setState(prevState => ({
         ...prevState,
         ...indices,
-        batsmanModal: {
-          open: false,
-        },
       }));
       return {batsman1: null, batsman2: null};
     },
@@ -65,17 +58,36 @@ export class Running extends Component {
 
 
   validateAndGetSelectedBatsmen(batsmenValues) {
+    const {batsman1, batsman2} = batsmenValues;
+
     const {innings, battingTeamPlayers} = this.getCurrentInningsDescription();
+    const indices = {};
+    if (batsman1) {
+      indices.batsman1 = battingTeamPlayers.reduce((i, player, playerI) => {
+        return (i !== -1) ? i : (player._id === batsman1) ? playerI : -1;
+      }, -1);
+    }
+    if (batsman2) {
+      indices.batsman2 = battingTeamPlayers.reduce((i, player, playerI) => {
+        return (i !== -1) ? i : (player._id === batsman2) ? playerI : -1;
+      }, -1);
+    }
+
+    if (!batsman1 && (indices.batsman2 === this.state.batsman1)) {
+      return [{batsman2: 'Already Selected As Batsman1'}]
+    }
+
     const errors = {};
+
 
     for (const over of innings.overs) {
       for (const bowl of over.bowls) {
         const batsman = battingTeamPlayers[bowl.playedBy]._id;
         if (bowl.isWicket) {
           const outBatsman = bowl.isWicket.player ? battingTeamPlayers[bowl.isWicket.player]._id : batsman;
-          if (outBatsman === batsmenValues.batsman1) {
+          if (outBatsman === batsman1) {
             errors.batsman1 = 'Already Out';
-          } else if (outBatsman === batsmenValues.batsman2) {
+          } else if (outBatsman === batsman2) {
             errors.batsman2 = 'Already Out';
           }
 
@@ -88,14 +100,7 @@ export class Running extends Component {
     if (errors.batsman1 || errors.batsman2) {
       return [errors];
     }
-    return [null, {
-      batsman1: battingTeamPlayers.reduce((i, player, playerI) => {
-        return (i !== -1) ? i : (player._id === batsmenValues.batsman1) ? playerI : -1;
-      }, -1),
-      batsman2: battingTeamPlayers.reduce((i, player, playerI) => {
-        return (i !== -1) ? i : (player._id === batsmenValues.batsman2) ? playerI : -1;
-      }, -1),
-    }];
+    return [null, indices];
   }
 
   getCurrentInningsDescription() {
@@ -119,10 +124,38 @@ export class Running extends Component {
   }
 
   componentDidMount() {
-    const {batsman1, batsman2} = this.state;
+    let {batsman1, batsman2} = this.state;
+    const innings = this.getCurrentInnings();
+    const outBatsmen = [];
+
+    outer: for (let i = innings.overs.length - 1; i >= 0; i--) {
+      const over = innings.overs[i];
+      for (let j = over.bowls.length - 1; j >= 0; j--) {
+        const bowl = over.bowls[j];
+
+        if (bowl.isWicket) {
+          outBatsmen.push((typeof bowl.isWicket.player === 'number') ? bowl.isWicket.player : bowl.playedBy);
+          continue;
+        }
+
+        const batsman = bowl.playedBy;
+        if (outBatsmen.indexOf(batsman) !== -1) {
+          continue
+        }
+
+        if (batsman1 == null) {
+          batsman1 = batsman;
+        } else if (batsman1 !== batsman) {
+          batsman2 = batsman;
+          break outer;
+        }
+      }
+    }
+
     this.setState(prevState => ({
       ...prevState,
-      batsmanModal: {open: !(batsman1 && batsman2)},
+      batsman1,
+      batsman2,
     }));
   }
 
@@ -197,9 +230,8 @@ export class Running extends Component {
           <Button color="secondary" onClick={this.closeOverModal}>Close</Button>
         </ModalFooter>
       </Modal>
-      <BatsmanSelectModal isOpen={this.state.batsmanModal.open} batsman1={batsman1}
-                          batsman2={batsman2} options={battingTeamPlayers}
-                          onSelect={this.onBatsmenSelect}/>
+      <BatsmanSelectModal isOpen={!this.state.batsman1 || !this.state.batsman2} batsman1={batsman1} batsman2={batsman2}
+                          options={battingTeamPlayers} onSelect={this.onBatsmenSelect}/>
     </div>;
   }
 

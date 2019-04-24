@@ -22,7 +22,8 @@ export default class BatsmanSelectModal extends Component {
   handlers = {
     onSubmit() {
       const {batsman1, batsman2} = this.state;
-      if (batsman1 === batsman2) {
+      const {batsman1: batsman1Exists, batsman2: batsman2Exists} = this.props;
+      if (batsman1Exists && batsman2Exists && batsman1 === batsman2) {
         return this.setState(prevState => ({
           ...prevState,
           errors: {
@@ -45,21 +46,28 @@ export default class BatsmanSelectModal extends Component {
         ...newValue,
       }))
     },
+    initialize() {
+      const {batsman1, batsman2, options} = this.props;
+      const initialBatsmanSelection = {};
+      if (!batsman1) {
+        initialBatsmanSelection.batsman1 = options[0]._id;
+      }
+      if (!batsman2) {
+        initialBatsmanSelection.batsman2 = options[0]._id;
+      }
+
+      this.setState(prevState => ({
+        ...prevState,
+        ...initialBatsmanSelection,
+      }))
+    },
   };
 
-  componentDidMount() {
-    const {options} = this.props;
-    this.setState(prevState => ({
-      ...prevState,
-      batsman1: options[0]._id,
-      batsman2: options[0]._id,
-    }))
-  }
 
   render() {
     const {batsman1: batsman1Exists, batsman2: batsman2Exists, options} = this.props;
     const {errors} = this.state;
-    return <Modal isOpen={this.props.isOpen}>
+    return <Modal isOpen={this.props.isOpen} onOpened={this.initialize}>
       <ModalHeader className="text-primary">
         Select {!(batsman1Exists || batsman2Exists) ? 'Batsmen' : 'Batsman'}
       </ModalHeader>
