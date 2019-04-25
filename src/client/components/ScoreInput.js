@@ -52,7 +52,7 @@ export default class ScoreInput extends Component {
   render() {
     const { isBy, isLegBy, isWide, isNo, singles, wicket } = this.state;
     return <section
-      className="col-12 d-flex pl-3 justify-content-between align-items-center bg-dark text-white rounded">
+      className="score-input rounded">
 
       <div>
         <CheckBoxControl value={isBy} name="by"
