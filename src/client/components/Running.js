@@ -186,10 +186,13 @@ export class Running extends Component {
         <ScoreCard innings={innings} battingTeamName={battingTeamName}
                    battingTeamPlayers={battingTeamPlayers}/>
       </aside>
-      <main className="col bg-success">
+      <main className="col bg-success min-vh-100">
         <div className="row px-1">
           <header className="text-center text-white col-12 mt-5 pt-2">
-            <h2 className="my-3">{name}</h2>
+            <h2 className="my-3">
+              {name}
+              <button type="button" className="btn btn-warning text-white float-right">Declare</button>
+            </h2>
           </header>
           <hr/>
           <ScoreInput/>
