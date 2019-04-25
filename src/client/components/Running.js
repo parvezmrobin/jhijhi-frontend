@@ -191,7 +191,7 @@ export class Running extends Component {
           <header className="text-center text-white col-12 mt-5 pt-2">
             <h2 className="my-3">
               {name}
-              <button type="button" className="btn btn-darkwarning text-white float-right">Declare</button>
+              <button type="button" className="btn btn-warning-light text-white float-right">Declare</button>
             </h2>
           </header>
           <hr/>
