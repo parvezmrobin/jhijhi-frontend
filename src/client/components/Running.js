@@ -164,7 +164,7 @@ export class Running extends Component {
 
   render() {
     const { match, overModal, batsman1, batsman2 } = this.state;
-    const { innings1: { overs } } = match;
+    const { innings1: { overs }, overs: numOvers } = match;
     const lastOver = overs[overs.length - 1];
 
     const { name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players, innings1, innings2, state } = match;
@@ -197,7 +197,7 @@ export class Running extends Component {
           <hr/>
           <ScoreInput/>
           <div className="col-md-4 px-0">
-            <Score battingTeamName={battingTeamShortName}
+            <Score battingTeamName={battingTeamShortName} numberOfOvers={numOvers}
                    tossOwner={team1WonToss ? team1.name : team2.name}
                    choice={tossOwnerChoice} innings={innings} inningsNo={inningsNo}/>
           </div>

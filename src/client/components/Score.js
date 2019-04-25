@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 export default class Score extends Component {
   render() {
-    const { battingTeamName, tossOwner, choice, innings, inningsNo } = this.props;
+    const { battingTeamName, tossOwner, choice, innings, inningsNo, numberOfOvers } = this.props;
     let totalRun = 0,
       totalWicket = 0;
     for (const over of innings.overs) {
@@ -44,9 +44,12 @@ export default class Score extends Component {
     return <>
       <div className='bg-dark text-info p-2 mt-5 rounded'>
         <h4 className="mt-3 text-white">{battingTeamName} - {totalRun} / {totalWicket}</h4>
-        <h5>
+        <h5 className="text-primary">
           <small>After</small>
           &nbsp;{numOvers} overs {numBowls && `${numBowls} bowl${(numBowls > 1) ? 's' : ''}`}
+        </h5>
+        <h5>
+          <small>From</small>&nbsp;{numberOfOvers} overs
         </h5>
         <h6>Innings {inningsNo}</h6>
       </div>

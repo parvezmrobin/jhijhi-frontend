@@ -41,31 +41,37 @@ module.exports = async function () {
     state: 'innings1',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
+    overs: 5,
   }, {
     name: 'Running Match 2',
     state: 'innings1',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
+    overs: 5,
   }, {
     name: 'Running Match 3',
     state: 'innings1',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
+    overs: 5,
   }, {
     name: 'Running Match 4',
     state: 'innings1',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
+    overs: 5,
   }, {
     name: 'On Toss Match 1',
     state: 'toss',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
+    overs: 5,
   }, {
     name: 'To Begin Match 1',
     state: '',
     team1WonToss: Math.random() < .5,
     team1BatFirst: Math.random() < .5,
+    overs: 5,
   }];
 
   const lastOver = {

@@ -55,6 +55,10 @@ const inningsSchema = new Schema({
 
 module.exports = new Schema({
   name: String,
+  overs: {
+    type: Number,
+    min: 1,
+  },
   team1: {
     type: Schema.Types.ObjectId,
     ref: 'Team',
