@@ -42,7 +42,7 @@ export default class Score extends Component {
     }
 
     return <>
-      <div className='bg-dark text-info p-2 mt-5'>
+      <div className='bg-dark text-info p-2 mt-5 rounded'>
         <h4 className="mt-3 text-white">{battingTeamName} - {totalRun} / {totalWicket}</h4>
         <h5>
           <small>After</small>

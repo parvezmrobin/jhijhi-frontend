@@ -196,7 +196,7 @@ export class Running extends Component {
           </header>
           <hr/>
           <ScoreInput/>
-          <div className="col-md-4">
+          <div className="col-md-4 px-0">
             <Score battingTeamName={battingTeamShortName}
                    tossOwner={team1WonToss ? team1.name : team2.name}
                    choice={tossOwnerChoice} innings={innings} inningsNo={inningsNo}/>
@@ -206,7 +206,7 @@ export class Running extends Component {
                          battingTeam={battingTeamPlayers} onCrease={onCreaseBatsmanName}
                          onBowlersEnd={onBowlersEnd}/>
           </div>
-          <div className="col-md-4">
+          <div className="col-md-4 px-0">
             <PreviousOvers overs={overs.slice(0, -1)} bowlingTeam={bowlingTeamPlayers}
                            onOverClick={this.openOverModal}/>
           </div>

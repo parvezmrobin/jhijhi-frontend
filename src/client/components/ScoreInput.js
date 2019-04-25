@@ -51,8 +51,7 @@ export default class ScoreInput extends Component {
 
   render() {
     const { isBy, isLegBy, isWide, isNo, singles, wicket } = this.state;
-    return <section
-      className="score-input rounded">
+    return <section className="score-input rounded">
 
       <div>
         <CheckBoxControl value={isBy} name="by"
