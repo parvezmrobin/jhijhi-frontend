@@ -102,7 +102,7 @@ module.exports = new Schema({
   team1BatFirst: Boolean,
   state: {
     type: String,
-    enum: ['', 'toss', 'innings1', 'innings1', 'done'],
+    enum: ['', 'toss', 'innings1', 'innings2', 'done'],
     default: '',
   },
   creator: {
