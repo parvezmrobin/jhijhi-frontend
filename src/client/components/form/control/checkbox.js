@@ -15,7 +15,7 @@ class CheckBoxControl extends Component {
 
     return (
       <div className="form-check">
-        <input className="form-check-input" type="checkbox" value={value} id={id} name={name}
+        <input className="form-check-input" type="checkbox" checked={value} id={id} name={name}
                onChange={onChange}/>
         <label className="form-check-label" htmlFor={id}>
           {children}

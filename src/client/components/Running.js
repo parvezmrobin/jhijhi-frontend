@@ -55,6 +55,42 @@ export class Running extends Component {
         batsman2: null,
       };
     },
+    /**
+     * Event handler for score input
+     * @param inputEvent
+     * @param inputEvent.type
+     * @param inputEvent.bowl
+     * @param inputEvent.bowler
+     */
+    onInput(inputEvent) {
+      this.setState(prevState => {
+        let { batsman1, batsman2 } = prevState;
+        const { state } = prevState.match;
+        const innings = (state === 'innings1') ? prevState.match.innings1 : prevState.match.innings2;
+        if (inputEvent.type === 'bowl') {
+          const bowl = inputEvent.bowl;
+          innings.overs[innings.overs.length - 1].bowls.push(bowl);
+
+          // TODO: handle by
+          if ((bowl.singles + bowl.legBy) % 2) {
+            [batsman1, batsman2] = [batsman2, batsman1];
+          }
+        } else if (inputEvent.type === 'over') {
+          innings.overs.push({ bowledBy: inputEvent.bowler });
+          [batsman1, batsman2] = [batsman2, batsman1];
+        }
+
+        return {
+          ...prevState,
+          match: {
+            ...prevState.match,
+            [prevState.match.state]: innings,
+          },
+          batsman1,
+          batsman2,
+        };
+      });
+    },
   };
 
 
@@ -191,11 +227,17 @@ export class Running extends Component {
           <header className="text-center text-white col-12 mt-5 pt-2">
             <h2 className="my-3">
               {name}
-              <button type="button" className="btn btn-warning-light text-white float-right">Declare</button>
+              <button type="button" className="btn btn-warning-light text-white float-right">
+                Declare
+              </button>
             </h2>
           </header>
           <hr/>
-          <ScoreInput/>
+          <ScoreInput batsman1={batsman1} batsman2={batsman2} matchId={match._id}
+                      onInput={bowl => this.onInput({
+                        type: 'bowl',
+                        bowl,
+                      })}/>
           <div className="col-md-4 px-0">
             <Score battingTeamName={battingTeamShortName} numberOfOvers={numOvers}
                    tossOwner={team1WonToss ? team1.name : team2.name}

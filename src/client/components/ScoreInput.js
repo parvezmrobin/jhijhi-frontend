@@ -4,6 +4,7 @@ import { Tooltip } from 'reactstrap';
 import SelectControl from './form/control/select';
 import * as PropTypes from 'prop-types';
 import { bindMethods } from '../lib/utils';
+import fetcher from '../lib/fetcher';
 
 export default class ScoreInput extends Component {
   constructor(props) {
@@ -21,18 +22,71 @@ export default class ScoreInput extends Component {
     bindMethods(this);
   }
 
+  createBowlEvent() {
+    return {
+      playedBy: this.props.batsman1,
+      legBy: this.state.isLegBy,
+      isWide: this.state.isWide,
+      isNo: this.state.isNo ? 'True' : null,
+      boundary: {
+        run: 0,
+      },
+    };
+  }
+
+  makeServerRequest(bowlEvent) {
+    fetcher.post(`matches/${this.props.matchId}/bowl`, bowlEvent)
+      .then(() => this.prepareForNextInput(bowlEvent))
+  }
+
+  prepareForNextInput(bowlEvent) {
+    this.props.onInput(bowlEvent);
+    this.setState(prevState => ({
+      ...prevState,
+      isBy: false,
+      isLegBy: false,
+      isWide: false,
+      isNo: false,
+      singles: 'Singles',
+      wicket: 'Wicket',
+    }))
+  }
+
   handlers = {
     onStateUpdate(update) {
       this.setState(prevState => ({ ...prevState, ...update }));
     },
     onSingle(run) {
       console.log('singles', run);
+      const bowlEvent = this.createBowlEvent();
+      // TODO : handle by
+      if (bowlEvent.legBy) {
+        bowlEvent.legBy = run;
+      } else {
+        bowlEvent.singles = run;
+      }
+      this.makeServerRequest(bowlEvent);
     },
     onBoundary(run) {
       console.log('boundary', run);
+      const bowlEvent = this.createBowlEvent();
+      // TODO : handle by
+      bowlEvent.boundary = {
+        run,
+        kind: bowlEvent.legBy ? 'legBy' : 'regular',
+      };
+      delete bowlEvent.legBy;
+      this.makeServerRequest(bowlEvent);
     },
     onWicket(wicket) {
       console.log('wicket', wicket);
+      const bowlEvent = this.createBowlEvent();
+      // TODO : handle runout
+      bowlEvent.isWicket = {
+        kind: wicket,
+      };
+      delete bowlEvent.legBy;
+      this.makeServerRequest(bowlEvent);
     },
   };
 
@@ -86,7 +140,7 @@ export default class ScoreInput extends Component {
                        onChange={e => {
                          const run = e.target.value;
                          this.onStateUpdate({ singles: run });
-                         this.onSingle(run);
+                         this.onSingle(parseInt(run));
                        }}/>
       </div>
 
@@ -112,5 +166,8 @@ export default class ScoreInput extends Component {
 }
 
 ScoreInput.propTypes = {
+  batsman1: PropTypes.number,
+  batsman2: PropTypes.number,
+  matchId: PropTypes.string,
   onInput: PropTypes.func,
 };
