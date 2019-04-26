@@ -48,14 +48,14 @@ export function bindMethods(object, property = "handlers") {
 }
 
 /**
- * Subtract array2 from array1
- * @param array1
- * @param array2
- * @param matcher
+ * Subtract subtrahend from from
+ * @param {Array} from
+ * @param {Array} subtrahend
+ * @param {Function} [matcher]
  */
-export function subtract(array1, array2, matcher = ((el1, el2) => el1 === el2)) {
-  return array1.filter(el1 => {
-    for (const el2 of array2) {
+export function subtract(from, subtrahend, matcher = ((el1, el2) => el1 === el2)) {
+  return from.filter(el1 => {
+    for (const el2 of subtrahend) {
       if (matcher(el1, el2)) {
         return false;
       }
