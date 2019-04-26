@@ -11,16 +11,16 @@ const router = express.Router();
 const Match = require('../models/match');
 const responses = require('../responses');
 const passport = require('passport');
-const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
-const { check, validationResult } = require('express-validator/check');
-const { sendErrorResponse, send404Response, nullEmptyValues } = require('../lib/utils');
+const authenticateJwt = passport.authenticate.bind(passport, 'jwt', {session: false});
+const {check, validationResult} = require('express-validator/check');
+const {sendErrorResponse, send404Response, nullEmptyValues} = require('../lib/utils');
 const Error404 = require('../lib/Error404');
 
 
 const matchCreateValidations = [
   check('name')
-    .exists({ checkFalsy: true })
-    .custom((name, { req }) => {
+    .exists({checkFalsy: true})
+    .custom((name, {req}) => {
       return Match
         .findOne({
           creator: req.user._id,
@@ -39,7 +39,7 @@ const matchCreateValidations = [
   check('team2')
     .isMongoId(),
   check('team1')
-    .custom((team1, { req }) => {
+    .custom((team1, {req}) => {
       if (team1 === req.body.team2) {
         // trow error if passwords do not match
         throw new Error('Team 1 and Team 2 should be different.');
@@ -47,7 +47,7 @@ const matchCreateValidations = [
       return team1;
     }),
   check('overs', 'Overs must be greater than 0')
-    .isInt({ min: 1 }),
+    .isInt({min: 1}),
 ];
 
 const matchBeginValidations = [
@@ -56,22 +56,22 @@ const matchBeginValidations = [
   check('team2Players')
     .isArray(),
   check('team1Captain', 'No captain selected')
-    .exists({ checkFalsy: true }),
+    .exists({checkFalsy: true}),
   check('team1Captain', 'Team 1 captain should be a team 1 player')
-    .custom((team1Captain, { req }) => {
+    .custom((team1Captain, {req}) => {
       return req.body.team1Players && req.body.team1Players.indexOf(team1Captain) !== -1;
     }),
   check('team2Captain', 'No captain selected')
-    .exists({ checkFalsy: true }),
+    .exists({checkFalsy: true}),
   check('team2Captain', 'Team 2 captain should be a team 2 player')
-    .custom((team2Captain, { req }) => {
+    .custom((team2Captain, {req}) => {
       return req.body.team2Players && req.body.team2Players.indexOf(team2Captain) !== -1;
     }),
 ];
 
 const matchTossValidations = [
   check('won')
-    .custom((won, { req }) => {
+    .custom((won, {req}) => {
       return Match
         .findById(req.params.id)
         .exec()
@@ -104,7 +104,7 @@ router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, res
         return send404Response(response, responses.matches.e404);
       }
 
-      match.set({ team1Captain, team2Captain, team1Players, team2Players, state });
+      match.set({team1Captain, team2Captain, team1Players, team2Players, state});
 
       return match.save()
         .then(() => {
@@ -130,7 +130,7 @@ router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, res
         });
     })
     .catch(err => sendErrorResponse(response, err, responses.matches.begin.err));
-  const { team1Players, team1Captain, team2Players, team2Captain, state = 'toss' } = params;
+  const {team1Players, team1Captain, team2Players, team2Captain, state = 'toss'} = params;
 
   const id = request.params.id;
 });
@@ -143,7 +143,7 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
   });
   const params = nullEmptyValues(request);
 
-  const { won, choice, state = 'innings1' } = params;
+  const {won, choice, state = 'innings1'} = params;
   const id = request.params.id;
 
   promise
@@ -174,6 +174,29 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
     .catch(err => sendErrorResponse(response, err, responses.matches.toss.err));
 });
 
+router.put('/:id/declare', authenticateJwt(), (request, response) => {
+  const id = request.params.id;
+
+  Match.findById(id)
+    .exec()
+    .then(match => {
+      if (!match) {
+        throw new Error404(responses.matches.e404);
+      }
+      const state = (match.state.toString() === 'innings1') ? 'innings2' : 'done';
+      match.state = 'state';
+      return match.save().then(() => response.json({state}));
+    })
+    .catch(err => {
+      response.status(err.statusCode || err.status || 500);
+      response.json({
+        success: false,
+        message: responses.matches.get.err,
+        err: err.error || err.errors || err,
+      });
+    });
+});
+
 router.get('/:id', authenticateJwt(), (request, response) => {
   Match
     .findOne({
@@ -201,7 +224,7 @@ router.get('/:id', authenticateJwt(), (request, response) => {
 /* GET matches listing. */
 router.get('/', authenticateJwt(), (request, response) => {
   Match
-    .find({ creator: request.user._id })
+    .find({creator: request.user._id})
     .lean()
     .then(matches => response.json(matches))
     .catch(err => {
@@ -228,7 +251,7 @@ router.post('/', authenticateJwt(), matchCreateValidations, (request, response) 
       }
     }
   }
-  const { name, team1, team2, umpire1, umpire2, umpire3, overs } = params;
+  const {name, team1, team2, umpire1, umpire2, umpire3, overs} = params;
 
   promise
     .then(() => Match.create({
@@ -245,7 +268,7 @@ router.post('/', authenticateJwt(), matchCreateValidations, (request, response) 
       response.json({
         success: true,
         message: responses.matches.create.ok(name),
-        match: { _id: createdMatch._id },
+        match: {_id: createdMatch._id},
       });
     })
     .catch(err => {
