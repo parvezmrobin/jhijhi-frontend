@@ -17,6 +17,7 @@ module.exports = function () {
     {name: 'akib', jerseyNo: 7},
     {name: 'mati', jerseyNo: 8},
     {name: 'shamma', jerseyNo: 80},
+    {name: 'disha', jerseyNo: 81},
     {name: 'dibyo', jerseyNo: 9},
     {name: 'tanin', jerseyNo: 1},
     {name: 'purnam', jerseyNo: 420},
@@ -25,6 +26,11 @@ module.exports = function () {
     {name: 'gomez', jerseyNo: 440},
     {name: 'ashar', jerseyNo: 40},
     {name: 'walindo', jerseyNo: 44},
+    {name: 'brinto', jerseyNo: 45},
+    {name: 'shan', jerseyNo: 46},
+    {name: 'abid', jerseyNo: 47},
+    {name: 'dulavai', jerseyNo: 48},
+    {name: 'tripto', jerseyNo: 49},
   ];
 
   return User.find({})
