@@ -228,6 +228,34 @@ router.post('/:id/bowl', authenticateJwt(), (request, response) => {
     });
 });
 
+router.post('/:id/over', authenticateJwt(), (request, response) => {
+  const over = nullEmptyValues(request);
+  over.bowls = [];
+  const id = request.params.id;
+  Match.findById(id)
+    .then(match => {
+      let updateQuery;
+      if (match.state === 'innings1') {
+        updateQuery = { $push: { [`innings1.overs`]: over } };
+      } else if (match.state === 'innings2') {
+        updateQuery = { $push: { [`innings2.overs`]: over } };
+      } else {
+        return response.status(400)
+          .json({
+            success: false,
+            message: `Can't add over in state ${match.state}`,
+          });
+      }
+      return match.update(updateQuery)
+        .exec()
+        .then(() => {
+          response.json({
+            success: true,
+          });
+        });
+    });
+});
+
 router.get('/:id', authenticateJwt(), (request, response) => {
   Match
     .findOne({
