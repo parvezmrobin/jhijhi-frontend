@@ -172,6 +172,7 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
               team1WonToss: match.team1WonToss,
               team1BatFirst: match.team1BatFirst,
               state: 'innings1',
+              innings1: [],
             },
           });
         });
