@@ -167,8 +167,9 @@ export class Running extends Component {
   }
 
   _getCurrentInnings() {
-    const { state, innings1, innings2 } = this.state.match;
-    const innings = (state === 'innings1') ? innings1 : innings2;
+    const {state, innings1, innings2} = this.state.match;
+    const innings = (state === 'innings1') ? innings1
+      : (state === 'innings2') ? innings2 : throw new Error(`State is ${state} in Running page`);
     return innings;
   }
 
