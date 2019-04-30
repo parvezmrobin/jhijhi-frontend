@@ -178,7 +178,7 @@ export class Running extends Component {
 
   _getCurrentInnings() {
     const {state, innings1, innings2} = this.state.match;
-    if (['innings1', 'innings2'].indexOf(state) !== -1) {
+    if (['innings1', 'innings2'].indexOf(state) === -1) {
       throw new Error(`State is ${state} in Running page`);
     }
     const innings = (state === 'innings1') ? innings1 : innings2;
