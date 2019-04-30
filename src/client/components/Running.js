@@ -8,6 +8,7 @@ import BatsmanSelectModal from './BatsmanSelectModal';
 import PreviousOverModal from './PreviousOverModal';
 import ScoreCard from './ScoreCard';
 import BowlerSelectModal from './BowlerSelectModal';
+import {Modal, ModalBody, Spinner} from "reactstrap";
 
 export class Running extends Component {
   constructor(props) {
@@ -259,7 +260,7 @@ export class Running extends Component {
           <header className="text-center text-white col-12 mt-5 pt-2">
             <h2 className="my-3">
               {name}
-              <button type="button" className="btn btn-warning-light float-right" onClick={this.onDeclare()}>
+              <button type="button" className="btn btn-warning-light float-right" onClick={this.onDeclare}>
                 Declare
               </button>
             </h2>
@@ -297,6 +298,15 @@ export class Running extends Component {
                            type: 'over',
                            bowler: bowler,
                          })}/>
+      <Modal centered={true} contentClassName="bg-transparent border-0" isOpen={this.state.isDeclaring}>
+        <ModalBody>
+          <div className="d-flex justify-content-center">
+            <Spinner color="primary" style={{width: '10rem', height: '10rem', borderWidth: '.75rem'}}>
+              Initiating next innings...
+            </Spinner>
+          </div>
+        </ModalBody>
+      </Modal>
     </div>;
   }
 }
