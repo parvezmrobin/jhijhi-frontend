@@ -24,6 +24,7 @@ module.exports = function () {
     {name: 'buira', jerseyNo: 2},
     {name: 'gomez', jerseyNo: 440},
     {name: 'ashar', jerseyNo: 40},
+    {name: 'walindo', jerseyNo: 44},
   ];
 
   return User.find({})

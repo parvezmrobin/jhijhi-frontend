@@ -7,6 +7,7 @@ import Score from './Score';
 import BatsmanSelectModal from './BatsmanSelectModal';
 import PreviousOverModal from './PreviousOverModal';
 import ScoreCard from './ScoreCard';
+import BowlerSelectModal from './BowlerSelectModal';
 
 export class Running extends Component {
   constructor(props) {
@@ -55,8 +56,62 @@ export class Running extends Component {
         batsman2: null,
       };
     },
+    /**
+     * Event handler for score input
+     * @param inputEvent
+     * @param inputEvent.type
+     * @param inputEvent.bowl
+     * @param inputEvent.bowler
+     */
+    onInput(inputEvent) {
+      this.setState(prevState => {
+        let { batsman1, batsman2, bowlerModalIsOpen } = prevState;
+        const { state } = prevState.match;
+        const innings = (state === 'innings1') ? prevState.match.innings1 : prevState.match.innings2;
+        if (inputEvent.type === 'bowl') {
+          const bowl = inputEvent.bowl;
+          innings.overs[innings.overs.length - 1].bowls.push(bowl);
+
+          // TODO: handle by
+          if ((bowl.singles + bowl.legBy) % 2) {
+            [batsman1, batsman2] = [batsman2, batsman1];
+          }
+        } else if (inputEvent.type === 'over') {
+          console.log('over', inputEvent);
+
+          innings.overs.push({
+            bowledBy: inputEvent.bowler,
+            bowls: [],
+          });
+          [batsman1, batsman2] = [batsman2, batsman1];
+          bowlerModalIsOpen = false;
+        }
+
+        return {
+          match: {
+            ...prevState.match,
+            [prevState.match.state]: innings,
+          },
+          batsman1,
+          batsman2,
+          bowlerModalIsOpen,
+        };
+      }, () => this._isNewOver() && this.setState({bowlerModalIsOpen: true}));
+    },
   };
 
+
+  _isNewOver() {
+    const { state } = this.state.match;
+    const innings = (state === 'innings1') ? this.state.match.innings1 : this.state.match.innings2;
+    const numBowls = innings.overs[innings.overs.length - 1].bowls.reduce((numValidBowls, bowl) => {
+      if (!(bowl.isWide || bowl.isNo)) {
+        return numValidBowls + 1;
+      }
+      return numValidBowls;
+    }, 0);
+    return numBowls === 6;
+  }
 
   _validateAndGetSelectedBatsmen(batsmenValues) {
     const { batsman1, batsman2 } = batsmenValues;
@@ -154,11 +209,10 @@ export class Running extends Component {
       }
     }
 
-    this.setState(prevState => ({
-      ...prevState,
+    this.setState(({
       batsman1,
       batsman2,
-    }));
+    }), () => this._isNewOver() && this.setState({bowlerModalIsOpen: true}));
   }
 
 
@@ -181,6 +235,7 @@ export class Running extends Component {
 
     const onCreaseBatsmanName = toTitleCase(battingTeamPlayers[batsman1] && battingTeamPlayers[batsman1].name, ' ');
     const onBowlersEnd = toTitleCase(battingTeamPlayers[batsman2] && battingTeamPlayers[batsman2].name, ' ');
+    const bowler = bowlingTeamPlayers[lastOver.bowledBy];
     return <div className="row">
       <aside className="col-md-3 d-none d-lg-block">
         <ScoreCard innings={innings} battingTeamName={battingTeamName}
@@ -191,20 +246,25 @@ export class Running extends Component {
           <header className="text-center text-white col-12 mt-5 pt-2">
             <h2 className="my-3">
               {name}
-              <button type="button" className="btn btn-warning-light text-white float-right">Declare</button>
+              <button type="button" className="btn btn-warning-light text-white float-right">
+                Declare
+              </button>
             </h2>
           </header>
           <hr/>
-          <ScoreInput/>
+          <ScoreInput batsman1={batsman1} batsman2={batsman2} matchId={match._id}
+                      onInput={bowl => this.onInput({
+                        type: 'bowl',
+                        bowl,
+                      })}/>
           <div className="col-md-4 px-0">
             <Score battingTeamName={battingTeamShortName} numberOfOvers={numOvers}
                    tossOwner={team1WonToss ? team1.name : team2.name}
                    choice={tossOwnerChoice} innings={innings} inningsNo={inningsNo}/>
           </div>
           <div className="col-md-4">
-            <CurrentOver balls={lastOver.bowls} bowler={bowlingTeamPlayers[lastOver.bowledBy]}
-                         battingTeam={battingTeamPlayers} onCrease={onCreaseBatsmanName}
-                         onBowlersEnd={onBowlersEnd}/>
+            <CurrentOver balls={lastOver.bowls} bowler={bowler} battingTeam={battingTeamPlayers}
+                         onCrease={onCreaseBatsmanName} onBowlersEnd={onBowlersEnd}/>
           </div>
           <div className="col-md-4 px-0">
             <PreviousOvers overs={overs.slice(0, -1)} bowlingTeam={bowlingTeamPlayers}
@@ -218,6 +278,12 @@ export class Running extends Component {
       <BatsmanSelectModal isOpen={!this.state.batsman1 || !this.state.batsman2} batsman1={batsman1}
                           batsman2={batsman2}
                           options={battingTeamPlayers} onSelect={this.onBatsmenSelect}/>
+      <BowlerSelectModal open={this.state.bowlerModalIsOpen} bowlers={bowlingTeamPlayers}
+                         lastBowler={bowler} matchId={match._id}
+                         onSelect={bowler => this.onInput({
+                           type: 'over',
+                           bowler: bowler,
+                         })}/>
     </div>;
   }
 }
