@@ -142,14 +142,15 @@ class Match extends Component {
   }
 
   render() {
+    const message = this.state.message;
     return (
       <div className="container-fluid pl-0">
-        <Toast isOpen={!!this.state.message}>
+        <Toast isOpen={!!message}>
           <ToastHeader icon="primary" toggle={() => this.setState({ message: null })}>
             Jhijhi
           </ToastHeader>
           <ToastBody>
-            {this.state.message}
+            {message}
           </ToastBody>
         </Toast>
         <div className="row">
@@ -158,7 +159,7 @@ class Match extends Component {
               <SidebarList
                 title="Upcoming Matches"
                 itemClass="text-white"
-                itemMapper={(match) => <Link className="text-info" to={`live/${match._id}`}>{match.name}</Link>}
+                itemMapper={(match) => <Link className="text-info" to={`live@${match._id}`}>{match.name}</Link>}
                 list={this.state.matches}/>
             </CenterContent>
           </aside>

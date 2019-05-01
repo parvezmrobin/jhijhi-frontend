@@ -48,7 +48,7 @@ class Home extends Component {
 
   render() {
     const options = this.state.matches.map((match) => {
-      return <Link key={match._id} to={`live/${match._id}`}>
+      return <Link key={match._id} to={`live@${match._id}`}>
         <DropdownItem className="text-primary">{match.name}</DropdownItem>
       </Link>;
     });
