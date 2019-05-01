@@ -8,8 +8,9 @@ import fetcher from '../lib/fetcher';
 export default class BowlerSelectModal extends Component {
   constructor(props) {
     super(props);
-    const {bowlers, lastBowler} = this.props;
-    const availableBowlers = subtract(bowlers, [lastBowler], (b1, b2) => b1._id === b2._id);
+    const { bowlers, lastBowler } = this.props;
+    const availableBowlers = (!lastBowler) ? bowlers
+      : subtract(bowlers, [lastBowler], (b1, b2) => b1._id === b2._id);
     this.state = {
       bowler: availableBowlers[0]._id,
     };
@@ -19,17 +20,18 @@ export default class BowlerSelectModal extends Component {
   handlers = {
     onSelect() {
       const bowlerIndex = this.props.bowlers.findIndex(b => b._id === this.state.bowler);
-      const data = {bowledBy: bowlerIndex};
+      const data = { bowledBy: bowlerIndex };
       fetcher
         .post(`matches/${this.props.matchId}/over`, data)
-        .then(() => this.props.onSelect(bowlerIndex))
+        .then(() => this.props.onSelect(bowlerIndex));
     },
   };
 
   render() {
-    const {open, bowlers, lastBowler} = this.props;
+    const { open, bowlers, lastBowler } = this.props;
 
-    const availableBowlers = subtract(bowlers, [lastBowler], (b1, b2) => b1._id === b2._id);
+    const availableBowlers = (!lastBowler) ? bowlers
+      : subtract(bowlers, [lastBowler], (b1, b2) => b1._id === b2._id);
 
     return <Modal isOpen={open}>
       <ModalHeader className="text-primary">
@@ -37,7 +39,7 @@ export default class BowlerSelectModal extends Component {
       </ModalHeader>
       <ModalBody>
         <FormGroup type="select" name="bowler" value={this.state.bowler}
-                   onChange={e => this.setState({bowler: e.target.value})}
+                   onChange={e => this.setState({ bowler: e.target.value })}
                    options={availableBowlers}/>
       </ModalBody>
       <ModalFooter>

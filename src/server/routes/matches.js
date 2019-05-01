@@ -14,7 +14,7 @@ const passport = require('passport');
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 const { check, validationResult } = require('express-validator/check');
 const { sendErrorResponse, send404Response, nullEmptyValues } = require('../lib/utils');
-const Error404 = require('../lib/Error404');
+const {Error400, Error404} = require('../lib/errors');
 
 
 const matchCreateValidations = [
@@ -189,10 +189,19 @@ router.put('/:id/declare', authenticateJwt(), (request, response) => {
       if (!match) {
         throw new Error404(responses.matches.e404);
       }
-      const state = (match.state.toString() === 'innings1') ? 'innings2' : 'done';
-      match.state = 'state';
+      if (['innings1', 'innings2'].indexOf(match.state) === -1) {
+        throw new Error400(`State must be either 'innings1' or 'innings1'`)
+      }
+      const updateState = {};
+      if (match.state.toString() === 'innings1') {
+        match.state = 'innings2';
+        updateState.innings2 = match.innings2 = {overs: []};
+      } else {
+        match.state = 'done';
+      }
+      updateState.state = match.state;
       return match.save()
-        .then(() => response.json({ state }));
+        .then(() => response.json(updateState));
     })
     .catch(err => {
       response.status(err.statusCode || err.status || 500);

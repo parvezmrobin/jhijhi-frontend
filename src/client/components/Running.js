@@ -1,14 +1,15 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import CurrentOver from './CurrentOver';
 import PreviousOvers from './PreviousOvers';
 import ScoreInput from './ScoreInput';
-import {bindMethods, toTitleCase} from '../lib/utils';
+import { bindMethods, toTitleCase } from '../lib/utils';
 import Score from './Score';
 import BatsmanSelectModal from './BatsmanSelectModal';
 import PreviousOverModal from './PreviousOverModal';
 import ScoreCard from './ScoreCard';
 import BowlerSelectModal from './BowlerSelectModal';
-import {Modal, ModalBody, Spinner} from "reactstrap";
+import { Modal, ModalBody, Spinner } from 'reactstrap';
+import fetcher from '../lib/fetcher';
 
 export class Running extends Component {
   constructor(props) {
@@ -66,8 +67,8 @@ export class Running extends Component {
      */
     onInput(inputEvent) {
       this.setState(prevState => {
-        let {batsman1, batsman2, bowlerModalIsOpen} = prevState;
-        const {state} = prevState.match;
+        let { batsman1, batsman2, bowlerModalIsOpen } = prevState;
+        const { state } = prevState.match;
         const innings = (state === 'innings1') ? prevState.match.innings1 : prevState.match.innings2;
         if (inputEvent.type === 'bowl') {
           const bowl = inputEvent.bowl;
@@ -106,18 +107,34 @@ export class Running extends Component {
           if (innings.overs.length === this.state.match.overs) {
             return this.onDeclare();
           }
-          return this.setState({bowlerModalIsOpen: true});
+          return this.setState({ bowlerModalIsOpen: true });
         }
       });
     },
     onDeclare() {
-      this.setState({isDeclaring: true});
+      this.setState({ isDeclaring: true });
+      fetcher
+        .put(`matches/${this.state.match._id}/declare`)
+        .then(response => {
+          this.setState(prevState => {
+            return {
+              isDeclaring: false,
+              match: {
+                ...prevState.match,
+                ...response.data,
+              },
+            };
+          });
+        });
     },
   };
 
 
   _isNewOver() {
     const innings = this._getCurrentInnings();
+    if (!innings.overs.length) {
+      return true;
+    }
     const numBowls = innings.overs[innings.overs.length - 1].bowls.reduce((numValidBowls, bowl) => {
       if (!(bowl.isWide || bowl.isNo)) {
         return numValidBowls + 1;
@@ -128,9 +145,9 @@ export class Running extends Component {
   }
 
   _validateAndGetSelectedBatsmen(batsmenValues) {
-    const {batsman1, batsman2} = batsmenValues;
+    const { batsman1, batsman2 } = batsmenValues;
 
-    const {innings, battingTeamPlayers} = this._getCurrentInningsDescription();
+    const { innings, battingTeamPlayers } = this._getCurrentInningsDescription();
     const indices = {};
     if (batsman1) {
       indices.batsman1 = battingTeamPlayers.reduce((i, player, playerI) => {
@@ -144,7 +161,7 @@ export class Running extends Component {
     }
 
     if (!batsman1 && (indices.batsman2 === this.state.batsman1)) {
-      return [{batsman2: 'Already Selected As Batsman1'}];
+      return [{ batsman2: 'Already Selected As Batsman1' }];
     }
 
     const errors = {};
@@ -181,7 +198,7 @@ export class Running extends Component {
   }
 
   _getCurrentInnings() {
-    const {state, innings1, innings2} = this.state.match;
+    const { state, innings1, innings2 } = this.state.match;
     if (['innings1', 'innings2'].indexOf(state) === -1) {
       throw new Error(`State is ${state} in Running page`);
     }
@@ -190,7 +207,7 @@ export class Running extends Component {
   }
 
   _getBattingTeamPlayers() {
-    const {state, team1BatFirst, team1Players, team2Players} = this.state.match;
+    const { state, team1BatFirst, team1Players, team2Players } = this.state.match;
     const battingTeamPlayers = (state === 'innings1')
       ? (team1BatFirst ? team1Players : team2Players)
       : (team1BatFirst ? team2Players : team1Players);
@@ -198,7 +215,7 @@ export class Running extends Component {
   }
 
   componentDidMount() {
-    let {batsman1, batsman2} = this.state;
+    let { batsman1, batsman2 } = this.state;
     const innings = this._getCurrentInnings();
     const outBatsmen = [];
 
@@ -229,16 +246,19 @@ export class Running extends Component {
     this.setState(({
       batsman1,
       batsman2,
-    }), () => this._isNewOver() && this.setState({bowlerModalIsOpen: true}));
+    }), () => this._isNewOver() && this.setState({ bowlerModalIsOpen: true }));
   }
 
 
   render() {
-    const {match, overModal, batsman1, batsman2} = this.state;
-    const {innings1: {overs}, overs: numOvers} = match;
-    const lastOver = overs[overs.length - 1];
+    const { match, overModal, batsman1, batsman2 } = this.state;
+    const overs = match.state === 'innings1' ? match.innings1.overs : match.innings2.overs;
+    console.log("overs", overs);
 
-    const {name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players, innings1, innings2, state} = match;
+    const { overs: numOvers } = match;
+    const lastOver = overs.length ? overs[overs.length - 1] : { bowls: [] };
+
+    const { name, team1, team2, team1WonToss, team1BatFirst, team1Players, team2Players, innings1, innings2, state } = match;
     const [battingTeamName, battingTeamShortName] = (state === 'innings1')
       ? (team1BatFirst ? [team1.name, team1.shortName] : [team2.name, team2.shortName])
       : (team1BatFirst ? [team2.name, team2.shortName] : [team1.name, team1.shortName]);
@@ -263,7 +283,8 @@ export class Running extends Component {
           <header className="text-center text-white col-12 mt-5 pt-2">
             <h2 className="my-3">
               {name}
-              <button type="button" className="btn btn-warning-light float-right" onClick={this.onDeclare}>
+              <button type="button" className="btn btn-warning-light float-right"
+                      onClick={this.onDeclare}>
                 Declare
               </button>
             </h2>
@@ -277,7 +298,8 @@ export class Running extends Component {
           <div className="col-md-4 px-0">
             <Score battingTeamName={battingTeamShortName} numberOfOvers={numOvers}
                    tossOwner={team1WonToss ? team1.name : team2.name}
-                   choice={tossOwnerChoice} innings={innings} inningsNo={inningsNo}/>
+                   choice={tossOwnerChoice} innings={innings} inningsNo={inningsNo}
+                   firstInnings={innings1}/>
           </div>
           <div className="col-md-4">
             <CurrentOver balls={lastOver.bowls} bowler={bowler} battingTeam={battingTeamPlayers}
@@ -292,19 +314,25 @@ export class Running extends Component {
       <PreviousOverModal overModal={overModal} toggle={this.closeOverModal}
                          bowlingTeamPlayers={bowlingTeamPlayers}
                          battingTeamPlayers={battingTeamPlayers}/>
-      <BatsmanSelectModal isOpen={!this.state.batsman1 || !this.state.batsman2} batsman1={batsman1}
-                          batsman2={batsman2}
-                          options={battingTeamPlayers} onSelect={this.onBatsmenSelect}/>
+      <BatsmanSelectModal
+        isOpen={!Number.isInteger(this.state.batsman1) || !Number.isInteger(this.state.batsman2)}
+        batsman1={batsman1} batsman2={batsman2} options={battingTeamPlayers}
+        onSelect={this.onBatsmenSelect}/>
       <BowlerSelectModal open={this.state.bowlerModalIsOpen} bowlers={bowlingTeamPlayers}
                          lastBowler={bowler} matchId={match._id}
                          onSelect={bowler => this.onInput({
                            type: 'over',
                            bowler: bowler,
                          })}/>
-      <Modal centered={true} contentClassName="bg-transparent border-0" isOpen={this.state.isDeclaring}>
+      <Modal centered={true} contentClassName="bg-transparent border-0"
+             isOpen={this.state.isDeclaring}>
         <ModalBody>
           <div className="d-flex justify-content-center">
-            <Spinner color="primary" style={{width: '10rem', height: '10rem', borderWidth: '.75rem'}}>
+            <Spinner color="primary" style={{
+              width: '10rem',
+              height: '10rem',
+              borderWidth: '.75rem',
+            }}>
               Initiating next innings...
             </Spinner>
           </div>

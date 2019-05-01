@@ -10,6 +10,12 @@ import PreviousOver from './PreviousOver';
 
 class PreviousOvers extends Component {
 
+  constructor() {
+    super();
+    console.log(this.props);
+  }
+
+
   render() {
     const { overs, bowlingTeam, onOverClick } = this.props;
     const getWickets = (over) => {
