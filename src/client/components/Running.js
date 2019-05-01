@@ -71,6 +71,9 @@ export class Running extends Component {
         if (inputEvent.type === 'bowl') {
           const bowl = inputEvent.bowl;
           innings.overs[innings.overs.length - 1].bowls.push(bowl);
+          if (bowl.isWicket) {
+            batsman1 = null;
+          }
 
           // TODO: handle by
           if ((bowl.singles + bowl.legBy) % 2) {
