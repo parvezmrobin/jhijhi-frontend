@@ -29,10 +29,10 @@ export default class BatsmanSelectModal extends Component {
           batsman1: null,
           batsman2: null,
         };
-        if (batsman1Exists) {
-          errors.batsman2 = 'Batsman1 and batsman2 must be different';
-        } else if (batsman2Exists) {
-          errors.batsman1 = 'Batsman1 and batsman2 must be different';
+        if (!batsman1Exists) {
+          errors.batsman1 = 'Batsman 1 and Batsman 2 must be different';
+        } else if (!batsman2Exists) {
+          errors.batsman2 = 'Batsman 1 and Batsman 2 must be different';
         }
         return this.setState({ errors });
       }
