@@ -135,6 +135,7 @@ export default class ScoreInput extends Component {
       </CheckBoxControl>
 
       <div>
+        <label htmlFor="singles"/>
         <SelectControl value={singles} name="singles" className="form-control"
                        options={this.singles}
                        onChange={e => {
@@ -153,6 +154,7 @@ export default class ScoreInput extends Component {
       </button>
 
       <div className="rounded">
+        <label htmlFor="wicket"/>
         <SelectControl value={wicket} name="wicket" className="form-control text-danger"
                        options={this.wickets}
                        onChange={e => {
