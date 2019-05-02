@@ -123,8 +123,10 @@ export class Running extends Component {
                 ...prevState.match,
                 ...response.data,
               },
+              batsman1: null,
+              batsman2: null,
             };
-          });
+          }, () => this._isNewOver() && this.setState({ bowlerModalIsOpen: true }));
         });
     },
   };
@@ -132,6 +134,8 @@ export class Running extends Component {
 
   _isNewOver() {
     const innings = this._getCurrentInnings();
+    console.log("innings.overs.length", innings.overs.length);
+
     if (!innings.overs.length) {
       return true;
     }
