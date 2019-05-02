@@ -95,11 +95,25 @@ select#select-match {
 section.score-input {
   @extend .col-12;
   @extend .d-flex;
+  @extend .flex-wrap;
   @extend .pl-3;
-  @extend .justify-content-between;
+  @extend .pt-1;
+  @extend .pb-2;
   @extend .align-items-center;
   @extend .bg-dark;
   @extend .text-white;
+}
+
+@include media-breakpoint-up(lg) {
+  section.score-input {
+    justify-content: space-between;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .btn-lg-regular{
+    width: 100%;
+  }
 }
 
 .mt-10 {

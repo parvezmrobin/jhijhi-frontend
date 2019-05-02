@@ -107,7 +107,7 @@ export default class ScoreInput extends Component {
     const { isBy, isLegBy, isWide, isNo, singles, wicket } = this.state;
     return <section className="score-input rounded">
 
-      <div>
+      <div className="col-6 col-md-3 col-lg-auto">
         <CheckBoxControl value={isBy} name="by"
                          onChange={e => this.onStateUpdate({ isBy: e.target.checked })}>
           By
@@ -119,23 +119,33 @@ export default class ScoreInput extends Component {
         </Tooltip>
       </div>
 
-      <CheckBoxControl value={isLegBy} name="leg-by"
-                       onChange={e => this.onStateUpdate({ isLegBy: e.target.checked })}>
-        Leg By
-      </CheckBoxControl>
+      <div className="col-6 col-md-3 col-lg-auto">
+        <CheckBoxControl value={isLegBy} name="leg-by"
+                         onChange={e => this.onStateUpdate({ isLegBy: e.target.checked })}>
+          Leg By
+        </CheckBoxControl>
+      </div>
 
-      <CheckBoxControl value={isWide} name="wide"
-                       onChange={e => this.onStateUpdate({ isWide: e.target.checked })}>
-        Wide
-      </CheckBoxControl>
+      <div className="col-6 col-md-3 col-lg-auto">
+        <CheckBoxControl value={isWide} name="wide"
+                         onChange={e => this.onStateUpdate({ isWide: e.target.checked })}>
+          Wide
+        </CheckBoxControl>
+      </div>
 
-      <CheckBoxControl value={isNo} name="no"
-                       onChange={e => this.onStateUpdate({ isNo: e.target.checked })}>
-        No Ball
-      </CheckBoxControl>
+      <div className="col-6 col-md-3 col-lg-auto">
+        <CheckBoxControl value={isNo} name="no"
+                         onChange={e => this.onStateUpdate({ isNo: e.target.checked })}>
+          No Ball
+        </CheckBoxControl>
+      </div>
 
-      <div>
-        <label htmlFor="singles"/>
+      <div className="d-block d-lg-none col-12">
+        <hr className="border-primary my-2 mb-md-1"/>
+      </div>
+
+      <div className="col-12 col-md-4 col-lg-auto">
+        <label className="sr-only" htmlFor="singles"/>
         <SelectControl value={singles} name="singles" className="form-control"
                        options={this.singles}
                        onChange={e => {
@@ -145,16 +155,20 @@ export default class ScoreInput extends Component {
                        }}/>
       </div>
 
-      <button type="button" className="btn btn-info m-2" onClick={() => this.onBoundary(4)}>
-        Four
-      </button>
+      <div className="col-6 col-md-2 col-lg-auto">
+        <button type="button" className="btn btn-info btn-block btn-lg-regular my-2" onClick={() => this.onBoundary(4)}>
+          Four
+        </button>
+      </div>
 
-      <button type="button" className="btn btn-info m-2" onClick={() => this.onBoundary(6)}>
-        Six
-      </button>
+      <div className="col-6 col-md-2 col-lg-auto">
+        <button type="button" className="btn btn-info btn-block btn-lg-regular my-2" onClick={() => this.onBoundary(6)}>
+          Six
+        </button>
+      </div>
 
-      <div className="rounded">
-        <label htmlFor="wicket"/>
+      <div className="col-12 col-md-4 col-lg-auto">
+        <label className="sr-only" htmlFor="wicket"/>
         <SelectControl value={wicket} name="wicket" className="form-control text-danger"
                        options={this.wickets}
                        onChange={e => {
@@ -163,6 +177,7 @@ export default class ScoreInput extends Component {
                          this.onWicket(wicket);
                        }}/>
       </div>
+
     </section>;
   }
 }
