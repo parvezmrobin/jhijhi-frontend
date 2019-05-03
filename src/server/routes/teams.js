@@ -13,7 +13,6 @@ const responses = require("../responses");
 const passport = require('passport');
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', {session: false});
 const {check, validationResult} = require('express-validator/check');
-const {Types: {ObjectId}} = require("mongoose");
 
 
 const teamCreateValidations = [
@@ -81,13 +80,12 @@ router.get('/', authenticateJwt(), (request, response) => {
 router.post('/', authenticateJwt(), teamCreateValidations, (request, response) => {
   const errors = validationResult(request);
   const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({status: 400, errors: errors.array()});
-  const {name, shortName, players} = request.body;
+  const {name, shortName} = request.body;
 
   promise
     .then(() => Team.create({
       name,
       shortName,
-      players: players.map(playerId => new ObjectId(playerId)),
       creator: request.user._id,
     }))
     .then(createdTeam => {

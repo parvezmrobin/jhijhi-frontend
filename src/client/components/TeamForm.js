@@ -8,30 +8,12 @@
 import React, {Component, Fragment} from 'react';
 import FormGroup from './form/FormGroup';
 import FormButton from './form/FormButton';
-import CheckBoxControl from "./form/control/checkbox";
-import {toTitleCase} from "../lib/utils";
 
 
 class TeamForm extends Component {
   players;
 
   render() {
-    const getCheckboxOnChange = (i) => {
-      return (e) => this.props.onChange({[e.target.checked ? 'select' : 'unselect']: i});
-    };
-// if checkbox is checked, key is 'select' and 'unselect otherwise. value is the index
-    const mapper = (player, i) => {
-      return (
-        <CheckBoxControl name={`cb-${player.jerseyNo}`} onChange={getCheckboxOnChange(i)}>
-          {toTitleCase(player.name)}
-        </CheckBoxControl>
-      );
-    };
-    const listItems = this.props.players.map(
-      (player, i) => {
-        return (<li key={player._id} className="list-group-item bg-transparent flex-fill">{mapper(player, i)}</li>);
-      },
-    );
     return (
       <Fragment>
         <h2>Create Team</h2>
@@ -46,17 +28,7 @@ class TeamForm extends Component {
                      isValid={this.props.isValid.shortName}
                      feedback={this.props.feedback.shortName}/>
 
-          <div className="form-group row">
-            <label className="col-form-label col-md-4 col-lg-3">
-              Choose Players
-            </label>
-            <div className="col">
-              <ul className="list-group-select">{listItems}</ul>
-            </div>
-          </div>
-          <FormButton type="submit" text="Create" btnClass="outline-success">
-            {this.props.children}
-          </FormButton>
+          <FormButton type="submit" text="Create" btnClass="outline-success"/>
         </form>
       </Fragment>
     );

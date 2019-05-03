@@ -12,7 +12,6 @@ import TeamForm from '../components/TeamForm';
 import fetcher from "../lib/fetcher";
 import {bindMethods} from "../lib/utils";
 import {Toast, ToastBody, ToastHeader} from "reactstrap";
-import {Link} from "react-router-dom";
 
 
 class Team extends Component {
@@ -23,9 +22,7 @@ class Team extends Component {
         name: '',
         shortName: '',
       },
-      players: [],
       teams: [],
-      selectedPlayers: [],
       isValid: {
         name: null,
         shortName: null,
@@ -43,32 +40,15 @@ class Team extends Component {
     /**
      * change event handler
      * @param action
-     * @param action.select
-     * @param action.unselect
      */
     onChange(action) {
       this.setState(prevState => {
-        // action.select is an index
-        if (typeof action.select === 'number') {
-          return {
-            selectedPlayers: prevState.selectedPlayers.map(((prevVal, i) => (i === action.select) ? true : prevVal)),
-          };
-        }
-        // action.unselect is an index
-        if (typeof action.unselect === 'number') {
-          return {
-            selectedPlayers: prevState.selectedPlayers.map(((prevVal, i) => (i === action.unselect) ? false : prevVal)),
-          };
-        }
         return {team: {...prevState.team, ...action}};
       });
     },
 
     onSubmit() {
       const postData = {...this.state.team};
-      const selectedPlayers = this.state.players.filter((player, i) => this.state.selectedPlayers[i]);
-      const selectedPlayerIds = selectedPlayers.map((player) => player._id);
-      postData.players = selectedPlayerIds;
 
       fetcher
         .post('teams', postData)
@@ -83,7 +63,6 @@ class Team extends Component {
               name: '',
               shortName: '',
             },
-            selectedPlayers: Array(this.state.players.length).fill(false),
             message: response.data.message,
             isValid: {
               name: null,
@@ -123,14 +102,6 @@ class Team extends Component {
 
   componentDidMount() {
     fetcher
-      .get('players')
-      .then(response => {
-        this.setState({
-          players: response.data,
-          selectedPlayers: Array(response.data.length).fill(false),
-        });
-      });
-    fetcher
       .get('teams')
       .then(response => {
         this.setState({teams: response.data})
@@ -138,15 +109,16 @@ class Team extends Component {
   }
 
   render() {
+    const message = this.state.message;
     return (
       <div className="container-fluid px-0">
 
-        <Toast isOpen={!!this.state.message}>
+        <Toast isOpen={!!message}>
           <ToastHeader icon="primary" toggle={() => this.setState({message: null})}>
             Jhijhi
           </ToastHeader>
           <ToastBody>
-            {this.state.message}
+            {message}
           </ToastBody>
         </Toast>
 
@@ -156,16 +128,14 @@ class Team extends Component {
               <SidebarList
                 title="Existing Teams"
                 itemClass="text-white"
-                itemMapper={(team) => {
-                  return <Link className="text-info" to={`team/${team._id}`}>{team.name} ({team.shortName})</Link>;
-                }}
+                itemMapper={(team) => `${team.name} (${team.shortName})`}
                 list={this.state.teams}/>
             </CenterContent>
           </aside>
-          <main className="col-md-6">
-            <CenterContent col="col mt-5">
+          <main className="col">
+            <CenterContent col="col-lg-8 col-md-10">
               <TeamForm players={this.state.players} onChange={this.onChange} onSubmit={this.onSubmit}
-                        team={this.state.team} selectedPlayers={this.state.selectedPlayers}
+                        team={this.state.team}
                         isValid={this.state.isValid} feedback={this.state.feedback}/>
             </CenterContent>
           </main>
