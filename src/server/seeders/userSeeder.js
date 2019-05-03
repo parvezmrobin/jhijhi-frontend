@@ -14,7 +14,7 @@ module.exports = function () {
     {username: 'robin', password: hashSync('robin', 10)},
     {username: 'mim', password: hashSync('mim', 10)},
     {username: 'oishie', password: hashSync('oishie', 10)},
-    {username: 'geshnu', password: hashSync('genshnu', 10)},
+    {username: 'geshnu', password: hashSync('geshnu', 10)},
     {username: 'pacada', password: hashSync('pacada', 10)},
   ];
 
