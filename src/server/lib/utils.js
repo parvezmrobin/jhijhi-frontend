@@ -29,7 +29,7 @@ module.exports.nullEmptyValues = function (request, container = 'body') {
   const params = Object.assign({}, request[container]);
   for (const key in params) {
     if (params.hasOwnProperty(key)) {
-      if (!params[key]) {
+      if (params[key] === '' || params[key] === undefined) {
         params[key] = null;
       }
     }
