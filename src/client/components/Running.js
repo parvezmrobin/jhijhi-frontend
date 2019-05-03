@@ -247,6 +247,11 @@ export class Running extends Component {
       }
     }
 
+    // if its a new over
+    if (innings.overs.length && !innings.overs[innings.overs.length - 1].bowls.length) {
+      [batsman1, batsman2] = [batsman2, batsman1];
+    }
+
     this.setState(({
       batsman1,
       batsman2,
