@@ -163,6 +163,7 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
       match.team1WonToss = match.team1 === won;
       match.team1BatFirst = (match.team1WonToss && choice === 'Bat') || (!match.team1WonToss && choice === 'Bawl');
       match.state = state;
+      match.innings1 = {overs: []};
       return match.save()
         .then(() => {
           response.json({
@@ -172,7 +173,7 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
               team1WonToss: match.team1WonToss,
               team1BatFirst: match.team1BatFirst,
               state: 'innings1',
-              innings1: [],
+              innings1: {overs: []},
             },
           });
         });
