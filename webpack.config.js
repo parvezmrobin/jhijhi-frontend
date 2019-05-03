@@ -43,6 +43,7 @@ module.exports = {
     proxy: {
       '/api': 'http://localhost:8080',
       '/manifest.json': 'http://localhost:8080',
+      '/favicon.png': 'http://localhost:8080',
     },
   },
   plugins: [
