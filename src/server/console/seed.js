@@ -5,8 +5,8 @@
  */
 
 
-require('../app');
 const mongoose = require('mongoose');
+const config = require('../config');
 
 const seed = function (fileName) {
   const seeder = require(`../seeders/${fileName}Seeder`);
@@ -22,17 +22,19 @@ const seed = function (fileName) {
     .catch(console.error);
 };
 
+mongoose
+  .connect(config.db, { useNewUrlParser: true })
+  .then(async () => {
+    console.log('Connected to database: \'jhijhi\'');
+    const seeders = ['player', 'team', 'match'];
 
-mongoose.connection.on('connected', async function () {
-  const seeders = ['player', 'team', 'match'];
+    await seed('user');
 
-  await seed('user');
+    for (const seeder of seeders) {
+      await seed(seeder);
+    }
 
-  for (const seeder of seeders) {
-    await seed(seeder);
-  }
-
-  process.exit(0);
-});
+    process.exit(0);
+  });
 
 
