@@ -22,9 +22,10 @@ export default class ScoreInput extends Component {
     bindMethods(this);
   }
 
-  createBowlEvent() {
+  _createBowlEvent() {
     return {
       playedBy: this.props.batsman1,
+      by: this.state.isBy,
       legBy: this.state.isLegBy,
       isWide: this.state.isWide,
       isNo: this.state.isNo ? 'True' : null,
@@ -34,13 +35,14 @@ export default class ScoreInput extends Component {
     };
   }
 
-  makeServerRequest(bowlEvent) {
-    fetcher.post(`matches/${this.props.matchId}/bowl`, bowlEvent)
-      .then(() => this.prepareForNextInput(bowlEvent))
+  _makeServerRequest(bowlEvent, endPoint='bowl') {
+    const request = (endPoint === 'bowl')? fetcher.post: fetcher.put;
+    request(`matches/${this.props.matchId}/${endPoint}`, bowlEvent)
+      .then((res) => this.prepareForNextInput((endPoint === 'bowl')? bowlEvent: res.data.bowl, endPoint !== 'bowl'))
   }
 
-  prepareForNextInput(bowlEvent) {
-    this.props.onInput(bowlEvent);
+  prepareForNextInput(bowlEvent, isUpdate) {
+    this.props.onInput(bowlEvent, isUpdate);
     this.setState(prevState => ({
       ...prevState,
       isBy: false,
@@ -57,36 +59,38 @@ export default class ScoreInput extends Component {
       this.setState(prevState => ({ ...prevState, ...update }));
     },
     onSingle(run) {
-      console.log('singles', run);
-      const bowlEvent = this.createBowlEvent();
-      // TODO : handle by
+      const bowlEvent = this._createBowlEvent();
+      if (bowlEvent.by){
+        return this._makeServerRequest({run}, 'by');
+      }
       if (bowlEvent.legBy) {
         bowlEvent.legBy = run;
       } else {
         bowlEvent.singles = run;
       }
-      this.makeServerRequest(bowlEvent);
+      this._makeServerRequest(bowlEvent);
     },
     onBoundary(run) {
-      console.log('boundary', run);
-      const bowlEvent = this.createBowlEvent();
-      // TODO : handle by
+      const bowlEvent = this._createBowlEvent();
+      if (bowlEvent.by) {
+        return this._makeServerRequest({run, boundary: true}, 'by');
+      }
       bowlEvent.boundary = {
         run,
         kind: bowlEvent.legBy ? 'legBy' : 'regular',
       };
       delete bowlEvent.legBy;
-      this.makeServerRequest(bowlEvent);
+      this._makeServerRequest(bowlEvent);
     },
     onWicket(wicket) {
-      console.log('wicket', wicket);
-      const bowlEvent = this.createBowlEvent();
+      const bowlEvent = this._createBowlEvent();
       // TODO : handle runout
+      // needs a popup to know, which player is out
       bowlEvent.isWicket = {
         kind: wicket,
       };
       delete bowlEvent.legBy;
-      this.makeServerRequest(bowlEvent);
+      this._makeServerRequest(bowlEvent);
     },
   };
 

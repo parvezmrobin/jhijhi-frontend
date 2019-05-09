@@ -20,6 +20,7 @@ function Bowl(props) {
     badge = <kbd className="bg-danger">{toTitleCase(isWicket.kind, ' ')}</kbd>;
   } else if (boundary.run) {
     className += 'text-info ';
+    console.log('boundary.kind', boundary);
     run = <>
       {run || ''} <kbd className="bg-info">
       {boundary.run}{(boundary.kind === 'by') ? '(By)' : (boundary.kind === 'legBy') ? '(Leg By)' : ''}

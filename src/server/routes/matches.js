@@ -14,7 +14,7 @@ const passport = require('passport');
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 const { check, validationResult } = require('express-validator/check');
 const { sendErrorResponse, send404Response, nullEmptyValues } = require('../lib/utils');
-const {Error400, Error404} = require('../lib/errors');
+const { Error400, Error404 } = require('../lib/errors');
 
 
 const matchCreateValidations = [
@@ -116,7 +116,6 @@ router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, res
 
       return match.save()
         .then(() => {
-          console.log(match.toObject());
           return match.populate('team1Captain')
             .populate('team2Captain')
             .populate('team1Players')
@@ -163,7 +162,7 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
       match.team1WonToss = match.team1 === won;
       match.team1BatFirst = (match.team1WonToss && choice === 'Bat') || (!match.team1WonToss && choice === 'Bawl');
       match.state = state;
-      match.innings1 = {overs: []};
+      match.innings1 = { overs: [] };
       return match.save()
         .then(() => {
           response.json({
@@ -173,7 +172,7 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
               team1WonToss: match.team1WonToss,
               team1BatFirst: match.team1BatFirst,
               state: 'innings1',
-              innings1: {overs: []},
+              innings1: { overs: [] },
             },
           });
         });
@@ -191,12 +190,12 @@ router.put('/:id/declare', authenticateJwt(), (request, response) => {
         throw new Error404(responses.matches.e404);
       }
       if (['innings1', 'innings2'].indexOf(match.state) === -1) {
-        throw new Error400(`State must be either 'innings1' or 'innings1'`)
+        throw new Error400(`State must be either 'innings1' or 'innings1'`);
       }
       const updateState = {};
       if (match.state.toString() === 'innings1') {
         match.state = 'innings2';
-        updateState.innings2 = match.innings2 = {overs: []};
+        updateState.innings2 = match.innings2 = { overs: [] };
       } else {
         match.state = 'done';
       }
@@ -237,6 +236,66 @@ router.post('/:id/bowl', authenticateJwt(), (request, response) => {
         });
     });
 });
+
+function _updateBowlAndSend(match, bowl, response) {
+  let field,
+    lastBowl;
+  if (match.state === 'innings1') {
+    const overs = match.innings1.overs;
+    const bowls = overs[overs.length - 1].bowls;
+    lastBowl = bowls[bowls.length - 1];
+    field = `innings1.overs.${overs.length - 1}.bowls.${bowls.length - 1}`;
+  } else if (match.state === 'innings2') {
+    const overs = match.innings2.overs;
+    const bowls = overs[overs.length - 1].bowls;
+    lastBowl = bowls[bowls.length - 1];
+    field = `innings2.overs.${overs.length - 1}.bowls.${bowls.length - 1}`;
+  } else {
+    return response.status(400)
+      .json({ success: false });
+  }
+  const updateQuery = { $set: { [field]: { ...lastBowl, ...bowl } } };
+  console.log('updateQuery', updateQuery.$set);
+
+  return Match.findByIdAndUpdate(match._id, updateQuery)
+    .exec()
+    .then(() => {
+      response.json({
+        success: true,
+        bowl,
+      });
+    })
+    .catch(() => response.status(500)
+      .json({ success: false }),
+    );
+}
+
+router.put('/:id/by', authenticateJwt(), (request, response) => {
+  const { run, boundary } = nullEmptyValues(request);
+  const id = request.params.id;
+  Match.findById(id, 'state innings1 innings2')
+    .lean()
+    .then(match => {
+      if (match.boundary && match.boundary.run && boundary) {
+        return response.status(400)
+          .json({ success: false });
+      }
+      let bowl;
+      if (boundary) {
+        bowl = {
+          boundary: {
+            run,
+            kind: 'by',
+          },
+        };
+      } else {
+        bowl = { by: run };
+      }
+      console.error('by', bowl);
+      return _updateBowlAndSend(match, bowl, response);
+    });
+});
+
 
 router.post('/:id/over', authenticateJwt(), (request, response) => {
   const over = nullEmptyValues(request);

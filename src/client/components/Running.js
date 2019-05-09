@@ -62,8 +62,9 @@ export class Running extends Component {
      * Event handler for score input
      * @param inputEvent
      * @param inputEvent.type
-     * @param inputEvent.bowl
-     * @param inputEvent.bowler
+     * @param [inputEvent.bowl]
+     * @param [inputEvent.bowler]
+     * @param inputEvent.isUpdate
      */
     onInput(inputEvent) {
       this.setState(prevState => {
@@ -72,14 +73,26 @@ export class Running extends Component {
         const innings = (state === 'innings1') ? prevState.match.innings1 : prevState.match.innings2;
         if (inputEvent.type === 'bowl') {
           const bowl = inputEvent.bowl;
-          innings.overs[innings.overs.length - 1].bowls.push(bowl);
+          const bowls = innings.overs[innings.overs.length - 1].bowls;
+          if (inputEvent.isUpdate) {
+            const lastBowl = bowls[bowls.length - 1];
+            bowls[bowls.length - 1] = { ...lastBowl, ...bowl };
+            console.log('lastBowl', bowls[bowls.length - 1]);
+          } else {
+            bowls.push(bowl);
+          }
           if (bowl.isWicket) {
             batsman1 = null;
           }
 
-          // TODO: handle by
-          if ((bowl.singles + bowl.legBy) % 2) {
-            [batsman1, batsman2] = [batsman2, batsman1];
+          if (inputEvent.isUpdate) {
+            if (bowl.by % 2) {
+              [batsman1, batsman2] = [batsman2, batsman1];
+            }
+          } else {
+            if ((bowl.singles + bowl.legBy) % 2) {
+              [batsman1, batsman2] = [batsman2, batsman1];
+            }
           }
         } else if (inputEvent.type === 'over') {
           console.log('over', inputEvent);
@@ -134,7 +147,6 @@ export class Running extends Component {
 
   _isNewOver() {
     const innings = this._getCurrentInnings();
-    console.log("innings.overs.length", innings.overs.length);
 
     if (!innings.overs.length) {
       return true;
@@ -262,7 +274,6 @@ export class Running extends Component {
   render() {
     const { match, overModal, batsman1, batsman2 } = this.state;
     const overs = match.state === 'innings1' ? match.innings1.overs : match.innings2.overs;
-    console.log("overs", overs);
 
     const { overs: numOvers } = match;
     const lastOver = overs.length ? overs[overs.length - 1] : { bowls: [] };
@@ -300,9 +311,10 @@ export class Running extends Component {
           </header>
           <hr/>
           <ScoreInput batsman1={batsman1} batsman2={batsman2} matchId={match._id}
-                      onInput={bowl => this.onInput({
+                      onInput={(bowl, isUpdate = false) => this.onInput({
                         type: 'bowl',
                         bowl,
+                        isUpdate,
                       })}/>
           <div className="col-md-4 px-0">
             <Score battingTeamName={battingTeamShortName} numberOfOvers={numOvers}
