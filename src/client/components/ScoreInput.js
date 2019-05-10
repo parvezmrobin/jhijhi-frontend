@@ -10,7 +10,8 @@ export default class ScoreInput extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tooltipOpen: false,
+      byRunTooltipOpen: false,
+      wicketTooltipOpen: false,
       isBy: false,
       isLegBy: false,
       isWide: false,
@@ -35,14 +36,15 @@ export default class ScoreInput extends Component {
     };
   }
 
-  _makeServerRequest(bowlEvent, endPoint='bowl') {
-    const request = (endPoint === 'bowl')? fetcher.post: fetcher.put;
+  _makeServerRequest(bowlEvent, endPoint = 'bowl') {
+    const isNewBowl = endPoint === 'bowl';
+    const request = isNewBowl ? fetcher.post : fetcher.put;
     request(`matches/${this.props.matchId}/${endPoint}`, bowlEvent)
-      .then((res) => this.prepareForNextInput((endPoint === 'bowl')? bowlEvent: res.data.bowl, endPoint !== 'bowl'))
+      .then(res => this.prepareForNextInput(isNewBowl ? bowlEvent : res.data.bowl, !isNewBowl));
   }
 
-  prepareForNextInput(bowlEvent, isUpdate) {
-    this.props.onInput(bowlEvent, isUpdate);
+  prepareForNextInput(bowl, isUpdate) {
+    this.props.onInput(bowl, isUpdate);
     this.setState(prevState => ({
       ...prevState,
       isBy: false,
@@ -51,7 +53,7 @@ export default class ScoreInput extends Component {
       isNo: false,
       singles: 'Singles',
       wicket: 'Wicket',
-    }))
+    }));
   }
 
   handlers = {
@@ -60,8 +62,8 @@ export default class ScoreInput extends Component {
     },
     onSingle(run) {
       const bowlEvent = this._createBowlEvent();
-      if (bowlEvent.by){
-        return this._makeServerRequest({run}, 'by');
+      if (bowlEvent.by) {
+        return this._makeServerRequest({ run }, 'by');
       }
       if (bowlEvent.legBy) {
         bowlEvent.legBy = run;
@@ -73,7 +75,10 @@ export default class ScoreInput extends Component {
     onBoundary(run) {
       const bowlEvent = this._createBowlEvent();
       if (bowlEvent.by) {
-        return this._makeServerRequest({run, boundary: true}, 'by');
+        return this._makeServerRequest({
+          run,
+          boundary: true,
+        }, 'by');
       }
       bowlEvent.boundary = {
         run,
@@ -90,6 +95,7 @@ export default class ScoreInput extends Component {
         kind: wicket,
       };
       delete bowlEvent.legBy;
+      delete bowlEvent.by;
       this._makeServerRequest(bowlEvent);
     },
   };
@@ -116,10 +122,10 @@ export default class ScoreInput extends Component {
                          onChange={e => this.onStateUpdate({ isBy: e.target.checked })}>
           By
         </CheckBoxControl>
-        <Tooltip placement="top" isOpen={this.state.tooltipOpen} target="by" autohide={false}
-                 toggle={() => this.setState(prevState => ({ tooltipOpen: !prevState.tooltipOpen }))}>
-          By runs will be added to previous bawl. Insert a zero run first to add bawl with
-          only by run.
+        <Tooltip placement="top" isOpen={this.state.byRunTooltipOpen} target="by" autohide={false}
+                 toggle={() => this.setState(prevState => ({ byRunTooltipOpen: !prevState.byRunTooltipOpen }))}>
+          By runs will be added to previous bowl.
+          Insert a zero run first to add bowl with only <em>by run</em>.
         </Tooltip>
       </div>
 
@@ -160,13 +166,15 @@ export default class ScoreInput extends Component {
       </div>
 
       <div className="col-6 col-md-2 col-lg-auto">
-        <button type="button" className="btn btn-info btn-block btn-lg-regular my-2" onClick={() => this.onBoundary(4)}>
+        <button type="button" className="btn btn-info btn-block btn-lg-regular my-2"
+                onClick={() => this.onBoundary(4)}>
           Four
         </button>
       </div>
 
       <div className="col-6 col-md-2 col-lg-auto">
-        <button type="button" className="btn btn-info btn-block btn-lg-regular my-2" onClick={() => this.onBoundary(6)}>
+        <button type="button" className="btn btn-info btn-block btn-lg-regular my-2"
+                onClick={() => this.onBoundary(6)}>
           Six
         </button>
       </div>
@@ -180,6 +188,12 @@ export default class ScoreInput extends Component {
                          this.onStateUpdate({ wicket: wicket });
                          this.onWicket(wicket);
                        }}/>
+        <Tooltip placement="top" isOpen={this.state.wicketTooltipOpen} autohide={false}
+                 target="wicket"
+                 toggle={() => this.setState(prevState => ({ wicketTooltipOpen: !prevState.wicketTooltipOpen }))}>
+          Run out will be added to previous bowl.
+          Insert a zero run first to add bowl with only <em>run out</em>.
+        </Tooltip>
       </div>
 
     </section>;

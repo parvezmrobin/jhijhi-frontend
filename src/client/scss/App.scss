@@ -130,3 +130,11 @@ section.score-input {
 .list-group.clickable .list-group-item {
   cursor: pointer;
 }
+
+.tooltip-inner {
+  @extend .bg-primary;
+}
+
+.bs-tooltip-top .arrow::before, .bs-tooltip-auto[x-placement^="top"] .arrow::before{
+  border-top-color: $primary;
+}

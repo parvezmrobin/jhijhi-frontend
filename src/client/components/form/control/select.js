@@ -17,7 +17,9 @@ class SelectControl extends Component {
     } else if (props.isValid === false) {
       className += "is-invalid";
     }
+    props.id = this.props.id || this.props.name;
     delete props.isValid;
+    delete props.options;
 
     const options = this.props.options.map(option => <option key={option._id} value={option._id}>{option.name}</option>);
     return (
