@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import CurrentOver from './CurrentOver';
 import PreviousOvers from './PreviousOvers';
 import ScoreInput from './ScoreInput';
-import { bindMethods, toTitleCase } from '../lib/utils';
+import { bindMethods, optional, toTitleCase } from '../lib/utils';
 import Score from './Score';
 import BatsmanSelectModal from './BatsmanSelectModal';
 import PreviousOverModal from './PreviousOverModal';
@@ -67,36 +67,13 @@ export class Running extends Component {
      * @param inputEvent.isUpdate
      */
     onInput(inputEvent) {
-      this.setState(prevState => {
+      const genUpdatedState = prevState => {
         let { batsman1, batsman2, bowlerModalIsOpen } = prevState;
         const { state } = prevState.match;
         const innings = (state === 'innings1') ? prevState.match.innings1 : prevState.match.innings2;
         if (inputEvent.type === 'bowl') {
-          const bowl = inputEvent.bowl;
-          const bowls = innings.overs[innings.overs.length - 1].bowls;
-          if (inputEvent.isUpdate) {
-            const lastBowl = bowls[bowls.length - 1];
-            bowls[bowls.length - 1] = { ...lastBowl, ...bowl };
-            console.log('lastBowl', bowls[bowls.length - 1]);
-          } else {
-            bowls.push(bowl);
-          }
-          if (bowl.isWicket) {
-            batsman1 = null;
-          }
-
-          if (inputEvent.isUpdate) {
-            if (bowl.by % 2) {
-              [batsman1, batsman2] = [batsman2, batsman1];
-            }
-          } else {
-            if ((bowl.singles + bowl.legBy) % 2) {
-              [batsman1, batsman2] = [batsman2, batsman1];
-            }
-          }
+          [batsman1, batsman2] = Running._onBowlEvent(inputEvent, innings, batsman1, batsman2);
         } else if (inputEvent.type === 'over') {
-          console.log('over', inputEvent);
-
           innings.overs.push({
             bowledBy: inputEvent.bowler,
             bowls: [],
@@ -114,7 +91,9 @@ export class Running extends Component {
           batsman2,
           bowlerModalIsOpen,
         };
-      }, () => {
+      };
+
+      const onUpdateCallback = () => {
         if (this._isNewOver()) {
           const innings = this._getCurrentInnings();
           if (innings.overs.length === this.state.match.overs) {
@@ -122,7 +101,9 @@ export class Running extends Component {
           }
           return this.setState({ bowlerModalIsOpen: true });
         }
-      });
+      };
+
+      this.setState(genUpdatedState, onUpdateCallback);
     },
     onDeclare() {
       this.setState({ isDeclaring: true });
@@ -144,6 +125,43 @@ export class Running extends Component {
     },
   };
 
+  static _onBowlEvent(inputEvent, innings, batsman1, batsman2) {
+    const bowl = inputEvent.bowl;
+    const bowls = innings.overs[innings.overs.length - 1].bowls;
+
+    if (inputEvent.isUpdate) {
+      const lastBowl = bowls[bowls.length - 1];
+      bowls[bowls.length - 1] = { ...lastBowl, ...bowl };
+      console.log('lastBowl', bowls[bowls.length - 1]);
+    } else {
+      bowls.push(bowl);
+    }
+
+    if (optional(bowl.isWicket).kind) {
+      if (bowl.isWicket.kind.toLowerCase() === 'run out') {
+        if (bowl.isWicket.player === batsman1) {
+          batsman1 = null;
+        } else if (bowl.isWicket.player === batsman2) {
+          batsman2 = null;
+        } else {
+          // throw Error(`Invalid batsman run out ${bowl.isWicket.player}`);
+        }
+      } else {
+        batsman1 = null;
+      }
+    }
+
+    if (inputEvent.isUpdate) {
+      if (bowl.by % 2) {
+        [batsman1, batsman2] = [batsman2, batsman1];
+      }
+    } else {
+      if ((bowl.singles + bowl.legBy) % 2) {
+        [batsman1, batsman2] = [batsman2, batsman1];
+      }
+    }
+    return [batsman1, batsman2];
+  }
 
   _isNewOver() {
     const innings = this._getCurrentInnings();
@@ -310,7 +328,8 @@ export class Running extends Component {
             </h2>
           </header>
           <hr/>
-          <ScoreInput batsman1={batsman1} batsman2={batsman2} matchId={match._id}
+          <ScoreInput batsmen={[battingTeamPlayers[batsman1], battingTeamPlayers[batsman2]]}
+                      batsmanIndices={[batsman1, batsman2]} matchId={match._id}
                       onInput={(bowl, isUpdate = false) => this.onInput({
                         type: 'bowl',
                         bowl,

@@ -265,9 +265,11 @@ function _updateBowlAndSend(match, bowl, response) {
         bowl,
       });
     })
-    .catch(() => response.status(500)
-      .json({ success: false }),
-    );
+    .catch((err) => {
+      console.error(err);
+      return response.status(500)
+        .json({ success: false });
+    });
 }
 
 router.put('/:id/by', authenticateJwt(), (request, response) => {
@@ -291,11 +293,29 @@ router.put('/:id/by', authenticateJwt(), (request, response) => {
       } else {
         bowl = { by: run };
       }
-      console.error('by', bowl);
       return _updateBowlAndSend(match, bowl, response);
     });
 });
 
+router.put('/:id/run-out', authenticateJwt(), (request, response) => {
+  const { batsman } = nullEmptyValues(request);
+  const id = request.params.id;
+  Match.findById(id)
+    .lean()
+    .then(match => {
+      if (match.isWicket && match.isWicket.kind) {
+        return response.status(400)
+          .json({ success: false });
+      }
+      const bowl = {
+        isWicket: {
+          kind: 'run out',
+          player: batsman,
+        },
+      };
+      return _updateBowlAndSend(match, bowl, response);
+    });
+});
 
 router.post('/:id/over', authenticateJwt(), (request, response) => {
   const over = nullEmptyValues(request);
