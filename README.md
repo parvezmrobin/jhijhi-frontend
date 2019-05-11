@@ -27,3 +27,6 @@ npm run seed <username>
 ```
 Place your desired `username` in place of `<username>`.
 Your password is same as the `username`.
+A bunch of players, teams and matches are also inserted for you.
+
+Thank me later. Find some bug first.
