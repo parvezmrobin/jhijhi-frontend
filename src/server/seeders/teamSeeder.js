@@ -5,25 +5,27 @@
  */
 
 
-const Team = require("../models/team");
-const User = require("../models/user");
+const Team = require('../models/team');
+const User = require('../models/user');
 
-module.exports = async function () {
-  const teams = [
-    {name: 'Dhaka Gladiators', shortName: 'DG'},
-    {name: 'Khulna Titans', shortName: 'KT'},
-    {name: 'CricPlatoon CC', shortName: 'CCC'},
-  ];
+const teams = [{
+  name: 'Dhaka Gladiators',
+  shortName: 'DG',
+}, {
+  name: 'Khulna Titans',
+  shortName: 'KT',
+}, {
+  name: 'CricPlatoon CC',
+  shortName: 'CCC',
+}];
 
-  const users = await User.find({});
-  const creatorWiseTeamPromises = users.map(
-    async creator => {
-
-      return teams.map(team => {
-        return ({...team, creator: creator._id});
-      });
-    },
-  );
+module.exports = async function (userId) {
+  const users = userId ? [{ _id: userId }] : await User.find({});
+  const creatorWiseTeamPromises = users.map(async creator =>
+    teams.map(team => ({
+      ...team,
+      creator: creator._id,
+    })));
   const teamsWithCreatorPromises = [].concat(...creatorWiseTeamPromises);
   const teamsWithCreators = await Promise.all(teamsWithCreatorPromises);
   const flattenedTeams = [].concat(...teamsWithCreators);

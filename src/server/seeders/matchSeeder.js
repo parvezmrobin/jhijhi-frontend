@@ -35,176 +35,170 @@ const dividePlayers = function (players) {
 };
 
 
-module.exports = async function () {
-  const matches = [{
-    name: 'Running Match 1',
-    state: 'innings1',
-    team1WonToss: Math.random() < .5,
-    team1BatFirst: Math.random() < .5,
-    overs: 5,
+const matches = [{
+  name: 'Running Match 1',
+  state: 'innings1',
+  team1WonToss: Math.random() < .5,
+  team1BatFirst: Math.random() < .5,
+  overs: 5,
+}, {
+  name: 'Running Match 2',
+  state: 'innings1',
+  team1WonToss: Math.random() < .5,
+  team1BatFirst: Math.random() < .5,
+  overs: 5,
+}, {
+  name: 'Running Match 3',
+  state: 'innings1',
+  team1WonToss: Math.random() < .5,
+  team1BatFirst: Math.random() < .5,
+  overs: 5,
+}, {
+  name: 'Running Match 4',
+  state: 'innings1',
+  team1WonToss: Math.random() < .5,
+  team1BatFirst: Math.random() < .5,
+  overs: 5,
+}, {
+  name: 'On Toss Match 1',
+  state: 'toss',
+  team1WonToss: Math.random() < .5,
+  team1BatFirst: Math.random() < .5,
+  overs: 5,
+}, {
+  name: 'To Begin Match 1',
+  state: '',
+  team1WonToss: Math.random() < .5,
+  team1BatFirst: Math.random() < .5,
+  overs: 5,
+}];
+
+
+const lastOver = {
+  bowledBy: 0,
+  bowls: [{
+    playedBy: 2,
+    singles: 3,
+    by: 1,
   }, {
-    name: 'Running Match 2',
-    state: 'innings1',
-    team1WonToss: Math.random() < .5,
-    team1BatFirst: Math.random() < .5,
-    overs: 5,
+    playedBy: 2,
+    legBy: 1,
+    by: 1,
   }, {
-    name: 'Running Match 3',
-    state: 'innings1',
-    team1WonToss: Math.random() < .5,
-    team1BatFirst: Math.random() < .5,
-    overs: 5,
-  }, {
-    name: 'Running Match 4',
-    state: 'innings1',
-    team1WonToss: Math.random() < .5,
-    team1BatFirst: Math.random() < .5,
-    overs: 5,
-  }, {
-    name: 'On Toss Match 1',
-    state: 'toss',
-    team1WonToss: Math.random() < .5,
-    team1BatFirst: Math.random() < .5,
-    overs: 5,
-  }, {
-    name: 'To Begin Match 1',
-    state: '',
-    team1WonToss: Math.random() < .5,
-    team1BatFirst: Math.random() < .5,
-    overs: 5,
-  }];
-
-  const lastOver = {
-    bowledBy: 0,
-    bowls: [{
-      playedBy: 2,
-      singles: 3,
-      by: 1,
-    }, {
-      playedBy: 2,
-      legBy: 1,
-      by: 1,
-    }, {
-      playedBy: 2,
-      singles: 2,
-      boundary: {
-        run: 4,
-        kind: 'by',
-      },
-    }, {
-      playedBy: 2,
-      singles: 2,
-      by: 1,
-      isNo: 'overStep',
-    }, {
-      playedBy: 4,
-      boundary: {
-        run: 6,
-      },
-    }, {
-      playedBy: 4,
-      isWide: true,
-      by: 1,
-    }, {
-      playedBy: 2,
-      singles: 1,
-      isWicket: {
-        kind: 'run out',
-        player: 4,
-      },
-    }],
-  };
-  const secondOver = {
-    bowledBy: 1,
-    bowls: [{
-      playedBy: 2,
-      singles: 2,
-    }, {
-      playedBy: 2,
-      singles: 3,
-      by: 1,
-    }, {
-      playedBy: 2,
-      legBy: 1,
-      by: 1,
-    }, {
-      playedBy: 2,
-      singles: 2,
-      boundary: {
-        run: 4,
-        kind: 'by',
-      },
-    }, {
-      playedBy: 2,
-      boundary: {
-        run: 6,
-      },
-    }, {
-      playedBy: 3,
-      isWicket: {
-        kind: 'bold',
-      },
-    }],
-  };
-  const firstOver = {
-    bowledBy: 0,
-    bowls: [{
-      playedBy: 0,
-    }, {
-      playedBy: 0,
-      by: 1,
-    }, {
-      playedBy: 1,
-      isWicket: {
-        kind: 'bold',
-      },
-    }, {
-      playedBy: 2,
-      singles: 1,
-      boundary: {
-        run: 4,
-        kind: 'by',
-      },
-    }, {
-      playedBy: 0,
-      boundary: {
-        run: 6,
-      },
-    }, {
-      playedBy: 0,
-      isWicket: {
-        kind: 'caught',
-      },
-    }],
-  };
-
-  const users = await User.find({});
-  const creatorWiseMatchPromises = users.map(
-    creator => {
-      const playersPromise = Player.find({ creator: creator._id }, '_id')
-        .exec();
-      const teamsPromise = Team.find({ creator: creator._id }, '_id')
-        .exec();
-
-      return Promise.all([playersPromise, teamsPromise])
-        .then(([players, teams]) => {
-
-          return matches.map(match => {
-            [match.team1, match.team2] = chooseTeams(teams);
-            [match.team1Players, match.team2Players] = dividePlayers(players);
-            match.team1Captain = match.team1Players[0];
-            match.team2Captain = match.team2Players[0];
-            match.creator = creator._id;
-
-            if (match.name.startsWith('Running')) {
-              match.innings1 = { overs: [firstOver, secondOver, lastOver] };
-            }
-
-            return { ...match };
-          });
-        });
+    playedBy: 2,
+    singles: 2,
+    boundary: {
+      run: 4,
+      kind: 'by',
     },
-  );
+  }, {
+    playedBy: 2,
+    singles: 2,
+    by: 1,
+    isNo: 'overStep',
+  }, {
+    playedBy: 4,
+    boundary: {
+      run: 6,
+    },
+  }, {
+    playedBy: 4,
+    isWide: true,
+    by: 1,
+  }],
+};
+
+const secondOver = {
+  bowledBy: 1,
+  bowls: [{
+    playedBy: 2,
+    singles: 2,
+  }, {
+    playedBy: 2,
+    singles: 3,
+    by: 1,
+  }, {
+    playedBy: 2,
+    legBy: 1,
+    by: 1,
+  }, {
+    playedBy: 2,
+    singles: 2,
+    boundary: {
+      run: 4,
+      kind: 'by',
+    },
+  }, {
+    playedBy: 2,
+    boundary: {
+      run: 6,
+    },
+  }, {
+    playedBy: 3,
+    isWicket: {
+      kind: 'bold',
+    },
+  }],
+};
+
+const firstOver = {
+  bowledBy: 0,
+  bowls: [{
+    playedBy: 0,
+  }, {
+    playedBy: 0,
+    by: 1,
+  }, {
+    playedBy: 1,
+    isWicket: {
+      kind: 'bold',
+    },
+  }, {
+    playedBy: 2,
+    singles: 1,
+    boundary: {
+      run: 4,
+      kind: 'by',
+    },
+  }, {
+    playedBy: 0,
+    boundary: {
+      run: 6,
+    },
+  }, {
+    playedBy: 0,
+    isWicket: {
+      kind: 'caught',
+    },
+  }],
+};
+
+module.exports = async function (userId) {
+  const users = userId ? [{ _id: userId }] : await User.find({});
+  const creatorWiseMatchPromises = users.map(creator => {
+    const playersPromise = Player.find({ creator: creator._id }, '_id')
+      .exec();
+    const teamsPromise = Team.find({ creator: creator._id }, '_id')
+      .exec();
+
+    return Promise.all([playersPromise, teamsPromise])
+      .then(([players, teams]) => {
+
+        return matches.map(match => {
+          [match.team1, match.team2] = chooseTeams(teams);
+          [match.team1Players, match.team2Players] = dividePlayers(players);
+          match.team1Captain = match.team1Players[0];
+          match.team2Captain = match.team2Players[0];
+          match.creator = creator._id;
+
+          if (match.name.startsWith('Running')) {
+            match.innings1 = { overs: [firstOver, secondOver, lastOver] };
+          }
+
+          return { ...match };
+        });
+      });
+  });
 
   const matchWithCreatorPromises = [].concat(...creatorWiseMatchPromises);
   const matchWithCreators = await Promise.all(matchWithCreatorPromises);

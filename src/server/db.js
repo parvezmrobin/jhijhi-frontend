@@ -13,7 +13,7 @@ const passport = require('passport');
 
 module.exports = function (app) {
   return mongoose
-    .connect(app.get('db'), { useNewUrlParser: true })
+    .connect(app.get('db'), { useNewUrlParser: true, useFindAndModify: false })
     .then(() => {
       console.log("Connected to database: 'jhijhi'");
 

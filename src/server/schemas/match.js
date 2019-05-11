@@ -105,10 +105,6 @@ module.exports = new Schema({
     enum: ['', 'toss', 'innings1', 'innings2', 'done'],
     default: '',
   },
-  creator: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
   innings1: {
     type: inningsSchema,
     default: null,
@@ -116,5 +112,9 @@ module.exports = new Schema({
   innings2: {
     type: inningsSchema,
     default: null,
+  },
+  creator: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
   },
 });
