@@ -14,11 +14,7 @@ export default class BowlerSelectModal extends Component {
 
   handlers = {
     onSelect() {
-      console.log("new bowler id", this.state.bowler);
-
       const bowlerIndex = this.props.bowlers.findIndex(b => {
-        console.log(b._id, this.state.bowler);
-
         return b._id === this.state.bowler;
       });
       const data = {bowledBy: bowlerIndex};
