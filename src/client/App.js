@@ -21,6 +21,8 @@ import {toTitleCase} from "./lib/utils";
 import Live from "./pages/Live";
 import fetcher from "./lib/fetcher";
 import ErrorBoundary from "./ErrorBoundary";
+import Kidding from './pages/Kidding';
+import Password from './pages/Password';
 
 
 class App extends Component {
@@ -55,6 +57,8 @@ class App extends Component {
                 <Route path="/umpire" component={Umpire}/>
                 <Route path="/match" component={Match}/>
                 <Route path="/live@:id" component={Live}/>
+                <Route path="/kidding" component={Kidding}/>
+                <Route path="/password" component={Password}/>
               </ErrorBoundary>
             </div>
           </div>
