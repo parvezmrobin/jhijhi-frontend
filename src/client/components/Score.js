@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 
 export default class Score extends Component {
   render() {
@@ -19,6 +20,19 @@ export default class Score extends Component {
       numBowls = null;
     }
 
+    let inningsText;
+    if (inningsNo === 1) {
+      inningsText = 'Innings 1';
+    } else {
+      const {totalRun: targetRun} = Score._getTotalScore(firstInnings);
+      if (totalRun > targetRun) {
+        return <Redirect to={`history@${this.props.matchId}`}/>
+      }
+      inningsText = `Target ${targetRun}`;
+      console.log(targetRun);
+
+    }
+
     return <>
       <div className='bg-dark text-info p-2 mt-5 rounded'>
         <h4 className="mt-3 text-white">{battingTeamName} - {totalRun} / {totalWicket}</h4>
@@ -29,10 +43,7 @@ export default class Score extends Component {
         <h5>
           <small>From</small>&nbsp;{numberOfOvers} overs
         </h5>
-        <h6>
-          {(inningsNo === 1) && `Innings ${inningsNo}`}
-          {(inningsNo !== 1) && `Target ${Score._getTotalScore(firstInnings)}`}
-        </h6>
+        <h6>{inningsText}</h6>
 
       </div>
       <div className="mt-2 text-white">
