@@ -11,6 +11,7 @@ import fetcher from '../lib/fetcher';
 import { bindMethods } from '../lib/utils';
 import Toss from '../components/Toss';
 import { Running } from '../components/Running';
+import { Redirect } from 'react-router-dom';
 
 class Live extends Component {
   constructor(props) {
@@ -49,11 +50,15 @@ class Live extends Component {
         {!match.state && <PreMatch team1={match.team1} team2={match.team2} name={match.name}
                                    matchId={this.props.match.params.id}
                                    onMatchBegin={this.onStateChange}/>}
+
         {match.state === 'toss' &&
         <Toss teams={[match.team1, match.team2]} name={match.name}
               matchId={this.props.match.params.id} onToss={this.onStateChange}/>}
+
         {((match.state === 'innings1') || (match.state === 'innings2')) &&
         <Running match={match}/>}
+
+        {(match.state === 'done') && <Redirect to={`/history@${match._id}`}/>}
       </div>
     );
   }
