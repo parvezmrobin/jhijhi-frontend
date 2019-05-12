@@ -71,6 +71,18 @@ const matches = [{
   team1WonToss: Math.random() < .5,
   team1BatFirst: Math.random() < .5,
   overs: 5,
+}, {
+  name: 'Done Match 1',
+  state: 'done',
+  team1WonToss: Math.random() < .5,
+  team1BatFirst: Math.random() < .5,
+  overs: 4,
+}, {
+  name: 'Done Match 1',
+  state: 'done',
+  team1WonToss: Math.random() < .5,
+  team1BatFirst: Math.random() < .5,
+  overs: 4,
 }];
 
 
@@ -173,6 +185,11 @@ const firstOver = {
   }],
 };
 
+const winningBowl = {
+  playedBy: 4,
+  singles: 3,
+};
+
 module.exports = async function (userId) {
   const users = userId ? [{ _id: userId }] : await User.find({});
   const creatorWiseMatchPromises = users.map(creator => {
@@ -193,6 +210,10 @@ module.exports = async function (userId) {
 
           if (match.name.startsWith('Running')) {
             match.innings1 = { overs: [firstOver, secondOver, lastOver] };
+          } else if (match.name.startsWith('Done')) {
+            match.innings1 = { overs: [firstOver, secondOver, lastOver] };
+            match.innings2 = {overs: [firstOver, secondOver, lastOver]};
+            match.innings2.overs[2].bowls[5] = winningBowl;
           }
 
           return { ...match };
