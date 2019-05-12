@@ -10,6 +10,7 @@ import ScoreCard from './ScoreCard';
 import BowlerSelectModal from './BowlerSelectModal';
 import { Modal, ModalBody, Spinner } from 'reactstrap';
 import fetcher from '../lib/fetcher';
+import { Redirect } from 'react-router-dom';
 
 export class Running extends Component {
   constructor(props) {
@@ -69,10 +70,9 @@ export class Running extends Component {
     onInput(inputEvent) {
       const genUpdatedState = prevState => {
         let { batsman1, batsman2, bowlerModalIsOpen } = prevState;
-        const { state } = prevState.match;
-        const innings = (state === 'innings1') ? prevState.match.innings1 : prevState.match.innings2;
+        const {innings, battingTeamPlayers} = this._getCurrentInningsDescription();
         if (inputEvent.type === 'bowl') {
-          [batsman1, batsman2] = Running._onBowlEvent(inputEvent, innings, batsman1, batsman2);
+          [batsman1, batsman2] = Running._onBowlEvent(inputEvent, innings, batsman1, batsman2, battingTeamPlayers.length);
         } else if (inputEvent.type === 'over') {
           innings.overs.push({
             bowledBy: inputEvent.bowler,
@@ -125,7 +125,7 @@ export class Running extends Component {
     },
   };
 
-  static _onBowlEvent(inputEvent, innings, batsman1, batsman2) {
+  static _onBowlEvent(inputEvent, innings, batsman1, batsman2, totalBattingTeamPlayers) {
     const bowl = inputEvent.bowl;
     const bowls = innings.overs[innings.overs.length - 1].bowls;
 
@@ -137,6 +137,10 @@ export class Running extends Component {
       bowls.push(bowl);
     }
 
+    if (Running._isAllOut(innings, totalBattingTeamPlayers)) {
+      this.onDeclare();
+    }
+
     if (optional(bowl.isWicket).kind) {
       if (bowl.isWicket.kind.toLowerCase() === 'run out') {
         if (bowl.isWicket.player === batsman1) {
@@ -144,7 +148,7 @@ export class Running extends Component {
         } else if (bowl.isWicket.player === batsman2) {
           batsman2 = null;
         } else {
-          // throw Error(`Invalid batsman run out ${bowl.isWicket.player}`);
+          throw Error(`Invalid batsman run out ${bowl.isWicket.player}`);
         }
       } else {
         batsman1 = null;
@@ -163,8 +167,29 @@ export class Running extends Component {
     return [batsman1, batsman2];
   }
 
+  static _isAllOut(innings, totalBattingTeamPlayers) {
+    let outCount = 0;
+    for (const over of innings.overs) {
+      for (const bowl of over.bowls) {
+        if (optional(bowl.isWicket).kind) {
+          outCount++;
+
+          if (outCount >= totalBattingTeamPlayers) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   _isNewOver() {
-    const innings = this._getCurrentInnings();
+    let innings;
+    try {
+      innings = this._getCurrentInnings();
+    } catch (e) {
+      return false;
+    }
 
     if (!innings.overs.length) {
       return true;
@@ -184,14 +209,10 @@ export class Running extends Component {
     const { innings, battingTeamPlayers } = this._getCurrentInningsDescription();
     const indices = {};
     if (batsman1) {
-      indices.batsman1 = battingTeamPlayers.reduce((i, player, playerI) => {
-        return (i !== -1) ? i : (player._id === batsman1) ? playerI : -1;
-      }, -1);
+      indices.batsman1 = this._getIndexOfBatsman(battingTeamPlayers, batsman1);
     }
     if (batsman2) {
-      indices.batsman2 = battingTeamPlayers.reduce((i, player, playerI) => {
-        return (i !== -1) ? i : (player._id === batsman2) ? playerI : -1;
-      }, -1);
+      indices.batsman2 = this._getIndexOfBatsman(battingTeamPlayers, batsman2);
     }
 
     if (!batsman1 && (indices.batsman2 === this.state.batsman1)) {
@@ -220,6 +241,12 @@ export class Running extends Component {
       return [errors];
     }
     return [null, indices];
+  }
+
+  _getIndexOfBatsman(battingTeamPlayers, batsman1) {
+    return battingTeamPlayers.reduce((i, player, playerI) => {
+      return (i !== -1) ? i : (player._id === batsman1) ? playerI : -1;
+    }, -1);
   }
 
   _getCurrentInningsDescription() {
@@ -304,8 +331,12 @@ export class Running extends Component {
 
   render() {
     const { match, overModal, batsman1, batsman2 } = this.state;
-    const overs = match.state === 'innings1' ? match.innings1.overs : match.innings2.overs;
 
+    if (match.state === 'done') {
+      return <Redirect to={`/history@${match._id}`}/>
+    }
+
+    const overs = this._getCurrentInnings().overs;
     const { overs: numOvers } = match;
     const lastOver = overs.length ? overs[overs.length - 1] : { bowls: [] };
 

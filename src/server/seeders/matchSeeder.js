@@ -48,17 +48,17 @@ const matches = [{
   team1BatFirst: Math.random() < .5,
   overs: 5,
 }, {
-  name: 'Running Match 3',
+  name: 'Running Match 3 (4 Overs)',
   state: 'innings1',
   team1WonToss: Math.random() < .5,
   team1BatFirst: Math.random() < .5,
-  overs: 5,
+  overs: 4,
 }, {
-  name: 'Running Match 4',
+  name: 'Running Match 4  (4 Overs)',
   state: 'innings1',
   team1WonToss: Math.random() < .5,
   team1BatFirst: Math.random() < .5,
-  overs: 5,
+  overs: 4,
 }, {
   name: 'On Toss Match 1',
   state: 'toss',
