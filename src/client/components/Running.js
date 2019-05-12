@@ -258,12 +258,20 @@ export class Running extends Component {
       for (let j = over.bowls.length - 1; j >= 0; j--) {
         const bowl = over.bowls[j];
 
+        const batsman = bowl.playedBy;
         if (bowl.isWicket) {
-          outBatsmen.push((typeof bowl.isWicket.player === 'number') ? bowl.isWicket.player : bowl.playedBy);
-          continue;
+          const outBatsman = (typeof bowl.isWicket.player === 'number') ? bowl.isWicket.player : batsman;
+          if (batsman1 == null && batsman === outBatsman) {
+            batsman1 = -1;
+          }
+          outBatsmen.push(outBatsman);
+
+          // if it's not runout then, no run, by or legBy is present
+          if (typeof bowl.isWicket.player !== 'number') {
+            continue;
+          }
         }
 
-        const batsman = bowl.playedBy;
         if (outBatsmen.indexOf(batsman) !== -1) {
           continue;
         }
@@ -275,6 +283,11 @@ export class Running extends Component {
           break outer;
         }
       }
+    }
+    if (batsman1 === -1) {
+      console.log('HERE');
+
+      batsman1 = null;
     }
 
     // if its a new over
