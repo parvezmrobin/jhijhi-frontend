@@ -19,6 +19,7 @@ import Umpire from "./pages/Umpire";
 import Match from "./pages/Match";
 import {toTitleCase} from "./lib/utils";
 import Live from "./pages/Live";
+import History from "./pages/History";
 import fetcher from "./lib/fetcher";
 import ErrorBoundary from "./ErrorBoundary";
 
@@ -55,6 +56,7 @@ class App extends Component {
                 <Route path="/umpire" component={Umpire}/>
                 <Route path="/match" component={Match}/>
                 <Route path="/live@:id" component={Live}/>
+                <Route path="/history@:id" component={History}/>
               </ErrorBoundary>
             </div>
           </div>
