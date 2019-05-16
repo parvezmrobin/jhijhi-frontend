@@ -14,7 +14,7 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test": "mocha --timeout 20000 src/server/test",
     "seed": "node src/server/console/seed.js",
-    "heroku-postbuild": "mv ./dist/ ./public/"
+    "heroku-postbuild": "node src/server/console/postbuild.js"
   },
   "author": {
     "name": "Parvez M Robin",
