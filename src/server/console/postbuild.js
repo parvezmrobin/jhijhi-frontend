@@ -10,6 +10,6 @@ const { join } = require('path');
 const baseDir = join(__dirname, '..', '..', '..');
 
 copyFileSync(join(baseDir, 'statics', 'manifest.json'), join(baseDir, 'public', 'manifest.json'));
-copyFileSync(join(baseDir, 'statics', 'favicon.svg'), join(baseDir, 'public', 'favicon.svg'));
+copyFileSync(join(baseDir, 'statics', 'favicon.png'), join(baseDir, 'public', 'favicon.png'));
 
 process.exit(0);
