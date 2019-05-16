@@ -1,12 +1,15 @@
 {
   "name": "jhijhi",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A simple react app backed by Express JS to maintain cricket score",
   "main": "src/server/bin/www",
+  "engines": {
+    "node": "10.x"
+  },
   "scripts": {
     "build": "webpack --mode production",
     "start": "npm run build && node src/server/bin/www",
-    "client": "webpack-dev-server --mode development --devtool inline-source-map --hot --host 0.0.0.0",
+    "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
     "server": "nodemon src/server/bin/www",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test": "mocha --timeout 20000 src/server/test",
@@ -39,9 +42,7 @@
     "reactstrap": "^8.0.0",
     "sass-loader": "^7.1.0",
     "sqlite3": "^4.0.6",
-    "prop-types": "latest"
-  },
-  "devDependencies": {
+    "prop-types": "^15.7.2",
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
