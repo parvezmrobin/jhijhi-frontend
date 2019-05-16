@@ -13,8 +13,7 @@
     "server": "nodemon src/server/bin/www",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test": "mocha --timeout 20000 src/server/test",
-    "seed": "node src/server/console/seed.js",
-    "postbuild": "node src/server/console/postbuild.js"
+    "seed": "node src/server/console/seed.js"
   },
   "author": {
     "name": "Parvez M Robin",
