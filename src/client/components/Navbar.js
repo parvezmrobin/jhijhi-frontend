@@ -5,17 +5,11 @@
  */
 
 import React from 'react';
-import { NavLink, Redirect } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { logout } from '../lib/utils';
 
 
 function Navbar(props) {
-  const guestUrls = ['/register', '/login'];
-
-  if (!props.isLoggedIn && guestUrls.indexOf(window.location.pathname) === -1) {
-    return <Redirect to="login"/>;
-  }
-
   let nav;
   if (props.isLoggedIn) {
     nav = (
