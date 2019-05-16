@@ -4,6 +4,7 @@ import PreviousOvers from '../components/PreviousOvers';
 import CurrentOver from '../components/CurrentOver';
 import { CustomInput } from 'reactstrap';
 import { Redirect } from 'react-router-dom';
+import { toTitleCase } from '../lib/utils';
 
 class History extends Component {
   constructor(props) {
@@ -106,6 +107,7 @@ class History extends Component {
     }
 
     const overIndex = this.state.overIndex || 0;
+    const bowlerName = bowlingTeamPlayers[match.innings1.overs[overIndex].bowledBy].name;
     return (
       <div className="container-fluid px-0 mt-5">
         <div className=" mt-10 pt-4 pb-4 col-8 offset-2 bg-dark text-white text-center">
@@ -120,7 +122,7 @@ class History extends Component {
           <PreviousOvers overs={match.innings1.overs} bowlingTeam={bowlingTeamPlayers}
                          onOverClick={(index) => this.setState({ overIndex: index })}/>
           <CurrentOver balls={match.innings1.overs[overIndex].bowls}
-                       bowler={bowlingTeamPlayers[match.innings1.overs[overIndex].bowledBy]}
+                       title={`${toTitleCase(bowlerName)} bowled`}
                        battingTeam={battingTeamPlayers}/>
         </div>
         <pre>
