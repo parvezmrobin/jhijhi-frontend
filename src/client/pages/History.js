@@ -3,6 +3,7 @@ import fetcher from '../lib/fetcher';
 import PreviousOvers from '../components/PreviousOvers';
 import CurrentOver from '../components/CurrentOver';
 import { CustomInput } from 'reactstrap';
+import { Redirect } from 'react-router-dom';
 
 class History extends Component {
   constructor(props) {
@@ -49,14 +50,17 @@ class History extends Component {
 
   render() {
     const { match } = this.state;
+    if (match === null) {
+      return <div>loading...</div>;
+    }
+    if (match.state !== 'done') {
+      return <Redirect to={`/live@${this.props.match.params.id}`}/>
+    }
     let winningTeam;
     let type;
     let bowlingTeamPlayers;
     let battingTeamPlayers;
 
-    if (match === null) {
-      return <div>loading...</div>;
-    }
     let tossWinningTeamName;
     let choice;
     if (match.team1WonToss) {
