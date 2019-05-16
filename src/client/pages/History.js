@@ -10,6 +10,7 @@ class History extends Component {
     super(props);
     this.state = {
       match: null,
+      overIndex: null,
     };
 
   }
@@ -54,7 +55,7 @@ class History extends Component {
       return <div>loading...</div>;
     }
     if (match.state !== 'done') {
-      return <Redirect to={`/live@${this.props.match.params.id}`}/>
+      return <Redirect to={`/live@${this.props.match.params.id}`}/>;
     }
     let winningTeam;
     let type;
@@ -84,11 +85,7 @@ class History extends Component {
     const [innings2score, innings2wicket] = History.calculateScore(match.innings2);
 
     if (innings1score > innings2score) {
-      if (match.team1BatFirst) {
-        winningTeam = match.team1.name;
-      } else {
-        winningTeam = match.team2.name;
-      }
+      winningTeam = match.team1BatFirst ? match.team1.name : match.team2.name;
       type = 'by ' + (innings1score - innings2score) + ' run';
     } else {
       if (match.team1BatFirst) {
@@ -107,10 +104,8 @@ class History extends Component {
       bowlingTeamPlayers = match.team1Players;
       battingTeamPlayers = match.team2Players;
     }
-    console.log('bowlingTeamPlayers ', bowlingTeamPlayers);
-    console.log('battingTeamPlayers ', battingTeamPlayers);
-    console.log('bowler ', bowlingTeamPlayers[match.innings1.overs[0].bowledBy]);
 
+    const overIndex = this.state.overIndex || 0;
     return (
       <div className="container-fluid px-0 mt-5">
         <div className=" mt-10 pt-4 pb-4 col-8 offset-2 bg-dark text-white text-center">
@@ -123,10 +118,9 @@ class History extends Component {
         </div>
         <div className=" mt-2 pt-1 pb-4 col-8 offset-2 bg-dark">
           <PreviousOvers overs={match.innings1.overs} bowlingTeam={bowlingTeamPlayers}
-                         onOverClick={() => {
-                         }}/>
-          <CurrentOver balls={match.innings1.overs[0].bowls}
-                       bowler={bowlingTeamPlayers[match.innings1.overs[0].bowledBy]}
+                         onOverClick={(index) => this.setState({ overIndex: index })}/>
+          <CurrentOver balls={match.innings1.overs[overIndex].bowls}
+                       bowler={bowlingTeamPlayers[match.innings1.overs[overIndex].bowledBy]}
                        battingTeam={battingTeamPlayers}/>
         </div>
         <pre>
