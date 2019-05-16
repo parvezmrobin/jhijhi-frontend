@@ -22,6 +22,8 @@ import Live from "./pages/Live";
 import History from "./pages/History";
 import fetcher from "./lib/fetcher";
 import ErrorBoundary from "./ErrorBoundary";
+import Kidding from './pages/Kidding';
+import Password from './pages/Password';
 
 
 class App extends Component {
@@ -57,6 +59,8 @@ class App extends Component {
                 <Route path="/match" component={Match}/>
                 <Route path="/live@:id" component={Live}/>
                 <Route path="/history@:id" component={History}/>
+                <Route path="/kidding" component={Kidding}/>
+                <Route path="/password" component={Password}/>
               </ErrorBoundary>
             </div>
           </div>
