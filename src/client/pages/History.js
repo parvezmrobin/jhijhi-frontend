@@ -59,27 +59,19 @@ class History extends Component {
     if (match.state !== 'done') {
       return <Redirect to={`/live@${this.props.match.params.id}`}/>;
     }
-    let winningTeam;
-    let type;
-    let bowlingTeamPlayers;
-    let battingTeamPlayers;
 
-    let tossWinningTeamName;
-    let choice;
+    let winningTeam,
+      type,
+      bowlingTeamPlayers,
+      battingTeamPlayers,
+      tossWinningTeamName,
+      choice;
+
     if (match.team1WonToss) {
-      if (match.team1BatFirst) {
-        choice = 'bat';
-      } else {
-        choice = 'bowl';
-      }
+      choice = match.team1BatFirst ? 'bat' : 'bowl';
       tossWinningTeamName = match.team1.name;
     } else {
-      if (match.team1BatFirst) {
-        choice = 'bowl';
-      } else {
-        choice = 'bat';
-        bowlingTeamPlayers = match.team2.players;
-      }
+      choice = match.team1BatFirst ? 'bowl' : 'bat';
       tossWinningTeamName = match.team2.name;
     }
 
@@ -145,7 +137,6 @@ class History extends Component {
       </div>
     );
   }
-
 }
 
 export default History;
