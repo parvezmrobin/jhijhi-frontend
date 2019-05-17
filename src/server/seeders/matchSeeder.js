@@ -78,7 +78,7 @@ const matches = [{
   team1BatFirst: Math.random() < .5,
   overs: 4,
 }, {
-  name: 'Done Match 1',
+  name: 'Done Match 2',
   state: 'done',
   team1WonToss: Math.random() < .5,
   team1BatFirst: Math.random() < .5,
