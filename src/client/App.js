@@ -54,10 +54,10 @@ class App extends Component {
                 <Switch>
 
                   <Route path="/login" component={Login}/>
+                  <Route path="/register" component={Register}/>
                   {shouldRedirect && <Redirect to="/login"/>}
                   <Route path="/" exact component={Home}/>
                   <Route path="/contact" component={Contact}/>
-                  <Route path="/register" component={Register}/>
                   <Route path="/player" component={Player}/>
                   <Route path="/team" exact component={Team}/>
                   <Route path="/team/:id" component={TeamPlayers}/>
