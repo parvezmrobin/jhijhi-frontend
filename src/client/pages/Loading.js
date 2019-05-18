@@ -27,7 +27,7 @@ export default class Loading extends Component {
     return (
       <CenterContent>
         <h2 className="text-center mt-10 mt-lg-0">
-          Loading...
+          Loading{this.state.dots}
         </h2>
       </CenterContent>
     );
