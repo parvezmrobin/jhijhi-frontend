@@ -121,7 +121,7 @@ class History extends Component {
     const innings = showSecondInnings ? match.innings2 : match.innings1;
 
     return (
-      <div className="container-fluid px-0 mt-5 bg-success min-vh-100">
+      <div className="container-fluid pt-5 bg-success min-vh-100">
         <div className="row">
           <div className="col">
 
