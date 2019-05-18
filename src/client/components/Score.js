@@ -4,27 +4,15 @@ import { Redirect } from 'react-router-dom';
 export default class Score extends Component {
   render() {
     const { battingTeamName, tossOwner, choice, innings, inningsNo, numberOfOvers, firstInnings } = this.props;
-    const {totalRun, totalWicket} = Score._getTotalScore(innings);
+    const {totalRun, totalWicket} = Score.getTotalScore(innings);
 
-    let numOvers = innings.overs.length - 1;
-    let numBowls = innings.overs.length &&
-      innings.overs[innings.overs.length - 1].bowls.reduce((numValidBowls, bowl) => {
-      if (!bowl.isWide && !bowl.isNo) {
-        return numValidBowls + 1;
-      }
-      return numValidBowls;
-    }, 0);
-
-    if (numBowls === 6) {
-      numOvers++;
-      numBowls = null;
-    }
+    const { numOvers, numBowls } = Score.getOverCount(innings);
 
     let inningsText;
     if (inningsNo === 1) {
       inningsText = 'Innings 1';
     } else {
-      const {totalRun: targetRun} = Score._getTotalScore(firstInnings);
+      const {totalRun: targetRun} = Score.getTotalScore(firstInnings);
       if (totalRun > targetRun) {
         return <Redirect to={`history@${this.props.matchId}`}/>
       }
@@ -58,7 +46,27 @@ export default class Score extends Component {
     </>;
   }
 
-  static _getTotalScore(innings) {
+  static getOverCount(innings) {
+    let numOvers = innings.overs.length - 1;
+    let numBowls = innings.overs.length &&
+      innings.overs[innings.overs.length - 1].bowls.reduce((numValidBowls, bowl) => {
+        if (!bowl.isWide && !bowl.isNo) {
+          return numValidBowls + 1;
+        }
+        return numValidBowls;
+      }, 0);
+
+    if (numBowls === 6) {
+      numOvers++;
+      numBowls = null;
+    }
+    return {
+      numOvers,
+      numBowls,
+    };
+  }
+
+  static getTotalScore(innings) {
     let totalWicket = 0, totalRun = 0;
     for (const over of innings.overs) {
       for (const bowl of over.bowls) {
