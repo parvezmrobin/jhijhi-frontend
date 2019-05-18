@@ -51,23 +51,23 @@ class App extends Component {
           <div className="row">
             <div className="col">
               <ErrorBoundary>
-                <Switch>
+                  <Switch>
 
-                  <Route path="/login" component={Login}/>
-                  <Route path="/register" component={Register}/>
-                  {shouldRedirect && <Redirect to="/login"/>}
-                  <Route path="/" exact component={Home}/>
-                  <Route path="/contact" component={Contact}/>
-                  <Route path="/player" component={Player}/>
-                  <Route path="/team" exact component={Team}/>
-                  <Route path="/umpire" component={Umpire}/>
-                  <Route path="/match" component={Match}/>
-                  <Route path="/live@:id" component={Live}/>
-                  <Route path="/history@:id" component={History}/>
-                  <Route path="/kidding" component={Kidding}/>
-                  <Route path="/password" component={Password}/>
+                    <Route path="/login" component={Login}/>
+                    <Route path="/register" component={Register}/>
+                    {shouldRedirect && <Redirect to="/login"/>}
+                    <Route path="/" exact component={Home}/>
+                    <Route path="/contact" component={Contact}/>
+                    <Route path="/player" component={Player}/>
+                    <Route path="/team" exact component={Team}/>
+                    <Route path="/umpire" component={Umpire}/>
+                    <Route path="/match" component={Match}/>
+                    <Route path="/live@:id" component={Live}/>
+                    <Route path="/history@:id" component={History}/>
+                    <Route path="/kidding" component={Kidding}/>
+                    <Route path="/password" component={Password}/>
 
-                </Switch>
+                  </Switch>
               </ErrorBoundary>
             </div>
           </div>
