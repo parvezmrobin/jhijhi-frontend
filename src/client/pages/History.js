@@ -4,7 +4,7 @@ import PreviousOvers from '../components/PreviousOvers';
 import CurrentOver from '../components/CurrentOver';
 import { CustomInput } from 'reactstrap';
 import { Redirect } from 'react-router-dom';
-import { toTitleCase } from '../lib/utils';
+ import { toTitleCase } from '../lib/utils';
 
 class History extends Component {
   constructor(props) {
@@ -65,6 +65,8 @@ class History extends Component {
       bowlingTeamPlayers,
       battingTeamPlayers,
       tossWinningTeamName,
+      innings1TeamName,
+      innings2TeamName,
       choice;
 
     if (match.team1WonToss) {
@@ -99,6 +101,8 @@ class History extends Component {
         bowlingTeamPlayers = match.team2Players;
         battingTeamPlayers = match.team1Players;
       }
+      innings1TeamName = match.team1.name;
+      innings2TeamName = match.team2.name;
     } else {
       if (showSecondInnings) {
         bowlingTeamPlayers = match.team2Players;
@@ -107,32 +111,46 @@ class History extends Component {
         bowlingTeamPlayers = match.team1Players;
         battingTeamPlayers = match.team2Players;
       }
+      innings2TeamName = match.team1.name;
+      innings1TeamName = match.team2.name;
     }
+
 
     const overIndex = this.state.overIndex || 0;
     const bowlerName = bowlingTeamPlayers[match.innings1.overs[overIndex].bowledBy].name;
     const innings = showSecondInnings ? match.innings2 : match.innings1;
 
     return (
-      <div className="container-fluid px-0 mt-5">
-        <div className=" mt-10 pt-4 pb-4 col-8 offset-2 bg-dark text-white text-center">
-          {winningTeam} won the match {type}. <br/>
-          {tossWinningTeamName} won the toss and chose to {choice} first. <br/>
-          <button className="btn btn-rounded btn-info mr-2">View 1st innings</button>
-          <CustomInput checked={showSecondInnings} type="switch" id="innings" name="innings"
-                       onChange={e => this.setState({
-                         showSecondInnings: e.target.checked,
-                         overIndex: 0,
-                       })}/>
-          <button className="btn btn-rounded btn-info ml-2">View 2nd innings</button>
+      <div className="container-fluid px-0 mt-5 bg-success min-vh-100">
+        <div className="row">
+          <div className="col">
 
-        </div>
-        <div className=" mt-2 pt-1 pb-4 col-8 offset-2 bg-dark">
-          <PreviousOvers overs={innings.overs} bowlingTeam={bowlingTeamPlayers}
-                         onOverClick={(index) => this.setState({ overIndex: index })}/>
-          <CurrentOver balls={innings.overs[overIndex].bowls}
-                       title={`${toTitleCase(bowlerName)} bowled (Over ${overIndex + 1})`}
-                       battingTeam={battingTeamPlayers}/>
+          </div>
+          <div className=" pt-4 pb-4 col text-white text-center">
+            <strong className="text-dark">{winningTeam}</strong> won the match {type}. <br/>
+            {tossWinningTeamName} won the toss and chose to {choice} first. <br/>
+            {innings1TeamName} : {innings1score}-{innings1wicket} <br/>
+            {innings2TeamName} : {innings2score}-{innings2wicket} <br/>
+            {}
+            <label className={showSecondInnings? '' : 'btn btn-info'}>1st innings</label>
+            <CustomInput className="pt-2 ml-4" checked={showSecondInnings} type="switch" id="innings" name="innings"
+                         onChange={e => this.setState({
+                           showSecondInnings: e.target.checked,
+                           overIndex: 0,
+                         })}  inline/>
+            <label className={showSecondInnings? 'btn btn-info' : ''}>2nd innings</label>
+
+          </div>
+          <div className=" pt-1 pb-4 col ">
+            <PreviousOvers overs={innings.overs} bowlingTeam={bowlingTeamPlayers}
+                           onOverClick={(index) => this.setState({ overIndex: index })}/>
+
+          </div>
+          <div className=" pt-1 pb-4 mr-2 col ">
+            <CurrentOver balls={innings.overs[overIndex].bowls}
+                         title={`${toTitleCase(bowlerName)} bowled (Over ${overIndex + 1})`}
+                         battingTeam={battingTeamPlayers}/>
+          </div>
         </div>
       </div>
     );
