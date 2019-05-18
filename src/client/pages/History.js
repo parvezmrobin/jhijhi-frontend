@@ -138,19 +138,21 @@ class History extends Component {
           <main className="col bg-success min-vh-100">
             <div className="row mt-5">
 
-              <div className="pt-4 pb-4 col text-white text-center">
-                <strong className="text-dark">{winningTeam}</strong> won the match {type}. <br/>
-                {tossWinningTeamName} won the toss and chose to {choice} first. <br/>
-                {innings1TeamName} : {innings1score}-{innings1wicket} <br/>
-                {innings2TeamName} : {innings2score}-{innings2wicket} <br/>
-                {}
-                <label className={showSecondInnings? '' : 'btn btn-info'}>1st innings</label>
-                <CustomInput className="pt-2 ml-4" checked={showSecondInnings} type="switch" id="innings" name="innings"
+          <div className=" pt-4 pb-4 col text-white text-center">
+            <strong className="text-dark">{winningTeam}</strong> won the match {type}. <br/>
+            {tossWinningTeamName} won the toss and chose to {choice} first. <br/>
+            {innings1TeamName} : {innings1score}-{innings1wicket} <br/>
+            {innings2TeamName} : {innings2score}-{innings2wicket} <br/>
+            {}
+            <h5 className="d-flex justify-content-center mt-2">
+                <label className={showSecondInnings? 'badge' : 'badge badge-info'}>1st innings</label>
+                <CustomInput className="mx-3" checked={showSecondInnings} type="switch" id="innings" name="innings"
                              onChange={e => this.setState({
-                               showSecondInnings: e.target.checked,
-                               overIndex: 0,
+                                 showSecondInnings: e.target.checked,
+                                 overIndex: 0,
                              })}  inline/>
-                <label className={showSecondInnings? 'btn btn-info' : ''}>2nd innings</label>
+                <label className={showSecondInnings? 'badge badge-info' : 'badge'}>2nd innings</label>
+            </h5>
 
               </div>
               <div className="pt-1 col">
