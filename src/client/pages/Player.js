@@ -41,15 +41,15 @@ class Player extends Component {
 
   componentDidMount() {
     this.unlisten = this.props.history.listen((location) => {
-      const matchId = location.pathname.substr(9);
-      this._loadPlayerIfNecessary(matchId);
+      const playerId = location.pathname.substr(8);
+      this._loadPlayerIfNecessary(playerId);
     });
 
     fetcher.get('players')
       .then(response => {
         this.setState({ players: response.data });
         if (this.props.match.params.id) {
-          this._loadPlayer(response.date);
+          this._loadPlayer(response.data, this.props.match.params.id);
         }
       });
   }
@@ -58,15 +58,23 @@ class Player extends Component {
     this.unlisten();
   }
 
-  _loadPlayerIfNecessary() {
+  _loadPlayerIfNecessary(playerId) {
     const players = this.state.players;
-    if (players.length && this.props.match.params.id) {
-      this._loadPlayer(players);
+    if (players.length && playerId) {
+      this._loadPlayer(players, playerId);
+    } else {
+      this.setState({
+        player: {
+          name: '',
+          jerseyNo: '',
+        },
+      });
     }
   }
 
-  _loadPlayer(players) {
-    const player = players.find(player => player._id === this.props.match.params.id);
+  _loadPlayer(players, playerId) {
+    const player = players.find(_player => _player._id === playerId);
+
     if (player) {
       this.setState({ player });
     }
