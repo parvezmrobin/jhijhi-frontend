@@ -14,7 +14,7 @@ import Loading from './pages/Loading';
 
 const App = React.lazy(() => import(/* webpackChunkName: "App" */ './App'));
 
-ReactDOM.render(<Suspense fallback={Loading}><App /></Suspense>, document.getElementById('root'));
+ReactDOM.render(<Suspense fallback={<Loading/>}><App /></Suspense>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
