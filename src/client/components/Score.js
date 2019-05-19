@@ -28,7 +28,7 @@ export default class Score extends Component {
       if (totalRun > targetRun) {
         return <Redirect to={`history@${this.props.matchId}`}/>
       }
-      inningsText = `Target ${targetRun}`;
+      inningsText = `Target ${targetRun + 1}`;
       console.log(targetRun);
 
     }
