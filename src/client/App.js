@@ -58,6 +58,7 @@ class App extends Component {
                     {shouldRedirect && <Redirect to="/login"/>}
                     <Route path="/" exact component={Home}/>
                     <Route path="/contact" component={Contact}/>
+                    <Route path="/player@:id" component={Player}/>
                     <Route path="/player" component={Player}/>
                     <Route path="/team" exact component={Team}/>
                     <Route path="/umpire" component={Umpire}/>

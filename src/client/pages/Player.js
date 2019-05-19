@@ -43,26 +43,58 @@ class Player extends Component {
     fetcher.get('players')
       .then(response => {
         this.setState({ players: response.data });
+        if (this.props.match.params.id) {
+          const player = response.data.find(player => player._id === this.props.match.params.id);
+          if (player) {
+            this.setState({ player });
+          }
+        }
       });
   }
 
-  handlers = {
-    onSubmit() {
-      const postData = { ...this.state.player };
+  createPlayer() {
+    const postData = { ...this.state.player };
 
-      fetcher
-        .post('players', postData)
-        .then(response => {
-          this.setState(prevState => ({
+    return fetcher
+      .post('players', postData)
+      .then(response => {
+        this.setState(prevState => ({
+          ...prevState,
+          players: prevState.players.concat({
+            ...prevState.player,
+            _id: response.data.player._id,
+          }),
+          player: {
+            name: '',
+            jerseyNo: '',
+          },
+          isValid: {
+            name: null,
+            jerseyNo: null,
+          },
+          feedback: {
+            name: null,
+            jerseyNo: null,
+          },
+          message: response.data.message,
+        }));
+      });
+  }
+
+  updatePlayer() {
+    const {player} = this.state;
+    const postData = { name: player.name, jerseyNo: player.jerseyNo };
+
+    return fetcher
+      .put(`players/${player._id}`, postData)
+      .then(response => {
+        this.setState(prevState => {
+          const playerIndex = prevState.players.findIndex(_player => _player._id === player._id);
+          if (playerIndex !== -1) {
+            prevState.players[playerIndex] = prevState.player;
+          }
+          return {
             ...prevState,
-            players: prevState.players.concat({
-              ...prevState.player,
-              _id: response.data.player._id,
-            }),
-            player: {
-              name: '',
-              jerseyNo: '',
-            },
             isValid: {
               name: null,
               jerseyNo: null,
@@ -72,8 +104,21 @@ class Player extends Component {
               jerseyNo: null,
             },
             message: response.data.message,
-          }));
-        })
+          };
+        });
+      });
+  }
+
+  handlers = {
+    onSubmit() {
+      let submission;
+      if (this.state.player._id) {
+        submission = this.updatePlayer();
+      } else {
+        submission = this.createPlayer();
+      }
+
+      submission
         .catch(err => {
           const isValid = {
             name: true,
@@ -107,9 +152,9 @@ class Player extends Component {
   render() {
     const renderPlayer = player => {
       const playerText = `${toTitleCase(player.name)} (${player.jerseyNo})`;
-      const editButton = <Link to={'player/edit/' + player._id}
+      const editButton = <Link to={'player@' + player._id}
                                className="float-right"><kbd>Edit</kbd></Link>;
-      return <Fragment>{playerText}</Fragment>;
+      return <Fragment>{playerText} {editButton}</Fragment>;
     };
     return (
       <div className="container-fluid pl-0">

@@ -20,6 +20,10 @@ module.exports = {
       ok: (name) => `Successfully created player ${name}`,
       err: "Error while creating player",
     },
+    edit: {
+      ok: (name) => `Successfully edited player ${name}`,
+      err: "Error while editing player",
+    },
   },
   teams: {
     index: {
