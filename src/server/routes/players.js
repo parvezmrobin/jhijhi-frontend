@@ -36,8 +36,9 @@ const playerCreateValidations = [
           .catch(reject);
       });
     }),
+  check('jerseyNo', 'Jersey number should be between 1 to 999')
+    .isInt({ min: 1, max: 999 }),
   check('jerseyNo')
-    .isInt({ min: 1 })
     .custom((jerseyNo, { req }) => {
       return new Promise(function (resolve, reject) {
         Player.findOne({
@@ -77,8 +78,9 @@ const playerEditValidations = [
           .catch(reject);
       });
     }),
+  check('jerseyNo', 'Jersey number should be between 1 to 999')
+    .isInt({ min: 1, max: 999 }),
   check('jerseyNo')
-    .isInt({ min: 1 })
     .custom((jerseyNo, { req }) => {
       return new Promise(function (resolve, reject) {
         Player.findOne({
