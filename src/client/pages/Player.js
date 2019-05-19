@@ -40,16 +40,36 @@ class Player extends Component {
   }
 
   componentDidMount() {
+    this.unlisten = this.props.history.listen((location) => {
+      const matchId = location.pathname.substr(9);
+      this._loadPlayerIfNecessary(matchId);
+    });
+
     fetcher.get('players')
       .then(response => {
         this.setState({ players: response.data });
         if (this.props.match.params.id) {
-          const player = response.data.find(player => player._id === this.props.match.params.id);
-          if (player) {
-            this.setState({ player });
-          }
+          this._loadPlayer(response.date);
         }
       });
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
+  }
+
+  _loadPlayerIfNecessary() {
+    const players = this.state.players;
+    if (players.length && this.props.match.params.id) {
+      this._loadPlayer(players);
+    }
+  }
+
+  _loadPlayer(players) {
+    const player = players.find(player => player._id === this.props.match.params.id);
+    if (player) {
+      this.setState({ player });
+    }
   }
 
   createPlayer() {
@@ -82,8 +102,11 @@ class Player extends Component {
   }
 
   updatePlayer() {
-    const {player} = this.state;
-    const postData = { name: player.name, jerseyNo: player.jerseyNo };
+    const { player } = this.state;
+    const postData = {
+      name: player.name,
+      jerseyNo: player.jerseyNo,
+    };
 
     return fetcher
       .put(`players/${player._id}`, postData)
