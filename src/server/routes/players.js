@@ -37,7 +37,7 @@ const playerCreateValidations = [
       });
     }),
   check('jerseyNo', 'Jersey number should be between 1 to 999')
-    .isInt({ min: 1, max: 999 }),
+    .isInt({ min: 0, max: 999 }),
   check('jerseyNo')
     .custom((jerseyNo, { req }) => {
       return new Promise(function (resolve, reject) {
@@ -79,7 +79,7 @@ const playerEditValidations = [
       });
     }),
   check('jerseyNo', 'Jersey number should be between 1 to 999')
-    .isInt({ min: 1, max: 999 }),
+    .isInt({ min: 0, max: 999 }),
   check('jerseyNo')
     .custom((jerseyNo, { req }) => {
       return new Promise(function (resolve, reject) {

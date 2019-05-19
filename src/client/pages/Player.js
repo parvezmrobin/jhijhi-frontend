@@ -89,7 +89,8 @@ class Player extends Component {
         this.setState(prevState => ({
           ...prevState,
           players: prevState.players.concat({
-            ...prevState.player,
+            name: prevState.player.name,
+            jerseyNo: Number.parseInt(prevState.player.jerseyNo),
             _id: response.data.player._id,
           }),
           player: {
@@ -123,6 +124,7 @@ class Player extends Component {
           const playerIndex = prevState.players.findIndex(_player => _player._id === player._id);
           if (playerIndex !== -1) {
             prevState.players[playerIndex] = prevState.player;
+            prevState.players[playerIndex].jerseyNo = Number.parseInt(prevState.player.jerseyNo);
           }
           return {
             ...prevState,
