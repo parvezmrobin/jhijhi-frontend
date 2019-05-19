@@ -10,7 +10,7 @@ import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
 import PlayerForm from '../components/PlayerForm';
 import fetcher from '../lib/fetcher';
-import { bindMethods, toTitleCase } from '../lib/utils';
+import { bindMethods } from '../lib/utils';
 import { Link } from 'react-router-dom';
 import { Alert, Toast, ToastBody, ToastHeader } from 'reactstrap';
 
@@ -179,7 +179,7 @@ class Player extends Component {
 
   render() {
     const renderPlayer = player => {
-      const playerText = `${toTitleCase(player.name, ' ')} (${player.jerseyNo})`;
+      const playerText = `${player.name} (${player.jerseyNo})`;
       const editButton = <Link to={'player@' + player._id}
                                className="float-right"><kbd>Edit</kbd></Link>;
       return <Fragment>{playerText} {editButton}</Fragment>;

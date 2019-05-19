@@ -173,11 +173,11 @@ router.put('/:id', authenticateJwt(), playerEditValidations, (request, response)
   const { name, jerseyNo } = request.body;
 
   promise
-    .then(() => Player.updateOne({ _id: ObjectId(request.params.id) }, {
+    .then(() => Player.findOneAndUpdate({ _id: ObjectId(request.params.id) }, {
       name: _formatPlayerName(name),
       jerseyNo,
       creator: request.user._id,
-    }))
+    }, { new: true }))
     .then(createdPlayer => {
       response.json({
         success: true,
