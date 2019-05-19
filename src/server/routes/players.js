@@ -15,6 +15,12 @@ const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: f
 const { check, validationResult } = require('express-validator/check');
 const ObjectId = require('mongoose/lib/types/objectid');
 
+const _formatPlayerName = function (name) {
+  return name.split(' ')
+    .filter(s => s)
+    .map(s => s[0].toUpperCase() + s.substr(1))
+    .join(' ');
+};
 
 const playerCreateValidations = [
   check('name')
@@ -22,7 +28,7 @@ const playerCreateValidations = [
     .custom((name, { req }) => {
       return new Promise(function (resolve, reject) {
         Player.findOne({
-          name: name,
+          name: _formatPlayerName(name),
           creator: req.user._id,
         })
           .exec()
@@ -37,7 +43,10 @@ const playerCreateValidations = [
       });
     }),
   check('jerseyNo', 'Jersey number should be between 1 to 999')
-    .isInt({ min: 0, max: 999 }),
+    .isInt({
+      min: 0,
+      max: 999,
+    }),
   check('jerseyNo')
     .custom((jerseyNo, { req }) => {
       return new Promise(function (resolve, reject) {
@@ -63,7 +72,7 @@ const playerEditValidations = [
     .custom((name, { req }) => {
       return new Promise(function (resolve, reject) {
         Player.findOne({
-          name: name,
+          name: _formatPlayerName(name),
           creator: req.user._id,
         })
           .lean()
@@ -79,7 +88,10 @@ const playerEditValidations = [
       });
     }),
   check('jerseyNo', 'Jersey number should be between 1 to 999')
-    .isInt({ min: 0, max: 999 }),
+    .isInt({
+      min: 0,
+      max: 999,
+    }),
   check('jerseyNo')
     .custom((jerseyNo, { req }) => {
       return new Promise(function (resolve, reject) {
@@ -127,7 +139,7 @@ router.post('/', authenticateJwt(), playerCreateValidations, (request, response)
 
   promise
     .then(() => Player.create({
-      name,
+      name: _formatPlayerName(name),
       jerseyNo,
       creator: request.user._id,
     }))
@@ -135,7 +147,11 @@ router.post('/', authenticateJwt(), playerCreateValidations, (request, response)
       response.json({
         success: true,
         message: responses.players.create.ok(name),
-        player: { _id: createdPlayer._id },
+        player: {
+          _id: createdPlayer._id,
+          name: createdPlayer.name,
+          jerseyNo: createdPlayer.jerseyNo,
+        },
       });
     })
     .catch(err => {
@@ -158,7 +174,7 @@ router.put('/:id', authenticateJwt(), playerEditValidations, (request, response)
 
   promise
     .then(() => Player.updateOne({ _id: ObjectId(request.params.id) }, {
-      name,
+      name: _formatPlayerName(name),
       jerseyNo,
       creator: request.user._id,
     }))
@@ -166,7 +182,11 @@ router.put('/:id', authenticateJwt(), playerEditValidations, (request, response)
       response.json({
         success: true,
         message: responses.players.edit.ok(name),
-        player: { _id: createdPlayer._id },
+        player: {
+          _id: createdPlayer._id,
+          name: createdPlayer.name,
+          jerseyNo: createdPlayer.jerseyNo,
+        },
       });
     })
     .catch(err => {
