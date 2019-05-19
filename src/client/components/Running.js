@@ -174,7 +174,7 @@ export class Running extends Component {
         if (optional(bowl.isWicket).kind) {
           outCount++;
 
-          if (outCount >= totalBattingTeamPlayers) {
+          if (outCount >= totalBattingTeamPlayers - 1) {
             return true;
           }
         }
@@ -262,6 +262,10 @@ export class Running extends Component {
     }, -1);
   }
 
+  /**
+   * @returns {{innings: Object, battingTeamPlayers: Array}}
+   * @private
+   */
   _getCurrentInningsDescription() {
     const innings = this._getCurrentInnings();
     const battingTeamPlayers = this._getBattingTeamPlayers();
@@ -289,8 +293,12 @@ export class Running extends Component {
   }
 
   componentDidMount() {
+    const {innings, battingTeamPlayers} = this._getCurrentInningsDescription();
+    if (Running._isAllOut(innings, battingTeamPlayers.length)) {
+      this.onDeclare();
+    }
+
     let { batsman1, batsman2 } = this.state;
-    const innings = this._getCurrentInnings();
     const outBatsmen = [];
 
     outer: for (let i = innings.overs.length - 1; i >= 0; i--) {
