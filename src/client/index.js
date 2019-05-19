@@ -7,8 +7,6 @@
 
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
-import './scss/App.scss';
-import 'bootstrap';
 import Loading from './pages/Loading';
 // import * as serviceWorker from './serviceWorker';
 
