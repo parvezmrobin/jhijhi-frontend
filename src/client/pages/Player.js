@@ -63,6 +63,14 @@ class Player extends Component {
               name: '',
               jerseyNo: '',
             },
+            isValid: {
+              name: null,
+              jerseyNo: null,
+            },
+            feedback: {
+              name: null,
+              jerseyNo: null,
+            },
             message: response.data.message,
           }));
         })
