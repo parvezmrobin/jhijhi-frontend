@@ -21,7 +21,7 @@ export default class PreMatch extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      players: [],
+      players: null,
       team1Players: [],
       team2Players: [],
       team1Captain: '',
@@ -157,10 +157,12 @@ export default class PreMatch extends Component {
 
 
   render() {
-    const {players} = this.state;
-    if (players.length && players.length < 5) {
+    let {players} = this.state;
+    if (players && players.length < 4) {
       return <Redirect to="/player?redirected=1"/>
     }
+    players = players || [];
+
     const getCheckboxOnChangeForTeam = (team, id) => {
       // if checkbox is checked, key is 'select' and 'unselect otherwise. value is the index
       if (team === 1) {
@@ -187,9 +189,9 @@ export default class PreMatch extends Component {
       </li>
     );
 
-    const team1CandidatePlayers = subtract(this.state.players, this.state.team2Players, matcher)
+    const team1CandidatePlayers = subtract(players, this.state.team2Players, matcher)
       .map(getListItemMapperForTeam(1));
-    const team2CandidatePlayers = subtract(this.state.players, this.state.team1Players, matcher)
+    const team2CandidatePlayers = subtract(players, this.state.team1Players, matcher)
       .map(getListItemMapperForTeam(2));
 
     return (
@@ -200,7 +202,7 @@ export default class PreMatch extends Component {
             <h2 className="text-center text-primary">{this.props.team1.name}</h2>
             <hr/>
             <FormGroup label="Captain" type="select"
-                       options={this.state.players.filter(
+                       options={players.filter(
                          el => this.state.team1Players.indexOf(el._id) !== -1,
                        )}
                        name="team1-captain" value={this.state.team1Captain}
@@ -220,7 +222,7 @@ export default class PreMatch extends Component {
             <h2 className="text-center text-primary">{this.props.team2.name}</h2>
             <hr/>
             <FormGroup label="Captain" type="select"
-                       options={this.state.players.filter(
+                       options={players.filter(
                          el => this.state.team2Players.indexOf(el._id) !== -1,
                        )}
                        name="team2-captain" value={this.state.team2Captain}
