@@ -12,7 +12,7 @@ import PlayerForm from '../components/PlayerForm';
 import fetcher from '../lib/fetcher';
 import { bindMethods, toTitleCase } from '../lib/utils';
 import { Link } from 'react-router-dom';
-import { Toast, ToastBody, ToastHeader } from 'reactstrap';
+import { Alert, Toast, ToastBody, ToastHeader } from 'reactstrap';
 
 
 class Player extends Component {
@@ -33,13 +33,13 @@ class Player extends Component {
         jerseyNo: null,
       },
       message: null,
+      redirected: this.props.location.search.startsWith('?redirected=1'),
     };
 
     bindMethods(this);
   }
 
   componentDidMount() {
-
     fetcher.get('players')
       .then(response => {
         this.setState({ players: response.data });
@@ -121,6 +121,7 @@ class Player extends Component {
             {this.state.message}
           </ToastBody>
         </Toast>
+
         <div className="row">
           <aside className="col-md-3">
             <CenterContent col="col">
@@ -133,6 +134,11 @@ class Player extends Component {
           </aside>
           <main className="col">
             <CenterContent col="col-lg-8 col-md-10">
+              {this.state.redirected && <Alert color="info">
+                <p className="lead mb-0">
+                  You need at least 4 players to start a match.
+                </p>
+              </Alert>}
               <PlayerForm values={this.state.player} onChange={this.onChange}
                           onSubmit={this.onSubmit}
                           isValid={this.state.isValid} feedback={this.state.feedback}/>
