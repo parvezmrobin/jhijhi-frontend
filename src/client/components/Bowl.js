@@ -48,7 +48,7 @@ function Bowl(props) {
 
   return (
     <li className={className}>
-      {bowlNo}. <strong>{toTitleCase(batsman.name)}</strong> - {run} {badge} {closeButton}
+      {bowlNo}. <strong>{toTitleCase(batsman.name)}</strong> - {run} {badge}
     </li>
   );
 }

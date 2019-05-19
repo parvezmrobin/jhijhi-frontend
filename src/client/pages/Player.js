@@ -109,7 +109,7 @@ class Player extends Component {
       const playerText = `${toTitleCase(player.name)} (${player.jerseyNo})`;
       const editButton = <Link to={'player/edit/' + player._id}
                                className="float-right"><kbd>Edit</kbd></Link>;
-      return <Fragment>{playerText} {editButton}</Fragment>;
+      return <Fragment>{playerText}</Fragment>;
     };
     return (
       <div className="container-fluid pl-0">
