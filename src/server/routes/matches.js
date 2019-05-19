@@ -345,6 +345,22 @@ router.post('/:id/over', authenticateJwt(), (request, response) => {
     });
 });
 
+router.get('/done', authenticateJwt(), function (request, response) {
+  Match
+    .find({ creator: request.user._id, state: 'done' })
+    .lean()
+    .then(matches => response.json(matches))
+    .catch(err => {
+      response.status(err.statusCode || err.status || 500);
+      response.json({
+        success: false,
+        message: responses.matches.index.err,
+        err: err.error || err.errors || err,
+      });
+    });
+
+});
+
 router.get('/:id', authenticateJwt(), (request, response) => {
   Match
     .findOne({

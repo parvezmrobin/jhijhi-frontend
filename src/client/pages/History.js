@@ -12,6 +12,7 @@ class History extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      matches: [],
       match: null,
       overIndex: null,
       showSecondInnings: false,
@@ -20,12 +21,36 @@ class History extends Component {
   }
 
   componentDidMount() {
+    this.unlisten = this.props.history.listen((location) => {
+      const matchId = location.pathname.substr(9);
+      this._loadMatchIfNecessary(matchId);
+    });
+
     fetcher
-      .get(`matches/${this.props.match.params.id}`)
+      .get('/matches/done')
+      .then(response => this.setState({ matches: response.data }));
+
+    const matchId = this.props.match.params.id;
+    this._loadMatchIfNecessary(matchId);
+  }
+
+  _loadMatchIfNecessary(matchId) {
+    if (matchId && matchId !== 'null') {
+      this._loadMatch(matchId);
+    }
+  }
+
+  _loadMatch(matchId) {
+    fetcher
+      .get(`/matches/${matchId}`)
       .then(response => {
         this.setState({ match: response.data });
         console.log(response.data);
       });
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   static calculateScore(innings) {
@@ -55,9 +80,28 @@ class History extends Component {
 
   render() {
     const { match, showSecondInnings } = this.state;
+
+    const sidebar = <aside className="col-3">
+      <CenterContent col="col">
+        <SidebarList
+          title="Completed Matches"
+          itemClass="text-white"
+          itemMapper={(match) => {
+            return <Link className="text-info" to={`history@${match._id}`}>{match.name}</Link>;
+          }}
+          list={this.state.matches}/>
+      </CenterContent>
+    </aside>;
     if (match === null) {
-      return <div>loading...</div>;
+      const matchId = this.props.match.params.id;
+      const text = (matchId === 'null') ? 'Select a Match' : 'Loading...';
+      const loading = <div className="col"><CenterContent>
+        <h2 className="text-center">{text}</h2>
+      </CenterContent></div>;
+      return <div
+        className="row">{sidebar}{loading}</div>;
     }
+
     if (match.state !== 'done') {
       return <Redirect to={`/live@${this.props.match.params.id}`}/>;
     }
@@ -124,17 +168,7 @@ class History extends Component {
 
     return (
         <div className="row">
-          <aside className="col-3">
-            <CenterContent col="col">
-              <SidebarList
-                title="Completed Matches"
-                itemClass="text-white"
-                itemMapper={(match) => {
-                  return <Link className="text-info" to={`history@${match._id}`}>{match.name}</Link>;
-                }}
-                list={[]}/>
-            </CenterContent>
-          </aside>
+        {sidebar}
           <main className="col bg-success min-vh-100">
             <div className="row mt-5">
 
