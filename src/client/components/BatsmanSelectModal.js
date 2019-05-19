@@ -8,8 +8,8 @@ export default class BatsmanSelectModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      batsman1: '',
-      batsman2: '',
+      batsman1Id: '',
+      batsman2Id: '',
       errors: {
         batsman1: null,
         batsman2: null,
@@ -21,10 +21,10 @@ export default class BatsmanSelectModal extends Component {
 
   handlers = {
     onSubmit() {
-      const { batsman1, batsman2 } = this.state;
-      const batsman1Exists = Number.isInteger(this.props.batsman1);
-      const batsman2Exists = Number.isInteger(this.props.batsman2);
-      if (batsman1 === batsman2) {
+      const { batsman1Id, batsman2Id } = this.state;
+      const batsman1Exists = Number.isInteger(this.props.batsman1Index);
+      const batsman2Exists = Number.isInteger(this.props.batsman2Index);
+      if (batsman1Id === batsman2Id) {
         const errors = {
           batsman1: null,
           batsman2: null,
@@ -38,24 +38,26 @@ export default class BatsmanSelectModal extends Component {
       }
 
       const errors = this.props.onSelect({
-        batsman1,
-        batsman2,
+        batsman1Id,
+        batsman2Id,
       });
       return this.setState({ errors });
     },
+
     onSelectionChange(newValue) {
       this.setState({ ...newValue });
     },
+
     initialize() {
-      const batsman1Exists = Number.isInteger(this.props.batsman1);
-      const batsman2Exists = Number.isInteger(this.props.batsman2);
-      const { options } = this.props;
+      const batsman1Exists = Number.isInteger(this.props.batsman1Index);
+      const batsman2Exists = Number.isInteger(this.props.batsman2Index);
+      const { batsmanList } = this.props;
       const initialBatsmanSelection = {};
       if (!batsman1Exists) {
-        initialBatsmanSelection.batsman1 = options[0]._id;
+        initialBatsmanSelection.batsman1Id = batsmanList[0]._id;
       }
       if (!batsman2Exists) {
-        initialBatsmanSelection.batsman2 = options[0]._id;
+        initialBatsmanSelection.batsman2Id = batsmanList[0]._id;
       }
 
       this.setState({ ...initialBatsmanSelection });
@@ -64,27 +66,27 @@ export default class BatsmanSelectModal extends Component {
 
 
   render() {
-    const batsman1Exists = Number.isInteger(this.props.batsman1);
-    const batsman2Exists = Number.isInteger(this.props.batsman2);
-    const { options } = this.props;
+    const { batsman1Index, batsman2Index, batsmanList, isOpen } = this.props;
+    const batsman1Exists = Number.isInteger(batsman1Index);
+    const batsman2Exists = Number.isInteger(batsman2Index);
     const { errors } = this.state;
-    return <Modal isOpen={this.props.isOpen} onOpened={this.initialize}>
+    return <Modal isOpen={isOpen} onOpened={this.initialize}>
       <ModalHeader className="text-primary">
         Select {!(batsman1Exists || batsman2Exists) ? 'Batsmen' : 'Batsman'}
       </ModalHeader>
       <ModalBody>
         {!batsman1Exists &&
-        <FormGroup type="select" name="batsman-1" value={this.state.batsman1}
+        <FormGroup type="select" name="batsman-1" value={this.state.batsman1Id}
+                   onChange={e => this.onSelectionChange({ batsman1Id: e.target.value })}
                    isValid={(!errors.batsman1) ? null : false}
                    feedback={errors.batsman1}
-                   onChange={e => this.onSelectionChange({ batsman1: e.target.value })}
-                   options={options}/>}
+                   options={batsmanList}/>}
         {!batsman2Exists &&
-        <FormGroup type="select" name="batsman-2" value={this.state.batsman2}
+        <FormGroup type="select" name="batsman-2" value={this.state.batsman2Id}
+                   onChange={e => this.onSelectionChange({ batsman2Id: e.target.value })}
                    isValid={(!errors.batsman2) ? null : false}
                    feedback={errors.batsman2}
-                   onChange={e => this.onSelectionChange({ batsman2: e.target.value })}
-                   options={options}/>}
+                   options={batsmanList}/>}
       </ModalBody>
       <ModalFooter>
         <Button color="primary" onClick={this.onSubmit}>Select</Button>
@@ -95,8 +97,8 @@ export default class BatsmanSelectModal extends Component {
 
 BatsmanSelectModal.propTypes = {
   isOpen: PropTypes.bool,
-  batsman1: PropTypes.any,
-  batsman2: PropTypes.any,
-  options: PropTypes.array,
+  batsman1Index: PropTypes.number,
+  batsman2Index: PropTypes.number,
+  batsmanList: PropTypes.array,
   onSelect: PropTypes.func,
 };

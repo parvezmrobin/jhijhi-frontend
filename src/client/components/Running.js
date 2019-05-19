@@ -203,31 +203,44 @@ export class Running extends Component {
     return numBowls === 6;
   }
 
+  /**
+   * @param batsmenValues
+   * @param batsmenValues.batsman1Id
+   * @param batsmenValues.batsman2Id
+   * @returns {{}[]}
+   * @private
+   */
   _validateAndGetSelectedBatsmen(batsmenValues) {
-    const { batsman1, batsman2 } = batsmenValues;
+    const { batsman1Id, batsman2Id } = batsmenValues;
 
     const { innings, battingTeamPlayers } = this._getCurrentInningsDescription();
     const indices = {};
-    if (batsman1) {
-      indices.batsman1 = this._getIndexOfBatsman(battingTeamPlayers, batsman1);
+    if (batsman1Id) {
+      indices.batsman1 = this._getIndexOfBatsman(battingTeamPlayers, batsman1Id);
     }
-    if (batsman2) {
-      indices.batsman2 = this._getIndexOfBatsman(battingTeamPlayers, batsman2);
+    if (batsman2Id) {
+      indices.batsman2 = this._getIndexOfBatsman(battingTeamPlayers, batsman2Id);
     }
 
-    if (!batsman1 && (indices.batsman2 === this.state.batsman1)) {
+    if (!batsman1Id && (indices.batsman2 === this.state.batsman1)) {
+      // if batsman1Id is selected and corresponding index is same as state's batsman1
       return [{ batsman2: 'Already Selected As Batsman1' }];
     }
+    if (!batsman2Id && (indices.batsman1 === this.state.batsman2)) {
+      // if batsman2Id is selected and corresponding index is same as state's batsman2
+      return [{ batsman1: 'Already Selected As Batsman2' }];
+    }
 
+    // check if any out batsmen selected
     const errors = {};
     for (const over of innings.overs) {
       for (const bowl of over.bowls) {
         const batsman = battingTeamPlayers[bowl.playedBy]._id;
         if (bowl.isWicket) {
           const outBatsman = bowl.isWicket.player ? battingTeamPlayers[bowl.isWicket.player]._id : batsman;
-          if (outBatsman === batsman1) {
+          if (outBatsman === batsman1Id) {
             errors.batsman1 = 'Already Out';
-          } else if (outBatsman === batsman2) {
+          } else if (outBatsman === batsman2Id) {
             errors.batsman2 = 'Already Out';
           }
 
@@ -400,7 +413,7 @@ export class Running extends Component {
                          battingTeamPlayers={battingTeamPlayers}/>
       <BatsmanSelectModal
         isOpen={!Number.isInteger(this.state.batsman1) || !Number.isInteger(this.state.batsman2)}
-        batsman1={batsman1} batsman2={batsman2} options={battingTeamPlayers}
+        batsman1Index={batsman1} batsman2Index={batsman2} batsmanList={battingTeamPlayers}
         onSelect={this.onBatsmenSelect}/>
       <BowlerSelectModal open={this.state.bowlerModalIsOpen} bowlers={bowlingTeamPlayers}
                          lastBowler={bowler} matchId={match._id}
