@@ -2,6 +2,20 @@
   "name": "jhijhi",
   "version": "1.0.0",
   "description": "A simple react app backed by Express JS to maintain cricket score",
+  "homepage": "https://jhijhi.herokuapp.com",
+  "keywords": [
+    "crikect",
+    "scoring",
+    "react",
+    "express",
+    "jhijhi",
+    "custom-scoring",
+    "cricket-scoring"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/parvezmrobin/jhijhi.git"
+  },
   "main": "src/server/bin/www",
   "engines": {
     "node": "10.x",
@@ -24,7 +38,7 @@
   },
   "license": "ISC",
   "dependencies": {
- "axios": "^0.18.0",
+    "axios": "^0.18.0",
     "bcrypt": "^3.0.5",
     "bootstrap": "^4.3.1",
     "connect-mongo": "^2.0.3",
