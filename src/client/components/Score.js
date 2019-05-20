@@ -21,6 +21,10 @@ export default class Score extends Component {
     }
 
     let inningsText;
+    let runRateText = <span>
+      Run Rate: {Score._calcRunRate(numOvers, parseInt(numBowls), totalRun, 2)}
+    </span>;
+
     if (inningsNo === 1) {
       inningsText = 'Innings 1';
     } else {
@@ -28,30 +32,39 @@ export default class Score extends Component {
       if (totalRun > targetRun) {
         return <Redirect to={`history@${this.props.matchId}`}/>;
       }
-      const {over: remainingOvers, bowl: remainingBowls} = Score._subtractOver({over: numberOfOvers, bowl: 0}, {over: numOvers, bowl: numBowls});
-      const remainingOverText = `in ${remainingOvers? remainingOvers + ' over' + ((remainingOvers > 1)? 's': ''): ''} `
-       + `${remainingBowls? remainingBowls + ' bowl' + ((remainingBowls > 1)? 's': ''): ''}`;
-      inningsText = <span>Target {targetRun + 1} <small>{remainingOverText}</small></span>;
+      const { over: remainingOvers, bowl: remainingBowls } = Score._subtractOver(numberOfOvers, 0, numOvers, numBowls);
+      const remainingOverText = ` in ${remainingOvers ? remainingOvers + ' over' + ((remainingOvers > 1) ? 's' : '') : ''} `
+        + `${remainingBowls ? remainingBowls + ' bowl' + ((remainingBowls > 1) ? 's' : '') : ''}`;
+      inningsText = <span>
+        <span>Target {targetRun + 1}</span>
+        <small>{remainingOverText}</small>
+      </span>;
+      runRateText = <p>
+        {runRateText}
+        <span className="float-right">
+          Required: {Score._calcRunRate(remainingOvers, remainingBowls, targetRun - totalRun + 1, 2)}
+        </span>
+      </p>;
     }
 
     return <>
       <div className='bg-dark text-info p-2 mt-5 rounded'>
         <h4 className="mt-3 text-white">{battingTeamName} - {totalRun} / {totalWicket}</h4>
-        <h5>
-          <span className="text-primary">{numOvers} overs {numBowls && `${numBowls} bowl${(numBowls > 1) ? 's' : ''}`}</span>
-          &nbsp;<small>({numberOfOvers} overs)</small>
+        <h5 className="font-weight-normal">
+          <span
+            className="text-primary">{numOvers} overs {numBowls && `${numBowls} bowl${(numBowls > 1) ? 's' : ''}`}</span>
+          &nbsp;
+          <small>({numberOfOvers} overs)</small>
         </h5>
-        <h5>{inningsText}</h5>
+        <h5 className="font-weight-normal">{inningsText}</h5>
 
       </div>
       <div className="mt-2 text-white">
-        <h5 className="px-2">
-          <small>
-            <em>{tossOwner}</em> won the toss <br/>
-            and chose to <em>{choice}</em>.
-          </small>
-        </h5>
-
+        <p className="px-2">
+          <em>{tossOwner}</em> won the toss <br/>
+          and chose to <em>{choice}</em>.
+        </p>
+        <p className="px-2">{runRateText}</p>
       </div>
     </>;
   }
@@ -88,19 +101,34 @@ export default class Score extends Component {
   }
 
   /**
-   * @param {{over: Number, bowl: Number}} from
-   * @param {{over: Number, bowl: Number}} to
+   * @param {Number} fromOver
+   * @param {Number} fromBowl
+   * @param {Number} toOver
+   * @param {Number} toBowl
    * @returns {{over: Number, bowl: Number}}
    * @private
    */
-  static _subtractOver(from, to) {
-    if (from.bowl < to.bowl) {
-      from.over--;
-      from.bowl += 6;
+  static _subtractOver(fromOver, fromBowl, toOver, toBowl) {
+    if (fromBowl < toBowl) {
+      fromOver--;
+      fromBowl += 6;
     }
     return {
-      over: from.over - to.over,
-      bowl: from.bowl - to.bowl,
+      over: fromOver - toOver,
+      bowl: fromBowl - toBowl,
     };
   };
+
+  /**
+   * @param {Number} overs
+   * @param {Number} bowls
+   * @param {Number} run
+   * @param {Number} round
+   * @returns {string}
+   * @private
+   */
+  static _calcRunRate(overs, bowls, run, round) {
+    const runRate = run / (overs * 6 + bowls) * 6;
+    return round ? runRate.toFixed(round) : runRate.toString();
+  }
 }
