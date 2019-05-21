@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import propTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 
 class Score extends Component {
   render() {
@@ -29,9 +29,6 @@ class Score extends Component {
       inningsText = 'Innings 1';
     } else {
       const { totalRun: targetRun } = Score._getTotalScore(firstInnings);
-      if (totalRun > targetRun) {
-        this.props.onWinning();
-      }
       const { over: remainingOvers, bowl: remainingBowls } = Score._subtractOver(numberOfOvers, 0, numOvers, numBowls);
 
       const remainingRuns = targetRun - totalRun + 1;
@@ -71,6 +68,20 @@ class Score extends Component {
       </div>
     </>;
   }
+
+
+  componentDidUpdate() {
+    const {innings, inningsNo, firstInnings} = this.props;
+    if (inningsNo === 1) {
+      return;
+    }
+    const {totalRun: firstInningsRuns} = Score._getTotalScore(firstInnings);
+    const {totalRun: secondInningsRuns} = Score._getTotalScore(innings);
+    if (secondInningsRuns > firstInningsRuns) {
+      this.props.onWinning();
+    }
+  }
+
 
   static _getTotalScore(innings) {
     let totalWicket = 0,
@@ -137,14 +148,14 @@ class Score extends Component {
 }
 
 Score.propTypes = {
-  battingTeamName: propTypes.string,
-  tossOwner: propTypes.string,
-  choice: propTypes.string,
-  innings: propTypes.object,
-  firstInnings: propTypes.object,
-  inningsNo: propTypes.number,
-  numberOfOvers: propTypes.number,
-  onWinning: propTypes.func,
+  battingTeamName: PropTypes.string,
+  tossOwner: PropTypes.string,
+  choice: PropTypes.string,
+  innings: PropTypes.object,
+  firstInnings: PropTypes.object,
+  inningsNo: PropTypes.number,
+  numberOfOvers: PropTypes.number,
+  onWinning: PropTypes.func,
 };
 
 export default Score;

@@ -70,7 +70,7 @@ export class Running extends Component {
     onInput(inputEvent) {
       const genUpdatedState = prevState => {
         let { batsman1, batsman2, bowlerModalIsOpen } = prevState;
-        const {innings, battingTeamPlayers} = this._getCurrentInningsDescription();
+        const { innings, battingTeamPlayers } = this._getCurrentInningsDescription();
         if (inputEvent.type === 'bowl') {
           [batsman1, batsman2] = Running._onBowlEvent(inputEvent, innings, batsman1, batsman2, battingTeamPlayers.length);
         } else if (inputEvent.type === 'over') {
@@ -93,20 +93,14 @@ export class Running extends Component {
         };
       };
 
-      const onUpdateCallback = () => {
-        if (this._isNewOver()) {
-          const innings = this._getCurrentInnings();
-          if (innings.overs.length === this.state.match.overs) {
-            return this.onDeclare();
-          }
-          return this.setState({ bowlerModalIsOpen: true });
-        }
-      };
-
-      this.setState(genUpdatedState, onUpdateCallback);
+      this.setState(genUpdatedState);
     },
     onDeclare() {
-      this.setState({ isDeclaring: true });
+      const {match: {state}, isDeclaring} = this.state;
+      if (isDeclaring || state === 'done') {
+        return;
+      }
+      setTimeout(() => this.setState({ isDeclaring: true }), 0);
       fetcher
         .put(`matches/${this.state.match._id}/declare`)
         .then(response => {
@@ -120,7 +114,7 @@ export class Running extends Component {
               batsman1: null,
               batsman2: null,
             };
-          }, () => this._isNewOver() && this.setState({ bowlerModalIsOpen: true }));
+          });
         });
     },
   };
@@ -183,7 +177,7 @@ export class Running extends Component {
     return false;
   }
 
-  _isNewOver() {
+  _shouldStartNewOver() {
     let innings;
     try {
       innings = this._getCurrentInnings();
@@ -293,8 +287,9 @@ export class Running extends Component {
   }
 
   componentDidMount() {
-    const {innings, battingTeamPlayers} = this._getCurrentInningsDescription();
-    if (Running._isAllOut(innings, battingTeamPlayers.length)) {
+    const { innings, battingTeamPlayers } = this._getCurrentInningsDescription();
+    const {match: {state}} = this.state;
+    if (Running._isAllOut(innings, battingTeamPlayers.length) && state !== 'done') {
       this.onDeclare();
     }
 
@@ -333,8 +328,6 @@ export class Running extends Component {
       }
     }
     if (batsman1 === -1) {
-      console.log('HERE');
-
       batsman1 = null;
     }
 
@@ -346,7 +339,18 @@ export class Running extends Component {
     this.setState(({
       batsman1,
       batsman2,
-    }), () => this._isNewOver() && this.setState({ bowlerModalIsOpen: true }));
+    }));
+  }
+
+
+  componentDidUpdate() {
+    if (this._shouldStartNewOver()) {
+      const innings = this._getCurrentInnings();
+      if (innings.overs.length === this.state.match.overs) {
+        return this.onDeclare();
+      }
+      this.setState({ bowlerModalIsOpen: true });
+    }
   }
 
 
@@ -354,7 +358,7 @@ export class Running extends Component {
     const { match, overModal, batsman1, batsman2 } = this.state;
 
     if (match.state === 'done') {
-      return <Redirect to={`/history@${match._id}`}/>
+      return <Redirect to={`/history@${match._id}`}/>;
     }
 
     const overs = this._getCurrentInnings().overs;
