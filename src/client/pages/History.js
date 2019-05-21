@@ -7,6 +7,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { toTitleCase } from '../lib/utils';
 import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
+import Score from "../components/Score";
 
 class History extends Component {
   constructor(props) {
@@ -53,34 +54,32 @@ class History extends Component {
     this.unlisten();
   }
 
-  static calculateScore(innings) {
-    let score = 0;
-    let wicket = 0;
-    for (const over of innings.overs) {
-      for (const bowl of over.bowls) {
-        if (typeof (bowl.singles) === 'number') {
-          score += bowl.singles;
-        }
-        if (typeof (bowl.by) === 'number') {
-          score += bowl.by;
-        }
-        if (typeof (bowl.legBy) === 'number') {
-          score += bowl.legBy;
-        }
-        if (bowl.boundary && typeof (bowl.boundary.run) === 'number') {
-          score += bowl.boundary.run;
-        }
-        if (typeof (bowl.isWicket) === 'string') {
-          wicket += 1;
-        }
+  static calculateOver(overs){
+      let lastOverNumber = overs.length-1,
+          lastOver = overs[lastOverNumber],
+      bowls = lastOver.bowls,
+      lastOverLength = bowls.length,
+      numOfOvers,
+      numOfBowls;
+      for (let i = 0; i < bowls.length; i++) {
+          const bowl = bowls[i];
+          if(bowl.isWide || bowl.isNo){
+              lastOverLength--;
+          }
       }
-    }
-    return [score, wicket];
+      if(lastOverLength===6){
+          numOfOvers = lastOverNumber+1;
+          numOfBowls = 0;
+      }
+      else{
+          numOfOvers = lastOverNumber;
+          numOfBowls = lastOverLength;
+      }
+      return [numOfOvers, numOfBowls];
   }
 
   render() {
     const { match, showSecondInnings } = this.state;
-
     const sidebar = <aside className="col-3">
       <CenterContent col="col">
         <SidebarList
@@ -101,7 +100,6 @@ class History extends Component {
       return <div
         className="row">{sidebar}{loading}</div>;
     }
-
     if (match.state !== 'done') {
       return <Redirect to={`/live@${this.props.match.params.id}`}/>;
     }
@@ -114,7 +112,6 @@ class History extends Component {
       innings1TeamName,
       innings2TeamName,
       choice;
-
     if (match.team1WonToss) {
       choice = match.team1BatFirst ? 'bat' : 'bowl';
       tossWinningTeamName = match.team1.name;
@@ -122,9 +119,8 @@ class History extends Component {
       choice = match.team1BatFirst ? 'bowl' : 'bat';
       tossWinningTeamName = match.team2.name;
     }
-
-    const [innings1score, innings1wicket] = History.calculateScore(match.innings1);
-    const [innings2score, innings2wicket] = History.calculateScore(match.innings2);
+    const {totalRun: innings1score, totalWicket:innings1wicket} = Score.getTotalScore(match.innings1);
+    const {totalRun: innings2score, totalWicket:innings2wicket} = Score.getTotalScore(match.innings2);
 
     if (innings1score > innings2score) {
       winningTeam = match.team1BatFirst ? match.team1.name : match.team2.name;
@@ -160,7 +156,11 @@ class History extends Component {
       innings2TeamName = match.team1.name;
       innings1TeamName = match.team2.name;
     }
+    let innings1overs = match.innings1.overs,
+    innings2overs = match.innings2.overs;
 
+    const [numOfOvers1, numOfBowls1] = History.calculateOver(innings1overs),
+        [numOfOvers2, numOfBowls2] = History.calculateOver(innings2overs);
 
     const overIndex = this.state.overIndex || 0;
     const bowlerName = bowlingTeamPlayers[match.innings1.overs[overIndex].bowledBy].name;
@@ -170,13 +170,14 @@ class History extends Component {
         <div className="row">
         {sidebar}
           <main className="col bg-success min-vh-100">
-            <div className="row mt-5">
+              <h2 className="text-warning    text-center mt-5 pt-2">{match.name}</h2>
+            <div className="row mt-1">
 
           <div className=" pt-4 pb-4 col text-white text-center">
             <strong className="text-dark">{winningTeam}</strong> won the match {type}. <br/>
             {tossWinningTeamName} won the toss and chose to {choice} first. <br/>
-            {innings1TeamName} : {innings1score}-{innings1wicket} <br/>
-            {innings2TeamName} : {innings2score}-{innings2wicket} <br/>
+            {innings1TeamName} : {innings1score}-{innings1wicket} ({numOfOvers1}.{numOfBowls1}) <br/>
+            {innings2TeamName} : {innings2score}-{innings2wicket} ({numOfOvers2}.{numOfBowls2})<br/>
             {}
             <h5 className="d-flex justify-content-center mt-2">
                 <label className={showSecondInnings? 'badge' : 'badge badge-info'}>1st innings</label>
