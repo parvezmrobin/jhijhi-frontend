@@ -22,6 +22,7 @@ export class Running extends Component {
       },
       match: this.props.match,
     };
+    console.log(this.props.match);
 
     bindMethods(this);
   }
@@ -344,7 +345,8 @@ export class Running extends Component {
 
 
   componentDidUpdate() {
-    if (this._shouldStartNewOver()) {
+    const {bowlerModalIsOpen} = this.state;
+    if (!bowlerModalIsOpen && this._shouldStartNewOver()) {
       const innings = this._getCurrentInnings();
       if (innings.overs.length === this.state.match.overs) {
         return this.onDeclare();
