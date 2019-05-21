@@ -14,7 +14,7 @@ class PreviousOver extends Component {
     const className = 'list-group-item ';
     const {overNo, runs, bowler, onOverClick} = this.props;
     const badges = this.props.wickets.map(
-      wicket => (<kbd key={wicket.kind} className="bg-danger mr-1">{toTitleCase(wicket.kind, ' ')}</kbd>),
+      (wicket, i) => (<kbd key={i} className="bg-danger mr-1">{toTitleCase(wicket.kind, ' ')}</kbd>),
     );
 
     return (
