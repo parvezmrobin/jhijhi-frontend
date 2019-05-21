@@ -33,16 +33,19 @@ export default class Score extends Component {
         return <Redirect to={`history@${this.props.matchId}`}/>;
       }
       const { over: remainingOvers, bowl: remainingBowls } = Score._subtractOver(numberOfOvers, 0, numOvers, numBowls);
-      const remainingOverText = ` in ${remainingOvers ? remainingOvers + ' over' + ((remainingOvers > 1) ? 's' : '') : ''} `
+
+      const remainingRuns = targetRun - totalRun + 1;
+      const remainingOverText = `${remainingRuns} in `
+        + `${remainingOvers ? remainingOvers + ' over' + ((remainingOvers > 1) ? 's' : '') : ''} `
         + `${remainingBowls ? remainingBowls + ' bowl' + ((remainingBowls > 1) ? 's' : '') : ''}`;
       inningsText = <span>
-        <span>Target {targetRun + 1}</span>
-        <small>{remainingOverText}</small>
+        <span>Target {targetRun + 1} </span>
+        <small>({remainingOverText})</small>
       </span>;
       runRateText = <p>
         {runRateText}
         <span className="float-right">
-          Required: {Score._calcRunRate(remainingOvers, remainingBowls, targetRun - totalRun + 1, 2)}
+          Required: {Score._calcRunRate(remainingOvers, remainingBowls, remainingRuns, 2)}
         </span>
       </p>;
     }
@@ -60,11 +63,11 @@ export default class Score extends Component {
 
       </div>
       <div className="mt-2 text-white">
+        <div className="px-2">{runRateText}</div>
         <p className="px-2">
           <em>{tossOwner}</em> won the toss <br/>
           and chose to <em>{choice}</em>.
         </p>
-        <p className="px-2">{runRateText}</p>
       </div>
     </>;
   }
