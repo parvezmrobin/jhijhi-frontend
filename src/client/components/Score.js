@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import propTypes from 'prop-types';
 
-export default class Score extends Component {
+class Score extends Component {
   render() {
     const { battingTeamName, tossOwner, choice, innings, inningsNo, numberOfOvers, firstInnings } = this.props;
     const { totalRun, totalWicket } = Score._getTotalScore(innings);
@@ -30,7 +30,7 @@ export default class Score extends Component {
     } else {
       const { totalRun: targetRun } = Score._getTotalScore(firstInnings);
       if (totalRun > targetRun) {
-        return <Redirect to={`history@${this.props.matchId}`}/>;
+        this.props.onWinning();
       }
       const { over: remainingOvers, bowl: remainingBowls } = Score._subtractOver(numberOfOvers, 0, numOvers, numBowls);
 
@@ -135,3 +135,16 @@ export default class Score extends Component {
     return round ? runRate.toFixed(round) : runRate.toString();
   }
 }
+
+Score.propTypes = {
+  battingTeamName: propTypes.string,
+  tossOwner: propTypes.string,
+  choice: propTypes.string,
+  innings: propTypes.object,
+  firstInnings: propTypes.object,
+  inningsNo: propTypes.number,
+  numberOfOvers: propTypes.number,
+  onWinning: propTypes.func,
+};
+
+export default Score;

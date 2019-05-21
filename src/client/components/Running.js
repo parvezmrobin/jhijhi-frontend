@@ -404,7 +404,7 @@ export class Running extends Component {
             <Score battingTeamName={battingTeamShortName} numberOfOvers={numOvers}
                    tossOwner={team1WonToss ? team1.name : team2.name}
                    choice={tossOwnerChoice} innings={innings} inningsNo={inningsNo}
-                   firstInnings={innings1} matchId={match._id}/>
+                   firstInnings={innings1} matchId={match._id} onWinning={this.onDeclare}/>
           </div>
           <div className="col-md-4">
             <CurrentOver balls={lastOver.bowls} bowler={bowler} battingTeam={battingTeamPlayers}
