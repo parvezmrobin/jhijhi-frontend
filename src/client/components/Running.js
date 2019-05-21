@@ -71,9 +71,9 @@ export class Running extends Component {
     onInput(inputEvent) {
       const genUpdatedState = prevState => {
         let { batsman1, batsman2, bowlerModalIsOpen } = prevState;
-        const { innings, battingTeamPlayers } = this._getCurrentInningsDescription();
+        const innings = this._getCurrentInnings();
         if (inputEvent.type === 'bowl') {
-          [batsman1, batsman2] = Running._onBowlEvent(inputEvent, innings, batsman1, batsman2, battingTeamPlayers.length);
+          [batsman1, batsman2] = Running._onBowlEvent(inputEvent, innings, batsman1, batsman2);
         } else if (inputEvent.type === 'over') {
           innings.overs.push({
             bowledBy: inputEvent.bowler,
@@ -97,7 +97,7 @@ export class Running extends Component {
       this.setState(genUpdatedState);
     },
     onDeclare() {
-      const {match: {state}, isDeclaring} = this.state;
+      const { match: { state }, isDeclaring } = this.state;
       if (isDeclaring || state === 'done') {
         return;
       }
@@ -120,7 +120,7 @@ export class Running extends Component {
     },
   };
 
-  static _onBowlEvent(inputEvent, innings, batsman1, batsman2, totalBattingTeamPlayers) {
+  static _onBowlEvent(inputEvent, innings, batsman1, batsman2) {
     const bowl = inputEvent.bowl;
     const bowls = innings.overs[innings.overs.length - 1].bowls;
 
@@ -130,10 +130,6 @@ export class Running extends Component {
       console.log('lastBowl', bowls[bowls.length - 1]);
     } else {
       bowls.push(bowl);
-    }
-
-    if (Running._isAllOut(innings, totalBattingTeamPlayers)) {
-      this.onDeclare();
     }
 
     if (optional(bowl.isWicket).kind) {
@@ -288,10 +284,16 @@ export class Running extends Component {
   }
 
   componentDidMount() {
-    const { innings, battingTeamPlayers } = this._getCurrentInningsDescription();
-    const {match: {state}} = this.state;
-    if (Running._isAllOut(innings, battingTeamPlayers.length) && state !== 'done') {
-      this.onDeclare();
+    let innings;
+    try {
+      innings = this._getCurrentInnings();
+    } catch (e) {
+      if (e.message === 'State is done in Running page') {
+        return;
+      }
+      throw e;
+    } finally {
+      this.componentDidUpdate();
     }
 
     let { batsman1, batsman2 } = this.state;
@@ -345,13 +347,29 @@ export class Running extends Component {
 
 
   componentDidUpdate() {
-    const {bowlerModalIsOpen} = this.state;
+    let innings,
+      battingTeamPlayers;
+    const { bowlerModalIsOpen, match: { state } } = this.state;
+
+    try {
+      ({
+        innings,
+        battingTeamPlayers,
+      } = this._getCurrentInningsDescription());
+    } catch (e) {
+      if (e.message === 'State is done in Running page') {
+        return;
+      }
+      throw e;
+    }
     if (!bowlerModalIsOpen && this._shouldStartNewOver()) {
-      const innings = this._getCurrentInnings();
-      if (innings.overs.length === this.state.match.overs) {
+      this.setState({ bowlerModalIsOpen: true });
+      if ((state !== 'done') && (innings.overs.length === this.state.match.overs)) {
         return this.onDeclare();
       }
-      this.setState({ bowlerModalIsOpen: true });
+    }
+    if ((state !== 'done') && Running._isAllOut(innings, battingTeamPlayers.length)) {
+      this.onDeclare();
     }
   }
 
