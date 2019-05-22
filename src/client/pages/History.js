@@ -7,7 +7,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { toTitleCase } from '../lib/utils';
 import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
-import Score from "../components/Score";
+import Score from '../components/Score';
 
 class History extends Component {
   constructor(props) {
@@ -54,51 +54,50 @@ class History extends Component {
     this.unlisten();
   }
 
-  static calculateOver(overs){
-      let lastOverNumber = overs.length-1,
-          lastOver = overs[lastOverNumber],
+  static calculateOver(overs) {
+    let lastOverNumber = overs.length - 1,
+      lastOver = overs[lastOverNumber],
       bowls = lastOver.bowls,
       lastOverLength = bowls.length,
       numOfOvers,
       numOfBowls;
-      for (let i = 0; i < bowls.length; i++) {
-          const bowl = bowls[i];
-          if(bowl.isWide || bowl.isNo){
-              lastOverLength--;
-          }
+    for (let i = 0; i < bowls.length; i++) {
+      const bowl = bowls[i];
+      if (bowl.isWide || bowl.isNo) {
+        lastOverLength--;
       }
-      if(lastOverLength===6){
-          numOfOvers = lastOverNumber+1;
-          numOfBowls = 0;
-      }
-      else{
-          numOfOvers = lastOverNumber;
-          numOfBowls = lastOverLength;
-      }
-      return [numOfOvers, numOfBowls];
+    }
+    if (lastOverLength === 6) {
+      numOfOvers = lastOverNumber + 1;
+      numOfBowls = 0;
+    } else {
+      numOfOvers = lastOverNumber;
+      numOfBowls = lastOverLength;
+    }
+    return [numOfOvers, numOfBowls];
   }
 
   render() {
     const { match, showSecondInnings } = this.state;
+    const matchId = this.props.match.params.id;
     const sidebar = <aside className="col-3">
       <CenterContent col="col">
         <SidebarList
           title="Completed Matches"
           itemClass="text-white"
           itemMapper={(match) => {
-            return <Link className="text-info" to={`history@${match._id}`}>{match.name}</Link>;
+            return <Link className={(match._id === matchId) ? 'text-primary' : 'text-info'}
+                         to={`history@${match._id}`}>{match.name}</Link>;
           }}
           list={this.state.matches}/>
       </CenterContent>
     </aside>;
     if (match === null) {
-      const matchId = this.props.match.params.id;
       const text = (matchId === 'null') ? 'Select a Match' : 'Loading...';
-      const loading = <div className="col"><CenterContent>
-        <h2 className="text-center">{text}</h2>
-      </CenterContent></div>;
-      return <div
-        className="row">{sidebar}{loading}</div>;
+      const loading = <div className="col"><CenterContent><h2 className="text-center">
+        {text}
+      </h2></CenterContent></div>;
+      return <div className="row">{sidebar}{loading}</div>;
     }
     if (match.state !== 'done') {
       return <Redirect to={`/live@${this.props.match.params.id}`}/>;
@@ -119,8 +118,8 @@ class History extends Component {
       choice = match.team1BatFirst ? 'bowl' : 'bat';
       tossWinningTeamName = match.team2.name;
     }
-    const {totalRun: innings1score, totalWicket:innings1wicket} = Score.getTotalScore(match.innings1);
-    const {totalRun: innings2score, totalWicket:innings2wicket} = Score.getTotalScore(match.innings2);
+    const { totalRun: innings1score, totalWicket: innings1wicket } = Score.getTotalScore(match.innings1);
+    const { totalRun: innings2score, totalWicket: innings2wicket } = Score.getTotalScore(match.innings2);
 
     if (innings1score > innings2score) {
       winningTeam = match.team1BatFirst ? match.team1.name : match.team2.name;
@@ -157,53 +156,69 @@ class History extends Component {
       innings1TeamName = match.team2.name;
     }
     let innings1overs = match.innings1.overs,
-    innings2overs = match.innings2.overs;
+      innings2overs = match.innings2.overs;
 
     const [numOfOvers1, numOfBowls1] = History.calculateOver(innings1overs),
-        [numOfOvers2, numOfBowls2] = History.calculateOver(innings2overs);
+      [numOfOvers2, numOfBowls2] = History.calculateOver(innings2overs);
 
     const overIndex = this.state.overIndex || 0;
     const bowlerName = bowlingTeamPlayers[match.innings1.overs[overIndex].bowledBy].name;
     const innings = showSecondInnings ? match.innings2 : match.innings1;
 
     return (
-        <div className="row">
+      <div className="row">
         {sidebar}
-          <main className="col bg-success min-vh-100">
-              <h2 className="text-warning    text-center mt-5 pt-2">{match.name}</h2>
-            <div className="row mt-1">
+        <main className="col bg-success min-vh-100 pt-5">
+          <h2 className="text-info bg-dark-trans pt-2 pb-3 mt-3 rounded text-center">
+            {match.name}
+          </h2>
+          <div className="row mt-1">
 
-          <div className=" pt-4 pb-4 col text-white text-center">
-            <strong className="text-dark">{winningTeam}</strong> won the match {type}. <br/>
-            {tossWinningTeamName} won the toss and chose to {choice} first. <br/>
-            {innings1TeamName} : {innings1score}-{innings1wicket} ({numOfOvers1}.{numOfBowls1}) <br/>
-            {innings2TeamName} : {innings2score}-{innings2wicket} ({numOfOvers2}.{numOfBowls2})<br/>
-            {}
-            <h5 className="d-flex justify-content-center mt-2">
-                <label className={showSecondInnings? 'badge' : 'badge badge-info'}>1st innings</label>
-                <CustomInput className="mx-3" checked={showSecondInnings} type="switch" id="innings" name="innings"
-                             onChange={e => this.setState({
+            <div className="pt-3 col text-white">
+              <h4 className="text-center">{winningTeam}</h4>
+              <div className="bg-info shadow rounded pb-3 px-2">
+                <h5 className="text-center">won the match {type}. </h5>
+                <h5 className="d-flex justify-content-center my-3">
+                  <label className={showSecondInnings ? 'badge' : 'badge badge-primary'}>
+                    1st innings
+                  </label>
+                  <CustomInput className="mx-3" checked={showSecondInnings} type="switch"
+                               id="innings"
+                               name="innings"
+                               onChange={e => this.setState({
                                  showSecondInnings: e.target.checked,
                                  overIndex: 0,
-                             })}  inline/>
-                <label className={showSecondInnings? 'badge badge-info' : 'badge'}>2nd innings</label>
-            </h5>
-
+                               })} inline/>
+                  <label className={showSecondInnings ? 'badge badge-primary' : 'badge'}>
+                    2nd innings
+                  </label>
+                </h5>
+                <p className="lead">
+                  <strong>Toss Won:</strong> {tossWinningTeamName}<br/>
+                  <strong>Decision:</strong> {choice}
+                </p>
+                <p className="lead">
+                  <strong>{innings1TeamName}:</strong> {innings1score}/{innings1wicket}{' '}
+                  <small>({numOfOvers1}.{numOfBowls1} overs)</small>
+                  <br/>
+                  <strong>{innings2TeamName}:</strong> {innings2score}/{innings2wicket}{' '}
+                  <small>({numOfOvers2}.{numOfBowls2} overs)</small>
+                </p>
               </div>
-              <div className="pt-1 col">
-                <PreviousOvers overs={innings.overs} bowlingTeam={bowlingTeamPlayers}
-                               onOverClick={(index) => this.setState({ overIndex: index })}/>
-
-              </div>
-              <div className="pt-1 col">
-                <CurrentOver balls={innings.overs[overIndex].bowls}
-                             title={`${toTitleCase(bowlerName)} bowled (Over ${overIndex + 1})`}
-                             battingTeam={battingTeamPlayers}/>
-              </div>
-
             </div>
-          </main>
-        </div>
+            <div className="pt-1 col">
+              <PreviousOvers overs={innings.overs} bowlingTeam={bowlingTeamPlayers}
+                             onOverClick={(index) => this.setState({ overIndex: index })}/>
+            </div>
+            <div className="pt-1 col">
+              <CurrentOver balls={innings.overs[overIndex].bowls}
+                           title={`${toTitleCase(bowlerName)} bowled (Over ${overIndex + 1})`}
+                           battingTeam={battingTeamPlayers}/>
+            </div>
+
+          </div>
+        </main>
+      </div>
     );
   }
 }
