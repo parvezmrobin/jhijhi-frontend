@@ -71,7 +71,8 @@ const players = [{
 }];
 
 module.exports = async function (userId) {
-  const users = userId ? [{ _id: userId }] : await User.find({});
+  const users = !userId ? await User.find({})
+    : Array.isArray(userId) ? userId.map(id => ({ _id: id })) : [{ _id: userId }];
   const creatorWisePlayers = users.map(
     creator => players.map(player => ({
       ...player,

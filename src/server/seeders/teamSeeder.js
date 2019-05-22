@@ -20,7 +20,8 @@ const teams = [{
 }];
 
 module.exports = async function (userId) {
-  const users = userId ? [{ _id: userId }] : await User.find({});
+  const users = !userId ? await User.find({})
+    : Array.isArray(userId) ? userId.map(id => ({ _id: id })) : [{ _id: userId }];
   const creatorWiseTeamPromises = users.map(async creator =>
     teams.map(team => ({
       ...team,
