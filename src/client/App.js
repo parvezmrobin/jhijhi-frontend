@@ -26,6 +26,7 @@ const Live = React.lazy(() => import(/* webpackChunkName: "Live" */ './pages/Liv
 const History = React.lazy(() => import(/* webpackChunkName: "History" */ './pages/History'));
 const Kidding = React.lazy(() => import(/* webpackChunkName: "Kidding" */ './pages/Kidding'));
 const Password = React.lazy(() => import(/* webpackChunkName: "Password" */ './pages/Password'));
+const Public = React.lazy(() => import(/* webpackChunkName: "Public" */ './pages/Public'));
 
 
 class App extends Component {
@@ -57,6 +58,7 @@ class App extends Component {
 
                     <Route path="/login" component={Login}/>
                     <Route path="/register" component={Register}/>
+                    <Route path="/public@:id" component={Public}/>
                     {shouldRedirect && <Redirect to="/login"/>}
                     <Route path="/" exact component={Home}/>
                     <Route path="/contact" component={Contact}/>

@@ -26,6 +26,11 @@ export default class MatchDetail extends Component {
     };
   }
 
+
+  componentDidMount() {
+    this._loadMatchIfNecessary();
+  }
+
   componentDidUpdate() {
     this._loadMatchIfNecessary();
   }
@@ -133,7 +138,7 @@ export default class MatchDetail extends Component {
           <div className="bg-info shadow rounded pb-3 px-2">
             <h5 className="text-center">won the match {type}. </h5>
             <h5 className="d-flex justify-content-center my-3">
-              <label className={showSecondInnings ? 'badge' : 'badge badge-primary'}>
+              <label className={showSecondInnings ? 'badge' : 'badge badge-success'}>
                 1st innings
               </label>
               <CustomInput className="mx-3" checked={showSecondInnings} type="switch"
@@ -142,7 +147,7 @@ export default class MatchDetail extends Component {
                              showSecondInnings: e.target.checked,
                              overIndex: 0,
                            })} inline/>
-              <label className={showSecondInnings ? 'badge badge-primary' : 'badge'}>
+              <label className={showSecondInnings ? 'badge badge-success' : 'badge'}>
                 2nd innings
               </label>
             </h5>
@@ -157,6 +162,10 @@ export default class MatchDetail extends Component {
               <strong>{innings2TeamName}:</strong> {innings2score}/{innings2wicket}{' '}
               <small>({numOfOvers2}.{numOfBowls2} overs)</small>
             </p>
+            <hr/>
+            <button onClick={(e) => this.copySharableLink(e)} className="btn btn-success btn-block">
+              Copy Sharable Link
+            </button>
           </div>
         </div>
         <div className="pt-1 col">
@@ -171,6 +180,22 @@ export default class MatchDetail extends Component {
 
       </div>
     </main>;
+  }
+
+  copySharableLink(e) {
+    const url = `${window.location.origin}/public@${this.props.matchId}`;
+    const el = document.createElement('textarea');
+    el.value = url;
+    el.setAttribute('readonly', '');
+    el.style.display = null;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+
+    const button = e.target;
+    button.innerHTML = 'Copied';
+    setTimeout(() => button.innerHTML = 'Copy Sharable Link', 500);
   }
 }
 

@@ -371,12 +371,9 @@ router.get('/done', authenticateJwt(), function (request, response) {
 
 });
 
-router.get('/:id', authenticateJwt(), (request, response) => {
+router.get('/:id', (request, response) => {
   Match
-    .findOne({
-      creator: request.user._id,
-      _id: request.params.id,
-    })
+    .findOne({_id: request.params.id })
     .populate('team1')
     .populate('team2')
     .populate('team1Captain')
