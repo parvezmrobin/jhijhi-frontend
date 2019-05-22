@@ -12,7 +12,7 @@ import MatchForm from "../components/MatchForm";
 import {bindMethods} from "../lib/utils";
 import fetcher from "../lib/fetcher";
 import {Toast, ToastBody, ToastHeader} from "reactstrap";
-import {Link} from "react-router-dom";
+import { Link, Redirect } from 'react-router-dom';
 
 
 class Match extends Component {
@@ -28,7 +28,7 @@ class Match extends Component {
         umpire3: '',
         overs: '',
       },
-      teams: [],
+      teams: null,
       matches: [],
       umpires: [],
       isValid: {
@@ -142,7 +142,10 @@ class Match extends Component {
   }
 
   render() {
-    const message = this.state.message;
+    const {message, teams} = this.state;
+    if (teams && teams.length < 3) {
+      return <Redirect to="/team?redirected=1"/>
+    }
     return (
       <div className="container-fluid pl-0">
         <Toast isOpen={!!message}>
@@ -165,7 +168,7 @@ class Match extends Component {
           </aside>
           <main className="col">
             <CenterContent col="col-lg-8 col-md-10">
-              <MatchForm teams={this.state.teams} umpires={this.state.umpires}
+              <MatchForm teams={teams || []} umpires={this.state.umpires}
                          values={this.state.match}
                          onChange={this.onChange} onSubmit={this.onSubmit}
                          isValid={this.state.isValid} feedback={this.state.feedback}/>

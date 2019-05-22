@@ -7,23 +7,25 @@
 
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import Register from './pages/Register';
-import Login from './pages/Login';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Contact from './pages/Contact';
-import Team from './pages/Team';
-import TeamPlayers from './pages/Team/Players';
-import Player from './pages/Player';
-import Umpire from './pages/Umpire';
-import Match from './pages/Match';
 import { toTitleCase } from './lib/utils';
-import Live from './pages/Live';
 import fetcher from './lib/fetcher';
 import ErrorBoundary from './ErrorBoundary';
-import History from "./pages/History";
-import Kidding from './pages/Kidding';
-import Password from './pages/Password';
+import './scss/App.scss';
+import 'bootstrap';
+
+const Home = React.lazy(() => import(/* webpackChunkName: "Home" */ './pages/Home'));
+const Navbar = React.lazy(() => import(/* webpackChunkName: "Navbar" */ './components/Navbar'));
+const Register = React.lazy(() => import(/* webpackChunkName: "Register" */ './pages/Register'));
+const Login = React.lazy(() => import(/* webpackChunkName: "Login" */ './pages/Login'));
+const Contact = React.lazy(() => import(/* webpackChunkName: "Contact" */ './pages/Contact'));
+const Team = React.lazy(() => import(/* webpackChunkName: "Team" */ './pages/Team'));
+const Player = React.lazy(() => import(/* webpackChunkName: "Player" */ './pages/Player'));
+const Umpire = React.lazy(() => import(/* webpackChunkName: "Umpire" */ './pages/Umpire'));
+const Match = React.lazy(() => import(/* webpackChunkName: "Match" */ './pages/Match'));
+const Live = React.lazy(() => import(/* webpackChunkName: "Live" */ './pages/Live'));
+const History = React.lazy(() => import(/* webpackChunkName: "History" */ './pages/History'));
+const Kidding = React.lazy(() => import(/* webpackChunkName: "Kidding" */ './pages/Kidding'));
+const Password = React.lazy(() => import(/* webpackChunkName: "Password" */ './pages/Password'));
 
 
 class App extends Component {
@@ -51,24 +53,24 @@ class App extends Component {
           <div className="row">
             <div className="col">
               <ErrorBoundary>
-                <Switch>
+                  <Switch>
 
-                  <Route path="/login" component={Login}/>
-                  <Route path="/register" component={Register}/>
-                  {shouldRedirect && <Redirect to="/login"/>}
-                  <Route path="/" exact component={Home}/>
-                  <Route path="/contact" component={Contact}/>
-                  <Route path="/player" component={Player}/>
-                  <Route path="/team" exact component={Team}/>
-                  <Route path="/team/:id" component={TeamPlayers}/>
-                  <Route path="/umpire" component={Umpire}/>
-                  <Route path="/match" component={Match}/>
-                  <Route path="/live@:id" component={Live}/>
-                  <Route path="/history@:id" component={History}/>
-                  <Route path="/kidding" component={Kidding}/>
-                  <Route path="/password" component={Password}/>
+                    <Route path="/login" component={Login}/>
+                    <Route path="/register" component={Register}/>
+                    {shouldRedirect && <Redirect to="/login"/>}
+                    <Route path="/" exact component={Home}/>
+                    <Route path="/contact" component={Contact}/>
+                    <Route path="/player@:id" component={Player}/>
+                    <Route path="/player" component={Player}/>
+                    <Route path="/team" exact component={Team}/>
+                    <Route path="/umpire" component={Umpire}/>
+                    <Route path="/match" component={Match}/>
+                    <Route path="/live@:id" component={Live}/>
+                    <Route path="/history@:id" component={History}/>
+                    <Route path="/kidding" component={Kidding}/>
+                    <Route path="/password" component={Password}/>
 
-                </Switch>
+                  </Switch>
               </ErrorBoundary>
             </div>
           </div>

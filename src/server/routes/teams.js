@@ -8,37 +8,44 @@ const express = require('express');
  * @property {Function} delete
  */
 const router = express.Router();
-const Team = require("../models/team");
-const responses = require("../responses");
+const Team = require('../models/team');
+const responses = require('../responses');
 const passport = require('passport');
-const authenticateJwt = passport.authenticate.bind(passport, 'jwt', {session: false});
-const {check, validationResult} = require('express-validator/check');
+const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
+const { check, validationResult } = require('express-validator/check');
 
 
 const teamCreateValidations = [
-  check('name').exists({checkFalsy: true})
-    .custom(name => {
+  check('name')
+    .exists({ checkFalsy: true })
+    .custom((name, { req }) => {
       return Team
-        .findOne({name: name})
+        .findOne({
+          name: name,
+          creator: req.user._id,
+        })
         .exec()
         .then(team => {
           if (team) {
-            return Promise.reject("Team Name already taken.");
+            return Promise.reject('Team Name already taken.');
           }
           return Promise.resolve();
         });
     }),
   check('shortName', 'Short name should be at least 2 characters')
-    .isAscii({min: 1})
-    .isLength({min: 2}),
+    .isAscii({ min: 1 })
+    .isLength({ min: 2 }),
   check('shortName')
-    .custom(shortName => {
+    .custom((shortName, { req }) => {
       return Team
-        .findOne({shortName: shortName})
+        .findOne({
+          shortName: shortName,
+          creator: req.user._id,
+        })
         .exec()
         .then(team => {
           if (team) {
-            return Promise.reject("This short name is already taken.");
+            return Promise.reject('This short name is already taken.');
           }
           return Promise.resolve();
         });
@@ -47,7 +54,7 @@ const teamCreateValidations = [
 
 router.get('/:id', authenticateJwt(), (request, response) => {
   Team
-    .findOne({_id: request.params.id})
+    .findOne({ _id: request.params.id })
     .lean()
     .populate('players')
     .then(teams => response.json(teams))
@@ -58,13 +65,13 @@ router.get('/:id', authenticateJwt(), (request, response) => {
         message: responses.teams.index.err,
         err: err.error || err.errors || err,
       });
-    })
+    });
 });
 
 /* GET teams listing. */
 router.get('/', authenticateJwt(), (request, response) => {
   Team
-    .find({creator: request.user._id})
+    .find({ creator: request.user._id })
     .lean()
     .then(teams => response.json(teams))
     .catch(err => {
@@ -74,13 +81,16 @@ router.get('/', authenticateJwt(), (request, response) => {
         message: responses.teams.index.err,
         err: err.error || err.errors || err,
       });
-    })
+    });
 });
 
 router.post('/', authenticateJwt(), teamCreateValidations, (request, response) => {
   const errors = validationResult(request);
-  const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({status: 400, errors: errors.array()});
-  const {name, shortName} = request.body;
+  const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({
+    status: 400,
+    errors: errors.array(),
+  });
+  const { name, shortName } = request.body;
 
   promise
     .then(() => Team.create({
@@ -92,7 +102,7 @@ router.post('/', authenticateJwt(), teamCreateValidations, (request, response) =
       response.json({
         success: true,
         message: responses.teams.create.ok(name),
-        team: {_id: createdTeam._id},
+        team: { _id: createdTeam._id },
       });
     })
     .catch(err => {
@@ -102,7 +112,7 @@ router.post('/', authenticateJwt(), teamCreateValidations, (request, response) =
         message: responses.teams.create.err,
         err: err.error || err.errors || err,
       });
-    })
+    });
 });
 
 module.exports = router;

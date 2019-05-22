@@ -12,15 +12,16 @@ import { bindMethods, subtract, toTitleCase } from '../lib/utils';
 import FormGroup from './form/FormGroup';
 import FormButton from './form/FormButton';
 import fetcher from '../lib/fetcher';
+import * as PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 
 
 export default class PreMatch extends Component {
-  matchId;
 
   constructor(props) {
     super(props);
     this.state = {
-      players: [],
+      players: null,
       team1Players: [],
       team2Players: [],
       team1Captain: '',
@@ -87,6 +88,11 @@ export default class PreMatch extends Component {
     onChange(action) {
       this.setState({ ...action });
     },
+    /**
+     * @param action
+     * @param action.select
+     * @param action.unselect
+     */
     onTeam1PlayerChange(action) {
 
       this.setState(prevState => {
@@ -151,6 +157,12 @@ export default class PreMatch extends Component {
 
 
   render() {
+    let {players} = this.state;
+    if (players && players.length < 4) {
+      return <Redirect to="/player?redirected=1"/>
+    }
+    players = players || [];
+
     const getCheckboxOnChangeForTeam = (team, id) => {
       // if checkbox is checked, key is 'select' and 'unselect otherwise. value is the index
       if (team === 1) {
@@ -177,9 +189,9 @@ export default class PreMatch extends Component {
       </li>
     );
 
-    const team1CandidatePlayers = subtract(this.state.players, this.state.team2Players, matcher)
+    const team1CandidatePlayers = subtract(players, this.state.team2Players, matcher)
       .map(getListItemMapperForTeam(1));
-    const team2CandidatePlayers = subtract(this.state.players, this.state.team1Players, matcher)
+    const team2CandidatePlayers = subtract(players, this.state.team1Players, matcher)
       .map(getListItemMapperForTeam(2));
 
     return (
@@ -190,7 +202,7 @@ export default class PreMatch extends Component {
             <h2 className="text-center text-primary">{this.props.team1.name}</h2>
             <hr/>
             <FormGroup label="Captain" type="select"
-                       options={this.state.players.filter(
+                       options={players.filter(
                          el => this.state.team1Players.indexOf(el._id) !== -1,
                        )}
                        name="team1-captain" value={this.state.team1Captain}
@@ -210,7 +222,7 @@ export default class PreMatch extends Component {
             <h2 className="text-center text-primary">{this.props.team2.name}</h2>
             <hr/>
             <FormGroup label="Captain" type="select"
-                       options={this.state.players.filter(
+                       options={players.filter(
                          el => this.state.team2Players.indexOf(el._id) !== -1,
                        )}
                        name="team2-captain" value={this.state.team2Captain}
@@ -237,3 +249,10 @@ export default class PreMatch extends Component {
 
 }
 
+PreMatch.propTypes = {
+  team1: PropTypes.object,
+  team2: PropTypes.object,
+  matchId: PropTypes.string,
+  name: PropTypes.string,
+  onMatchBegin: PropTypes.func,
+};

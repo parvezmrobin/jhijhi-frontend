@@ -37,25 +37,25 @@ const dividePlayers = function (players) {
 
 const matches = [{
   name: 'Running Match 1',
-  state: 'innings1',
+  state: 'innings2',
   team1WonToss: Math.random() < .5,
   team1BatFirst: Math.random() < .5,
   overs: 5,
 }, {
   name: 'Running Match 2',
-  state: 'innings1',
+  state: 'innings2',
   team1WonToss: Math.random() < .5,
   team1BatFirst: Math.random() < .5,
   overs: 5,
 }, {
   name: 'Running Match 3 (4 Overs)',
-  state: 'innings1',
+  state: 'innings2',
   team1WonToss: Math.random() < .5,
   team1BatFirst: Math.random() < .5,
   overs: 4,
 }, {
   name: 'Running Match 4  (4 Overs)',
-  state: 'innings1',
+  state: 'innings2',
   team1WonToss: Math.random() < .5,
   team1BatFirst: Math.random() < .5,
   overs: 4,
@@ -78,7 +78,7 @@ const matches = [{
   team1BatFirst: Math.random() < .5,
   overs: 4,
 }, {
-  name: 'Done Match 1',
+  name: 'Done Match 2',
   state: 'done',
   team1WonToss: Math.random() < .5,
   team1BatFirst: Math.random() < .5,
@@ -118,7 +118,7 @@ const lastOver = {
     isWide: true,
     by: 1,
   }],
-};
+}; // 24 runs
 
 const secondOver = {
   bowledBy: 1,
@@ -151,7 +151,7 @@ const secondOver = {
       kind: 'bold',
     },
   }],
-};
+}; // 20 runs
 
 const firstOver = {
   bowledBy: 0,
@@ -183,7 +183,7 @@ const firstOver = {
       kind: 'caught',
     },
   }],
-};
+}; // 12 runs
 
 const winningBowl = {
   playedBy: 4,
@@ -209,10 +209,12 @@ module.exports = async function (userId) {
           match.creator = creator._id;
 
           if (match.name.startsWith('Running')) {
-            match.innings1 = { overs: [firstOver, secondOver, lastOver] };
+            match.innings1 = { overs: [firstOver, secondOver, {bowledBy: 3, bowls: [...lastOver.bowls]}] };
+            match.innings1.overs[2].bowls[5] = winningBowl;
+            match.innings2 = { overs: [firstOver, secondOver, lastOver] };
           } else if (match.name.startsWith('Done')) {
             match.innings1 = { overs: [firstOver, secondOver, lastOver] };
-            match.innings2 = {overs: [firstOver, secondOver, lastOver]};
+            match.innings2 = { overs: [firstOver, secondOver, {bowledBy: 3, bowls: [...lastOver.bowls]}] };
             match.innings2.overs[2].bowls[5] = winningBowl;
           }
 

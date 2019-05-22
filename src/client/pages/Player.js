@@ -10,9 +10,9 @@ import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
 import PlayerForm from '../components/PlayerForm';
 import fetcher from '../lib/fetcher';
-import { bindMethods, toTitleCase } from '../lib/utils';
+import { bindMethods } from '../lib/utils';
 import { Link } from 'react-router-dom';
-import { Toast, ToastBody, ToastHeader } from 'reactstrap';
+import { Alert, Toast, ToastBody, ToastHeader } from 'reactstrap';
 
 
 class Player extends Component {
@@ -33,39 +33,120 @@ class Player extends Component {
         jerseyNo: null,
       },
       message: null,
+      redirected: this.props.location.search.startsWith('?redirected=1'),
     };
 
     bindMethods(this);
   }
 
   componentDidMount() {
+    this.unlisten = this.props.history.listen((location) => {
+      const playerId = location.pathname.substr(8);
+      this._loadPlayerIfNecessary(playerId);
+    });
 
     fetcher.get('players')
       .then(response => {
         this.setState({ players: response.data });
+        if (this.props.match.params.id) {
+          this._loadPlayer(response.data, this.props.match.params.id);
+        }
+      });
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
+  }
+
+  _loadPlayerIfNecessary(playerId) {
+    const players = this.state.players;
+    if (players.length && playerId) {
+      this._loadPlayer(players, playerId);
+    } else {
+      this.setState({
+        player: {
+          name: '',
+          jerseyNo: '',
+        },
+      });
+    }
+  }
+
+  _loadPlayer(players, playerId) {
+    const player = players.find(_player => _player._id === playerId);
+
+    if (player) {
+      this.setState({ player });
+    }
+  }
+
+  createPlayer() {
+    const postData = { ...this.state.player };
+
+    return fetcher
+      .post('players', postData)
+      .then(response => {
+        this.setState(prevState => ({
+          ...prevState,
+          players: prevState.players.concat(response.data.player),
+          player: {
+            name: '',
+            jerseyNo: '',
+          },
+          isValid: {
+            name: null,
+            jerseyNo: null,
+          },
+          feedback: {
+            name: null,
+            jerseyNo: null,
+          },
+          message: response.data.message,
+        }));
+      });
+  }
+
+  updatePlayer() {
+    const { player } = this.state;
+    const postData = {
+      name: player.name,
+      jerseyNo: player.jerseyNo,
+    };
+
+    return fetcher
+      .put(`players/${player._id}`, postData)
+      .then(response => {
+        this.setState(prevState => {
+          const playerIndex = prevState.players.findIndex(_player => _player._id === player._id);
+          if (playerIndex !== -1) {
+            prevState.players[playerIndex] = response.data.player;
+          }
+          return {
+            ...prevState,
+            isValid: {
+              name: null,
+              jerseyNo: null,
+            },
+            feedback: {
+              name: null,
+              jerseyNo: null,
+            },
+            message: response.data.message,
+          };
+        });
       });
   }
 
   handlers = {
     onSubmit() {
-      const postData = { ...this.state.player };
+      let submission;
+      if (this.state.player._id) {
+        submission = this.updatePlayer();
+      } else {
+        submission = this.createPlayer();
+      }
 
-      fetcher
-        .post('players', postData)
-        .then(response => {
-          this.setState(prevState => ({
-            ...prevState,
-            players: prevState.players.concat({
-              ...prevState.player,
-              _id: response.data.player._id,
-            }),
-            player: {
-              name: '',
-              jerseyNo: '',
-            },
-            message: response.data.message,
-          }));
-        })
+      submission
         .catch(err => {
           const isValid = {
             name: true,
@@ -98,8 +179,8 @@ class Player extends Component {
 
   render() {
     const renderPlayer = player => {
-      const playerText = `${toTitleCase(player.name)} (${player.jerseyNo})`;
-      const editButton = <Link to={'player/edit/' + player._id}
+      const playerText = `${player.name} (${player.jerseyNo})`;
+      const editButton = <Link to={'player@' + player._id}
                                className="float-right"><kbd>Edit</kbd></Link>;
       return <Fragment>{playerText} {editButton}</Fragment>;
     };
@@ -113,6 +194,7 @@ class Player extends Component {
             {this.state.message}
           </ToastBody>
         </Toast>
+
         <div className="row">
           <aside className="col-md-3">
             <CenterContent col="col">
@@ -125,6 +207,11 @@ class Player extends Component {
           </aside>
           <main className="col">
             <CenterContent col="col-lg-8 col-md-10">
+              {this.state.redirected && <Alert color="info">
+                <p className="lead mb-0">
+                  You need at least 4 players to start a match.
+                </p>
+              </Alert>}
               <PlayerForm values={this.state.player} onChange={this.onChange}
                           onSubmit={this.onSubmit}
                           isValid={this.state.isValid} feedback={this.state.feedback}/>

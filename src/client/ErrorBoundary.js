@@ -7,6 +7,7 @@
 
 import React, {Component} from "react";
 import CenterContent from "./components/layouts/CenterContent";
+import { Link } from 'react-router-dom';
 
 
 class ErrorBoundary extends Component {
@@ -27,7 +28,13 @@ class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       // You can render any custom fallback UI
-      return <CenterContent><h1 className="text-center text-danger">Something went wrong!</h1></CenterContent>;
+      return <CenterContent><h1 className="text-center font-weight-normal">
+        <span className="d-inline-flex text-danger">Something went wrong!</span>
+        <br/>
+        <span className="d-inline-flex mt-4">
+          Please<Link to="#" onClick={window.location.reload}>&nbsp;reload&nbsp;</Link>the page to retry.
+        </span>
+      </h1></CenterContent>;
     }
 
     return this.props.children;

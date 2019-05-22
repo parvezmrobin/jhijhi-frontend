@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import * as PropTypes from 'prop-types';
 
-export default class Score extends Component {
+class Score extends Component {
   render() {
     const { battingTeamName, tossOwner, choice, innings, inningsNo, numberOfOvers, firstInnings } = this.props;
     const {totalRun, totalWicket} = Score.getTotalScore(innings);
@@ -9,42 +9,67 @@ export default class Score extends Component {
     const { numOvers, numBowls } = Score.getOverCount(innings);
 
     let inningsText;
+    let runRateText = <span>
+      Run Rate: {Score._calcRunRate(numOvers, parseInt(numBowls), totalRun, 2)}
+    </span>;
+
     if (inningsNo === 1) {
       inningsText = 'Innings 1';
     } else {
-      const {totalRun: targetRun} = Score.getTotalScore(firstInnings);
-      if (totalRun > targetRun) {
-        return <Redirect to={`history@${this.props.matchId}`}/>
-      }
-      inningsText = `Target ${targetRun}`;
-      console.log(targetRun);
+      const { totalRun: targetRun } = Score._getTotalScore(firstInnings);
+      const { over: remainingOvers, bowl: remainingBowls } = Score._subtractOver(numberOfOvers, 0, numOvers, numBowls);
 
+      const remainingRuns = targetRun - totalRun + 1;
+      const remainingOverText = `${remainingRuns} in `
+        + `${remainingOvers ? remainingOvers + ' over' + ((remainingOvers > 1) ? 's' : '') : ''} `
+        + `${remainingBowls ? remainingBowls + ' bowl' + ((remainingBowls > 1) ? 's' : '') : ''}`;
+      inningsText = <span>
+        <span>Target {targetRun + 1} </span>
+        <small>({remainingOverText})</small>
+      </span>;
+      runRateText = <p>
+        {runRateText}
+        <span className="float-right">
+          Required: {Score._calcRunRate(remainingOvers, remainingBowls, remainingRuns, 2)}
+        </span>
+      </p>;
     }
 
     return <>
       <div className='bg-dark text-info p-2 mt-5 rounded'>
         <h4 className="mt-3 text-white">{battingTeamName} - {totalRun} / {totalWicket}</h4>
-        <h5 className="text-primary">
-          <small>After</small>
-          &nbsp;{numOvers} overs {numBowls && `${numBowls} bowl${(numBowls > 1) ? 's' : ''}`}
+        <h5 className="font-weight-normal">
+          <span
+            className="text-primary">{numOvers} overs {numBowls && `${numBowls} bowl${(numBowls > 1) ? 's' : ''}`}</span>
+          &nbsp;
+          <small>({numberOfOvers} overs)</small>
         </h5>
-        <h5>
-          <small>From</small>&nbsp;{numberOfOvers} overs
-        </h5>
-        <h6>{inningsText}</h6>
+        <h5 className="font-weight-normal">{inningsText}</h5>
 
       </div>
       <div className="mt-2 text-white">
-        <h5 className="px-2">
-          <small>
-            <em>{tossOwner}</em> won the toss <br/>
-            and chose to <em>{choice}</em>.
-          </small>
-        </h5>
-
+        <div className="px-2">{runRateText}</div>
+        <p className="px-2">
+          <em>{tossOwner}</em> won the toss <br/>
+          and chose to <em>{choice}</em>.
+        </p>
       </div>
     </>;
   }
+
+
+  componentDidUpdate() {
+    const {innings, inningsNo, firstInnings} = this.props;
+    if (inningsNo === 1) {
+      return;
+    }
+    const {totalRun: firstInningsRuns} = Score._getTotalScore(firstInnings);
+    const {totalRun: secondInningsRuns} = Score._getTotalScore(innings);
+    if (secondInningsRuns > firstInningsRuns) {
+      this.props.onWinning();
+    }
+  }
+
 
   static getOverCount(innings) {
     let numOvers = innings.overs.length - 1;
@@ -67,7 +92,9 @@ export default class Score extends Component {
   }
 
   static getTotalScore(innings) {
-    let totalWicket = 0, totalRun = 0;
+
+    let totalWicket = 0,
+      totalRun = 0;
     for (const over of innings.overs) {
       for (const bowl of over.bowls) {
         if (bowl.isWicket) {
@@ -95,4 +122,47 @@ export default class Score extends Component {
       totalRun,
     };
   }
+
+  /**
+   * @param {Number} fromOver
+   * @param {Number} fromBowl
+   * @param {Number} toOver
+   * @param {Number} toBowl
+   * @returns {{over: Number, bowl: Number}}
+   * @private
+   */
+  static _subtractOver(fromOver, fromBowl, toOver, toBowl) {
+    if (fromBowl < toBowl) {
+      fromOver--;
+      fromBowl += 6;
+    }
+    return {
+      over: fromOver - toOver,
+      bowl: fromBowl - toBowl,
+    };
+  };
+
+  /**
+   * @param {Number} overs
+   * @param {Number} bowls
+   * @param {Number} run
+   * @param {Number} round
+   * @returns {string}
+   * @private
+   */
+  static _calcRunRate(overs, bowls, run, round) {
+    const runRate = run / (overs * 6 + bowls) * 6;
+    return round ? runRate.toFixed(round) : runRate.toString();
+  }
 }
+
+Score.propTypes = {
+  battingTeamName: PropTypes.string,
+  tossOwner: PropTypes.string,
+  choice: PropTypes.string,
+  innings: PropTypes.object,
+  firstInnings: PropTypes.object,
+  inningsNo: PropTypes.number,
+  numberOfOvers: PropTypes.number,
+  onWinning: PropTypes.func,
+};

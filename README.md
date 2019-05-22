@@ -1,9 +1,14 @@
 # Jhijhi
 
-> A simple react app backed by Express JS to maintain cricket score
+*A simple react app backed by Express JS to maintain cricket score*
+
+## Live
+
+> You can use the app from https://jhijhi.herokuapp.com.
 
 ## Installation
-Make sure you have `node` and `npm` installed. Then run
+To install the app in your local machine
+make sure you have `node` and `npm` installed. Then run
 ```npm
 npm install
 ```

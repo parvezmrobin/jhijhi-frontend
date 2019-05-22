@@ -11,7 +11,7 @@ import SidebarList from '../components/SidebarList';
 import TeamForm from '../components/TeamForm';
 import fetcher from "../lib/fetcher";
 import {bindMethods} from "../lib/utils";
-import {Toast, ToastBody, ToastHeader} from "reactstrap";
+import { Alert, Toast, ToastBody, ToastHeader } from 'reactstrap';
 
 
 class Team extends Component {
@@ -32,6 +32,7 @@ class Team extends Component {
         shortName: null,
       },
       message: null,
+      redirected: this.props.location.search.startsWith('?redirected=1'),
     };
     bindMethods(this);
   }
@@ -134,6 +135,11 @@ class Team extends Component {
           </aside>
           <main className="col">
             <CenterContent col="col-lg-8 col-md-10">
+              {this.state.redirected && <Alert color="info">
+                <p className="lead mb-0">
+                  You need at least 2 teams to create a match.
+                </p>
+              </Alert>}
               <TeamForm players={this.state.players} onChange={this.onChange} onSubmit={this.onSubmit}
                         team={this.state.team}
                         isValid={this.state.isValid} feedback={this.state.feedback}/>

@@ -14,6 +14,13 @@ function _genSidebarPlayerMapper(innings, battingTeamPlayers) {
           isOut: null,
         };
       }
+      const runOutBatsmanName = bowl.isWicket && Number.isInteger(bowl.isWicket.player) && battingTeamPlayers[bowl.isWicket.player].name;
+      if (runOutBatsmanName && !sidebarContent[runOutBatsmanName]) {
+        sidebarContent[runOutBatsmanName] = {
+          run: 0,
+          isOut: null,
+        };
+      }
 
       if (bowl.singles) {
         sidebarContent[batsmanName].run += bowl.singles;

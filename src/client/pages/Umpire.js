@@ -11,7 +11,7 @@ import SidebarList from '../components/SidebarList';
 import UmpireForm from "../components/UmpireForm";
 
 
-class Player extends Component {
+class Umpire extends Component {
 
   render() {
     return (
@@ -37,4 +37,4 @@ class Player extends Component {
 
 }
 
-export default Player;
+export default Umpire;
