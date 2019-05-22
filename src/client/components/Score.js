@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 
-class Score extends Component {
+export default class Score extends Component {
   render() {
     const { battingTeamName, tossOwner, choice, innings, inningsNo, numberOfOvers, firstInnings } = this.props;
     const {totalRun, totalWicket} = Score.getTotalScore(innings);
