@@ -8,10 +8,13 @@
 import React, { Fragment } from 'react';
 import FormGroup from './form/FormGroup';
 import FormButton from './form/FormButton';
+import { Link } from 'react-router-dom';
 
 
 function PlayerForm(props) {
   const operation = props.values._id ? 'Edit' : 'Create';
+  const child = !props.values._id ? null :
+    <label className="col-form-label float-right"><Link to="/player">Create</Link> a player instead</label>;
   return (
     <Fragment>
       <h2>{operation} Player</h2>
@@ -27,7 +30,7 @@ function PlayerForm(props) {
                    value={props.values.jerseyNo} isValid={props.isValid.jerseyNo}
                    feedback={props.feedback.jerseyNo}/>
         <FormButton type="submit" text={operation} btnClass="outline-success">
-          {props.children}
+          {child}
         </FormButton>
       </form>
     </Fragment>
