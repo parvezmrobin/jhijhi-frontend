@@ -19,7 +19,9 @@ const { Error400, Error404 } = require('../lib/errors');
 
 const matchCreateValidations = [
   check('name')
-    .exists({ checkFalsy: true })
+    .trim()
+    .exists({ checkFalsy: true }),
+  check('name')
     .custom((name, { req }) => {
       return Match
         .findOne({
@@ -29,9 +31,9 @@ const matchCreateValidations = [
         .exec()
         .then(match => {
           if (match) {
-            return Promise.reject('Match Name already taken.');
+            throw new Error('Match Name already taken.');
           }
-          return Promise.resolve();
+          return match;
         });
     }),
   check('team1')
@@ -41,7 +43,6 @@ const matchCreateValidations = [
   check('team1')
     .custom((team1, { req }) => {
       if (team1 === req.body.team2) {
-        // trow error if passwords do not match
         throw new Error('Team 1 and Team 2 should be different.');
       }
       return team1;
@@ -56,9 +57,9 @@ const matchBeginValidations = [
   check('team2Players')
     .isArray(),
   check('team1Captain', 'No captain selected')
-    .exists({ checkFalsy: true }),
+    .isMongoId(),
   check('team1Captain', 'Team 1 must have at least two players')
-    .custom((_, {req}) => {
+    .custom((_, { req }) => {
       const team1Players = req.body.team1Players;
       return team1Players && team1Players.length > 1;
     }),
@@ -67,9 +68,9 @@ const matchBeginValidations = [
       return req.body.team1Players && req.body.team1Players.indexOf(team1Captain) !== -1;
     }),
   check('team2Captain', 'No captain selected')
-    .exists({ checkFalsy: true }),
+    .isMongoId(),
   check('team2Captain', 'Team 2 must have at least two players')
-    .custom((_, {req}) => {
+    .custom((_, { req }) => {
       const team2Players = req.body.team2Players;
       return team2Players && team2Players.length > 1;
     }),
@@ -86,10 +87,10 @@ const matchTossValidations = [
         .findById(req.params.id)
         .exec()
         .then(match => {
-          if (won === match.team1.toString() || won === match.team2.toString()) {
-            return Promise.resolve('Select a team');
+          if (!(won === match.team1.toString() || won === match.team2.toString())) {
+            throw new Error('Select a team')
           }
-          return Promise.reject();
+          return match;
         });
     }),
   check('choice')
@@ -357,7 +358,10 @@ router.post('/:id/over', authenticateJwt(), (request, response) => {
 
 router.get('/done', authenticateJwt(), function (request, response) {
   Match
-    .find({ creator: request.user._id, state: 'done' })
+    .find({
+      creator: request.user._id,
+      state: 'done',
+    })
     .lean()
     .then(matches => response.json(matches))
     .catch(err => {
@@ -373,7 +377,7 @@ router.get('/done', authenticateJwt(), function (request, response) {
 
 router.get('/:id', (request, response) => {
   Match
-    .findOne({_id: request.params.id })
+    .findOne({ _id: request.params.id })
     .populate('team1')
     .populate('team2')
     .populate('team1Captain')
