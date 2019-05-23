@@ -56,10 +56,7 @@ class Team extends Component {
         .then(response => {
           this.setState(prevState => ({
             ...prevState,
-            teams: prevState.teams.concat({
-              ...prevState.team,
-              _id: response.data.team._id,
-            }),
+            teams: prevState.teams.concat(response.data.team),
             team: {
               name: '',
               shortName: '',

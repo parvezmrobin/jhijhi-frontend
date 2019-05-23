@@ -13,15 +13,25 @@ const responses = require('../responses');
 const passport = require('passport');
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 const { check, validationResult } = require('express-validator/check');
+const { namify, sendErrorResponse } = require('../lib/utils');
 
+
+function _getShortName(shortName) {
+  return shortName.split(' ')
+    .filter(s => s)
+    .join('')
+    .toUpperCase();
+}
 
 const teamCreateValidations = [
   check('name')
-    .exists({ checkFalsy: true })
+    .trim()
+    .exists({ checkFalsy: true }),
+  check('name')
     .custom((name, { req }) => {
       return Team
         .findOne({
-          name: name,
+          name: namify(name),
           creator: req.user._id,
         })
         .exec()
@@ -33,13 +43,13 @@ const teamCreateValidations = [
         });
     }),
   check('shortName', 'Short name should be at least 2 characters')
-    .isAscii({ min: 1 })
+    .trim()
     .isLength({ min: 2 }),
   check('shortName')
     .custom((shortName, { req }) => {
       return Team
         .findOne({
-          shortName: shortName,
+          shortName: _getShortName(shortName),
           creator: req.user._id,
         })
         .exec()
@@ -54,18 +64,11 @@ const teamCreateValidations = [
 
 router.get('/:id', authenticateJwt(), (request, response) => {
   Team
-    .findOne({ _id: request.params.id })
+    .findOne({ _id: request.params.id, creator: request.user._id })
     .lean()
     .populate('players')
     .then(teams => response.json(teams))
-    .catch(err => {
-      response.status(err.statusCode || err.status || 500);
-      response.json({
-        success: false,
-        message: responses.teams.index.err,
-        err: err.error || err.errors || err,
-      });
-    });
+    .catch(err => sendErrorResponse(response, err, responses.teams.index.err));
 });
 
 /* GET teams listing. */
@@ -74,14 +77,7 @@ router.get('/', authenticateJwt(), (request, response) => {
     .find({ creator: request.user._id })
     .lean()
     .then(teams => response.json(teams))
-    .catch(err => {
-      response.status(err.statusCode || err.status || 500);
-      response.json({
-        success: false,
-        message: responses.teams.index.err,
-        err: err.error || err.errors || err,
-      });
-    });
+    .catch(err => sendErrorResponse(response, err, responses.teams.index.err));
 });
 
 router.post('/', authenticateJwt(), teamCreateValidations, (request, response) => {
@@ -94,25 +90,18 @@ router.post('/', authenticateJwt(), teamCreateValidations, (request, response) =
 
   promise
     .then(() => Team.create({
-      name,
-      shortName,
+      name: namify(name),
+      shortName: _getShortName(shortName),
       creator: request.user._id,
     }))
     .then(createdTeam => {
       response.json({
         success: true,
-        message: responses.teams.create.ok(name),
-        team: { _id: createdTeam._id },
+        message: responses.teams.create.ok(createdTeam.name),
+        team: createdTeam,
       });
     })
-    .catch(err => {
-      response.status(err.statusCode || err.status || 500);
-      response.json({
-        success: false,
-        message: responses.teams.create.err,
-        err: err.error || err.errors || err,
-      });
-    });
+    .catch(err => sendErrorResponse(response, err, responses.teams.create.err));
 });
 
 module.exports = router;
