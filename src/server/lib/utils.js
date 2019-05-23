@@ -5,15 +5,18 @@
  */
 
 
-module.exports.sendErrorResponse = function (response, err, message) {
+module.exports.sendErrorResponse = function (response, err, message, suppressError = false) {
   console.log(err);
 
   response.status(err.statusCode || err.status || 500);
-  response.json({
+  const errorDescription = {
     success: false,
     message: message,
-    err: err.error || err.errors || err,
-  });
+  };
+  if (!suppressError) {
+    errorDescription.err = err.error || err.errors || err;
+  }
+  response.json(errorDescription);
 };
 
 module.exports.send404Response = function (response, message) {
@@ -35,4 +38,28 @@ module.exports.nullEmptyValues = function (request, container = 'body') {
     }
   }
   return params;
+};
+
+/**
+ * @param {String} str
+ * @param {Boolean} smallCase
+ * @return {String}
+ */
+module.exports.namify = function (str, smallCase = false) {
+  return str.split(' ')
+    .filter(s => s)
+    .map(s => {
+      const fistLetter = s[0].toUpperCase();
+      let rest = s.substr(1);
+      if (smallCase) {
+        rest = rest.toLowerCase();
+      }
+      return fistLetter + rest;
+    })
+    .join(' ');
+};
+
+module.exports.isSameName = function (str1, str2) {
+  const namify = module.exports.namify;
+  return namify(str1, true) === module.exports.namify(str2, true);
 };
