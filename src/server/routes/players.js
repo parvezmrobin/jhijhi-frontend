@@ -14,78 +14,58 @@ const passport = require('passport');
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 const { check, validationResult } = require('express-validator/check');
 const ObjectId = require('mongoose/lib/types/objectid');
+const { namify, sendErrorResponse } = require('../lib/utils');
 
-const _formatPlayerName = function (name) {
-  return name.split(' ')
-    .filter(s => s)
-    .map(s => s[0].toUpperCase() + s.substr(1))
-    .join(' ');
-};
 
 const playerCreateValidations = [
   check('name')
-    .exists({ checkFalsy: true })
+    .trim()
+    .exists({ checkFalsy: true }),
+  check('name')
     .custom((name, { req }) => {
-      return new Promise(function (resolve, reject) {
-        Player.findOne({
-          name: _formatPlayerName(name),
+      return Player
+        .findOne({
+          name: namify(name),
           creator: req.user._id,
         })
-          .exec()
-          .then(player => {
-            if (player) {
-              reject('Player Name already taken.');
-            } else {
-              resolve();
-            }
-          })
-          .catch(reject);
-      });
+        .exec()
+        .then(player => {
+          return player ? Promise.reject('Player Name already taken.') : Promise.resolve();
+        });
     }),
-  check('jerseyNo', 'Jersey number should be between 1 to 999')
+  check('jerseyNo', 'Jersey number should be between 0 to 999')
     .isInt({
       min: 0,
       max: 999,
     }),
   check('jerseyNo')
     .custom((jerseyNo, { req }) => {
-      return new Promise(function (resolve, reject) {
-        Player.findOne({
+      return Player
+        .findOne({
           jerseyNo: jerseyNo,
           creator: req.user._id,
         })
-          .exec()
-          .then(player => {
-            if (player) {
-              reject('This jersey is already taken.');
-            } else {
-              resolve();
-            }
-          })
-          .catch(reject);
-      });
+        .exec()
+        .then(player => {
+          return player ? Promise.reject('This jersey is already taken.') : Promise.resolve();
+        });
     }),
 ];
 const playerEditValidations = [
   check('name')
+    .trim()
     .exists({ checkFalsy: true })
     .custom((name, { req }) => {
-      return new Promise(function (resolve, reject) {
-        Player.findOne({
-          name: _formatPlayerName(name),
-          creator: req.user._id,
-        })
-          .lean()
-          .exec()
-          .then(player => {
-            if (player && player._id.toString() !== req.params.id) {
-              reject('Player Name already taken.');
-            } else {
-              resolve();
-            }
-          })
-          .catch(reject);
-      });
+      return Player.findOne({
+        name: namify(name),
+        creator: req.user._id,
+      })
+        .lean()
+        .exec()
+        .then(player => {
+          return player && player._id.toString() !== req.params.id
+            ? Promise.reject('Player Name already taken.') : Promise.resolve();
+        });
     }),
   check('jerseyNo', 'Jersey number should be between 1 to 999')
     .isInt({
@@ -94,22 +74,17 @@ const playerEditValidations = [
     }),
   check('jerseyNo')
     .custom((jerseyNo, { req }) => {
-      return new Promise(function (resolve, reject) {
-        Player.findOne({
+      return Player
+        .findOne({
           jerseyNo: jerseyNo,
           creator: req.user._id,
         })
-          .lean()
-          .exec()
-          .then(player => {
-            if (player && player._id.toString() !== req.params.id) {
-              reject('This jersey is already taken.');
-            } else {
-              resolve();
-            }
-          })
-          .catch(reject);
-      });
+        .lean()
+        .exec()
+        .then(player => {
+          return player && player._id.toString() !== req.params.id
+            ? Promise.reject('This jersey is already taken.') : Promise.resolve();
+        });
     }),
 ];
 
@@ -119,14 +94,7 @@ router.get('/', authenticateJwt(), (request, response) => {
     .find({ creator: request.user._id })
     .lean()
     .then(players => response.json(players))
-    .catch(err => {
-      response.status(err.statusCode || err.status || 500);
-      response.json({
-        success: false,
-        message: responses.players.index.err,
-        err: err.error || err.errors || err,
-      });
-    });
+    .catch(err => sendErrorResponse(response, err, responses.players.index.err));
 });
 
 router.post('/', authenticateJwt(), playerCreateValidations, (request, response) => {
@@ -139,7 +107,7 @@ router.post('/', authenticateJwt(), playerCreateValidations, (request, response)
 
   promise
     .then(() => Player.create({
-      name: _formatPlayerName(name),
+      name: namify(name),
       jerseyNo,
       creator: request.user._id,
     }))
@@ -154,14 +122,7 @@ router.post('/', authenticateJwt(), playerCreateValidations, (request, response)
         },
       });
     })
-    .catch(err => {
-      response.status(err.statusCode || err.status || 500);
-      response.json({
-        success: false,
-        message: responses.players.create.err,
-        err: err.error || err.errors || err,
-      });
-    });
+    .catch(err => sendErrorResponse(response, err, responses.players.create.err));
 });
 
 router.put('/:id', authenticateJwt(), playerEditValidations, (request, response) => {
@@ -174,7 +135,7 @@ router.put('/:id', authenticateJwt(), playerEditValidations, (request, response)
 
   promise
     .then(() => Player.findOneAndUpdate({ _id: ObjectId(request.params.id) }, {
-      name: _formatPlayerName(name),
+      name: namify(name),
       jerseyNo,
       creator: request.user._id,
     }, { new: true }))
@@ -189,14 +150,7 @@ router.put('/:id', authenticateJwt(), playerEditValidations, (request, response)
         },
       });
     })
-    .catch(err => {
-      response.status(err.statusCode || err.status || 500);
-      response.json({
-        success: false,
-        message: responses.players.edit.err,
-        err: err.error || err.errors || err,
-      });
-    });
+    .catch(err => sendErrorResponse(response, err, responses.players.edit.err));
 });
 
 module.exports = router;
