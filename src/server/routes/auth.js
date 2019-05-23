@@ -20,6 +20,7 @@ const { sendErrorResponse } = require('../lib/utils');
 
 const registrationValidations = [
   check('username')
+    .trim()
     .exists({ checkFalsy: true }),
   check('username')
     .custom(username => {
