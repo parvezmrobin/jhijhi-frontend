@@ -29,6 +29,7 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test": "mocha --timeout 20000 src/server/test",
     "seed": "node src/server/console/seed.js",
+    "del": "node src/server/console/del.js",
     "postbuild": "node src/server/console/postbuild.js"
   },
   "author": {
