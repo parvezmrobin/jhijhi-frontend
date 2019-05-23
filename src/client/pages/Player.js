@@ -13,6 +13,7 @@ import fetcher from '../lib/fetcher';
 import { bindMethods } from '../lib/utils';
 import { Link } from 'react-router-dom';
 import { Alert, Toast, ToastBody, ToastHeader } from 'reactstrap';
+import * as feather from 'feather-icons';
 
 
 class Player extends Component {
@@ -57,6 +58,12 @@ class Player extends Component {
   componentWillUnmount() {
     this.unlisten();
   }
+
+
+  componentDidUpdate() {
+    feather.replace();
+  }
+
 
   _loadPlayerIfNecessary(playerId) {
     const players = this.state.players;
@@ -181,7 +188,9 @@ class Player extends Component {
     const renderPlayer = player => {
       const playerText = `${player.name} (${player.jerseyNo})`;
       const editButton = <Link to={'player@' + player._id}
-                               className="float-right"><kbd>Edit</kbd></Link>;
+                               className="float-right">
+        <small className="text-white"><i data-feather="edit"/></small>
+      </Link>;
       return <Fragment>{playerText} {editButton}</Fragment>;
     };
     return (
