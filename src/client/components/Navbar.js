@@ -23,7 +23,7 @@ function Navbar(props) {
           <NavLink className="nav-item nav-link text-primary" to="/team">Team</NavLink>
           <NavLink className="nav-item nav-link text-primary" to="/umpire">Umpire</NavLink>
           <NavLink className="nav-item nav-link text-primary" to="/match">Match</NavLink>
-          <NavLink className="nav-item nav-link text-primary" to="/history@null">History</NavLink>
+          <NavLink className="nav-item nav-link text-primary" to="/history@null">Score</NavLink>
         </div>
         <div className="navbar-nav">
           <div className="nav-item dropdown" id="user">

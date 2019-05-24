@@ -10,7 +10,7 @@ class History extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      matches: [],
+      matches: null,
     };
   }
 
@@ -22,6 +22,16 @@ class History extends Component {
 
   render() {
     const matchId = this.props.match.params.id;
+    const matches = this.state.matches;
+
+    if (matches && !matches.length) {
+      return <CenterContent>
+        <h2 className="text-center mt-10">You want score before even playing a match!</h2>
+        <div className="row justify-content-center">
+          <img className="img-fluid" src="/frustrated.gif" alt="frustrated"/>
+        </div>
+      </CenterContent>
+    }
     const sidebar = <aside className="col-3">
       <CenterContent col="col">
         <SidebarList
@@ -31,7 +41,7 @@ class History extends Component {
             return <Link className={(match._id === matchId) ? 'text-primary' : 'text-info'}
                          to={`history@${match._id}`}>{match.name}</Link>;
           }}
-          list={this.state.matches}/>
+          list={matches || []}/>
       </CenterContent>
     </aside>;
 

@@ -29,7 +29,7 @@ module.exports = {
         use: ['style-loader', 'css-loader', 'sass-loader'],
       },
       {
-        test: /\.(png|woff|woff2|eot|ttf|svg|jpg)$/,
+        test: /\.(png|woff|woff2|eot|ttf|svg|jpg|gif)$/,
         loader: 'url-loader?limit=100000',
       },
     ],
@@ -45,6 +45,7 @@ module.exports = {
       '/api': 'http://localhost:8080',
       '/manifest.json': 'http://localhost:8080',
       '/favicon.png': 'http://localhost:8080',
+      '/frustrated.gif': 'http://localhost:8080',
     },
   },
   plugins: [
