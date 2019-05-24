@@ -12,7 +12,7 @@ import { toTitleCase } from '../lib/utils';
 
 class ScoreModal extends Component {
   render() {
-    const { battingCard, bowlingCard } = this._calculateBattingScores();
+    const { battingCard, bowlingCard, totalRun, totalWicket } = this._calculateBattingScores();
     const battingRows = battingCard.map(entry => <tr key={entry.name}>
       <th scope="row">{toTitleCase(entry.name)}</th>
       <td>{entry.bowls ? entry.runs : null}</td>
@@ -48,7 +48,7 @@ class ScoreModal extends Component {
             <div className="row">
 
               <div className="col">
-                <h4>{this.props.battingTeamName}</h4>
+                <h4>{`${this.props.battingTeamName} (${totalRun}/${totalWicket})`}</h4>
                 <Table>
                   <thead>
                   <tr>
@@ -102,7 +102,8 @@ class ScoreModal extends Component {
     }));
 
     const bowlingCard = {};
-
+    let totalRun = 0;
+    let totalWicket = 0;
     this.props.innings.overs.forEach(over => {
       const bowlerName = bowlingTeamPlayers[over.bowledBy].name;
       if (!(bowlerName in bowlingCard)) {
@@ -119,6 +120,7 @@ class ScoreModal extends Component {
         battingCard[bowl.playedBy].bowls++;
 
         if (bowl.isWicket) {
+          totalWicket++;
           bowlingCard[bowlerName].wicket++;
           if (bowl.isWicket.kind === 'run out') {
             battingCard[bowl.isWicket.player].out = { kind: bowl.isWicket.kind };
@@ -129,6 +131,7 @@ class ScoreModal extends Component {
           };
         }
         if (bowl.singles) {
+          totalRun += bowl.singles;
           battingCard[bowl.playedBy].runs += bowl.singles;
           bowlingCard[bowlerName].run += bowl.singles;
         }
@@ -136,19 +139,24 @@ class ScoreModal extends Component {
           if (bowl.boundary.kind === 'regular') {
             battingCard[bowl.playedBy].runs += bowl.boundary.run;
           }
+          totalRun += bowl.boundary.run;
           bowlingCard[bowlerName].run += bowl.boundary.run;
         }
 
         if (bowl.by) {
+          totalRun += bowl.by;
           bowlingCard[bowlerName].run += bowl.by;
         }
         if (bowl.legBy) {
+          totalRun += bowl.legBy;
           bowlingCard[bowlerName].run += bowl.legBy;
         }
 
         if (bowl.isWide) {
+          totalRun++;
           bowlingCard[bowlerName].run++;
         } else if (bowl.isNo) {
+          totalRun++;
           bowlingCard[bowlerName].run++;
         } else {
           validDeliveries++;
@@ -167,9 +175,18 @@ class ScoreModal extends Component {
       stat.runRate = (stat.run / (stat.overs * 6 + stat.bowls)) * 6;
     }
 
+    console.log({
+      battingCard,
+      bowlingCard,
+      totalRun,
+      totalWicket,
+    });
+
     return {
       battingCard,
       bowlingCard,
+      totalRun,
+      totalWicket,
     };
   }
 }
