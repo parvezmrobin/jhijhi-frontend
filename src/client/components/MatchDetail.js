@@ -150,7 +150,7 @@ export default class MatchDetail extends Component {
           <div className="bg-info shadow rounded pb-3 px-2">
             <h5 className="text-center">won the match {type}. </h5>
             <h5 className="d-flex justify-content-center my-3">
-              <label className={showSecondInnings ? 'badge' : 'badge badge-blue'}>
+              <label className={showSecondInnings ? 'badge' : 'badge badge-primary'}>
                 1st innings
               </label>
               <CustomInput className="mx-3" checked={showSecondInnings} type="switch"
@@ -159,7 +159,7 @@ export default class MatchDetail extends Component {
                              showSecondInnings: e.target.checked,
                              overIndex: 0,
                            })} inline/>
-              <label className={showSecondInnings ? 'badge badge-blue' : 'badge'}>
+              <label className={showSecondInnings ? 'badge badge-primary' : 'badge'}>
                 2nd innings
               </label>
             </h5>
