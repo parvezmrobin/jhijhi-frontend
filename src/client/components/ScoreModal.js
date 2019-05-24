@@ -12,8 +12,8 @@ import { toTitleCase } from '../lib/utils';
 
 class ScoreModal extends Component {
   render() {
-    const battingScores = this._calculateBattingScores();
-    const rows = battingScores.map(entry => <tr key={entry.name}>
+    const {battingCard, bowlingCard} = this._calculateBattingScores();
+    const battingRows = battingCard.map(entry => <tr key={entry.name}>
       <th scope="row">{toTitleCase(entry.name)}</th>
       <td>{entry.bowls ? entry.runs : null}</td>
       <td>{entry.bowls || 'Did not bat'}</td>
@@ -23,60 +23,140 @@ class ScoreModal extends Component {
       </td>
     </tr>);
 
+    const bowlingRows = Object.keys(bowlingCard).map(bowler => <tr key={bowler}>
+      <th scope="row">{toTitleCase(bowler)}</th>
+      <td>{bowlingCard[bowler].run}</td>
+      <td>{bowlingCard[bowler].runRate}</td>
+      <td className={bowlingCard[bowler].wicket && 'text-danger'}>
+        {bowlingCard[bowler].wicket}
+      </td>
+    </tr>);
+
     return (
-      <Modal isOpen={this.props.isOpen} toggle={this.props.toggle}>
-        <ModalHeader toggle={this.props.toggle}
-                     className="border-0">{this.props.battingTeamName}</ModalHeader>
+      <Modal isOpen={this.props.isOpen} toggle={this.props.toggle} size="xl">
+        <ModalHeader toggle={this.props.toggle} className="border-0" tag="h2">
+          Scorecard
+        </ModalHeader>
         <ModalBody>
-          <Table>
-            <thead>
-            <tr>
-              <th>Name</th>
-              <th>Runs</th>
-              <th>Bowls</th>
-              <th/>
-            </tr>
-            </thead>
-            <tbody>
-            {rows}
-            </tbody>
-          </Table>
+          <div className="container-fluid">
+            <div className="row">
+
+              <div className="col">
+                <h4>{this.props.battingTeamName}</h4>
+                <Table>
+                  <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Runs</th>
+                    <th>Bowls</th>
+                    <th/>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {battingRows}
+                  </tbody>
+                </Table>
+              </div>
+              <div className="col">
+                <h4>{this.props.bowlingTeamName}</h4>
+                <Table>
+                  <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Runs</th>
+                    <th>Run Rate</th>
+                    <th>Wicket</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {bowlingRows}
+                  </tbody>
+                </Table>
+              </div>
+
+            </div>
+          </div>
         </ModalBody>
       </Modal>
     );
   }
 
   _calculateBattingScores() {
-    const scores = this.props.battingTeamPlayers.map(player => ({
+    const bowlingTeamPlayers = this.props.bowlingTeamPlayers;
+    const battingCard = this.props.battingTeamPlayers.map(player => ({
       name: player.name,
       runs: 0,
       bowls: 0,
       out: {},
     }));
 
+    const bowlingCard = {};
+
     this.props.innings.overs.forEach(over => {
+      const bowlerName = bowlingTeamPlayers[over.bowledBy].name;
+      if (!(bowlerName in bowlingCard)) {
+        bowlingCard[bowlerName] = {
+          run: 0,
+          wicket: 0,
+          overs: 0,
+          bowls: 0,
+        };
+      }
+
+      let validDeliveries = 0;
       over.bowls.forEach(bowl => {
-        scores[bowl.playedBy].bowls++;
+        battingCard[bowl.playedBy].bowls++;
 
         if (bowl.isWicket) {
+          bowlingCard[bowlerName].wicket++;
           if (bowl.isWicket.kind === 'run out') {
-            scores[bowl.isWicket.player].out = { kind: bowl.isWicket.kind };
+            battingCard[bowl.isWicket.player].out = { kind: bowl.isWicket.kind };
           }
-          scores[bowl.playedBy].out = {
+          battingCard[bowl.playedBy].out = {
             kind: bowl.isWicket.kind,
-            by: this.props.bowlingTeamPlayers[over.bowledBy].name,
+            by: bowlingTeamPlayers[over.bowledBy].name,
           };
         }
         if (bowl.singles) {
-          scores[bowl.playedBy].runs += bowl.singles;
+          battingCard[bowl.playedBy].runs += bowl.singles;
+          bowlingCard[bowlerName].run += bowl.singles;
         }
-        if (bowl.boundary.run && bowl.boundary.kind === 'regular') {
-          scores[bowl.playedBy].runs += bowl.boundary.run;
+        if (bowl.boundary.run) {
+          if (bowl.boundary.kind === 'regular') {
+            battingCard[bowl.playedBy].runs += bowl.boundary.run;
+          }
+          bowlingCard[bowlerName].run += bowl.boundary.run;
+        }
+
+        if (bowl.by) {
+          bowlingCard[bowlerName].run += bowl.by;
+        }
+        if (bowl.legBy) {
+          bowlingCard[bowlerName].run += bowl.legBy;
+        }
+
+        if (bowl.isWide) {
+          bowlingCard[bowlerName].run++;
+        } else if (bowl.isNo) {
+          bowlingCard[bowlerName].run++;
+        } else {
+          validDeliveries++;
         }
       });
+
+      if (validDeliveries >= 6) {
+        bowlingCard[bowlerName].overs++;
+      } else {
+        bowlingCard[bowlerName].bowls += validDeliveries;
+      }
     });
 
-    return scores;
+    for (const bowler in bowlingCard) {
+      const stat = bowlingCard[bowler];
+      stat.runRate = (stat.run / (stat.overs * 6 + stat.bowls)) * 6;
+    }
+
+    return {battingCard, bowlingCard};
   }
 }
 
