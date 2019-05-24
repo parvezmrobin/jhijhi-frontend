@@ -7,34 +7,40 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, ModalBody, ModalHeader, Table } from 'reactstrap';
+import { Modal, ModalBody, ModalFooter, ModalHeader, Table } from 'reactstrap';
 import { toTitleCase } from '../lib/utils';
 
 class ScoreModal extends Component {
   render() {
-    const {battingCard, bowlingCard} = this._calculateBattingScores();
+    const { battingCard, bowlingCard } = this._calculateBattingScores();
     const battingRows = battingCard.map(entry => <tr key={entry.name}>
       <th scope="row">{toTitleCase(entry.name)}</th>
       <td>{entry.bowls ? entry.runs : null}</td>
       <td>{entry.bowls || 'Did not bat'}</td>
-      <td className={entry.out && 'text-danger'}>
+      <td className={entry.out.kind ? 'text-danger' : 'text-success'}>
         {entry.out.kind && toTitleCase(entry.out.kind, ' ')}
         {entry.out.by && ` (${toTitleCase(entry.out.by)})`}
+        {(!entry.out.kind && entry.bowls) ? 'Not Out' : null}
       </td>
     </tr>);
 
-    const bowlingRows = Object.keys(bowlingCard).map(bowler => <tr key={bowler}>
-      <th scope="row">{toTitleCase(bowler)}</th>
-      <td>{bowlingCard[bowler].run}</td>
-      <td>{bowlingCard[bowler].runRate}</td>
-      <td className={bowlingCard[bowler].wicket && 'text-danger'}>
-        {bowlingCard[bowler].wicket}
-      </td>
-    </tr>);
+    const bowlingRows = Object.keys(bowlingCard)
+      .map(bowler => <tr key={bowler}>
+        <th scope="row">{toTitleCase(bowler)}</th>
+        <td>
+          {bowlingCard[bowler].overs}
+          {(bowlingCard[bowler].bowls ? `.${bowlingCard[bowler].overs}` : '')}
+        </td>
+        <td>{bowlingCard[bowler].run}</td>
+        <td>{bowlingCard[bowler].runRate}</td>
+        <td className={bowlingCard[bowler].wicket && 'text-danger'}>
+          {bowlingCard[bowler].wicket}
+        </td>
+      </tr>);
 
     return (
       <Modal isOpen={this.props.isOpen} toggle={this.props.toggle} size="xl">
-        <ModalHeader toggle={this.props.toggle} className="border-0" tag="h2">
+        <ModalHeader toggle={this.props.toggle} className="border-0 text-success ml-3" tag="h2">
           Scorecard
         </ModalHeader>
         <ModalBody>
@@ -63,6 +69,7 @@ class ScoreModal extends Component {
                   <thead>
                   <tr>
                     <th>Name</th>
+                    <th>Overs</th>
                     <th>Runs</th>
                     <th>Run Rate</th>
                     <th>Wicket</th>
@@ -77,6 +84,10 @@ class ScoreModal extends Component {
             </div>
           </div>
         </ModalBody>
+        <ModalFooter className="d-md-none">
+          <button className="btn btn-secondary float-right" onClick={this.props.toggle}>Close
+          </button>
+        </ModalFooter>
       </Modal>
     );
   }
@@ -156,7 +167,10 @@ class ScoreModal extends Component {
       stat.runRate = (stat.run / (stat.overs * 6 + stat.bowls)) * 6;
     }
 
-    return {battingCard, bowlingCard};
+    return {
+      battingCard,
+      bowlingCard,
+    };
   }
 }
 
