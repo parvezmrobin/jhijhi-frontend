@@ -14,14 +14,19 @@ class ScoreModal extends Component {
   render() {
     const battingScores = this._calculateBattingScores();
     const rows = battingScores.map(entry => <tr key={entry.name}>
-      <th scope="row">{entry.name}</th>
-      <td>{entry.runs}</td>
+      <th scope="row">{toTitleCase(entry.name)}</th>
+      <td>{entry.bowls ? entry.runs : null}</td>
       <td>{entry.bowls || 'Did not bat'}</td>
-      <td className={entry.out && 'text-danger'}>{entry.out && toTitleCase(entry.out, ' ')}</td>
+      <td className={entry.out && 'text-danger'}>
+        {entry.out.kind && toTitleCase(entry.out.kind, ' ')}
+        {entry.out.by && ` (${toTitleCase(entry.out.by)})`}
+      </td>
     </tr>);
+
     return (
       <Modal isOpen={this.props.isOpen} toggle={this.props.toggle}>
-        <ModalHeader toggle={this.props.toggle} className="border-0">{this.props.battingTeamName}</ModalHeader>
+        <ModalHeader toggle={this.props.toggle}
+                     className="border-0">{this.props.battingTeamName}</ModalHeader>
         <ModalBody>
           <Table>
             <thead>
@@ -46,7 +51,7 @@ class ScoreModal extends Component {
       name: player.name,
       runs: 0,
       bowls: 0,
-      out: null,
+      out: {},
     }));
 
     this.props.innings.overs.forEach(over => {
@@ -54,7 +59,13 @@ class ScoreModal extends Component {
         scores[bowl.playedBy].bowls++;
 
         if (bowl.isWicket) {
-          scores[bowl.playedBy].out = bowl.isWicket.kind;
+          if (bowl.isWicket.kind === 'run out') {
+            scores[bowl.isWicket.player].out = { kind: bowl.isWicket.kind };
+          }
+          scores[bowl.playedBy].out = {
+            kind: bowl.isWicket.kind,
+            by: this.props.bowlingTeamPlayers[over.bowledBy].name,
+          };
         }
         if (bowl.singles) {
           scores[bowl.playedBy].runs += bowl.singles;
