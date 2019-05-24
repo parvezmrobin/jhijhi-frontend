@@ -27,7 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(cors());
-app.use(express.static(join(__dirname, '..', '..', 'statics')));
+app.use(express.static(join(__dirname, '..', '..', 'public')));
 app.use(function (request, response, next) {
   if (!request.originalUrl.startsWith('/api')) {
     return response.sendFile(join(__dirname, '..', '..', 'public', 'index.html'));
