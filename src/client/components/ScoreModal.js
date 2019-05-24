@@ -29,7 +29,7 @@ class ScoreModal extends Component {
         <th scope="row">{toTitleCase(bowler)}</th>
         <td>
           {bowlingCard[bowler].overs}
-          {(bowlingCard[bowler].bowls ? `.${bowlingCard[bowler].overs}` : '')}
+          {(bowlingCard[bowler].bowls ? `.${bowlingCard[bowler].bowls}` : '')}
         </td>
         <td>{bowlingCard[bowler].run}</td>
         <td>{bowlingCard[bowler].runRate}</td>
