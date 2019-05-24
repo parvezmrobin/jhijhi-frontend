@@ -29,7 +29,8 @@ class AuthForm extends Component {
         <h2>{this.props.title}</h2>
         <hr/>
         <form onSubmit={e => {e.preventDefault(); this.props.onSubmit(e)}} action={action} method="post">
-          <FormGroup name="username" value={this.props.values.username} isValid={this.props.isValid.username}
+          <FormGroup name="username" value={this.props.values.username} autoFocus={true}
+                     isValid={this.props.isValid.username}
                      feedback={this.props.feedback.username}
                      onChange={e => this.props.onChange({username: e.target.value})}/>
           <FormGroup name="password" type="password" value={this.props.values.password}

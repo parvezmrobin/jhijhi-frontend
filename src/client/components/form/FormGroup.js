@@ -25,6 +25,7 @@ class FormGroup extends Component {
       name: this.props.name,
       isValid: this.props.isValid,
       onChange: this.props.onChange,
+      autoFocus: this.props.autoFocus,
     };
 
     let control = <InputControl type={type} {...inputProps} value={this.props.value}/>;
