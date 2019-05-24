@@ -5,12 +5,12 @@
  */
 
 
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
 import PlayerForm from '../components/PlayerForm';
 import fetcher from '../lib/fetcher';
-import { bindMethods } from '../lib/utils';
+import { bindMethods, toTitleCase } from '../lib/utils';
 import { Link } from 'react-router-dom';
 import { Alert, Toast, ToastBody, ToastHeader } from 'reactstrap';
 import * as feather from 'feather-icons';
@@ -186,12 +186,13 @@ class Player extends Component {
 
   render() {
     const renderPlayer = player => {
-      const playerText = `${player.name} (${player.jerseyNo})`;
+      const playerText = `${toTitleCase(player.name)} (${player.jerseyNo})`;
       const editButton = <Link to={'player@' + player._id}
                                className="float-right">
         <small className="text-white"><i data-feather="edit"/></small>
       </Link>;
-      return <Fragment>{playerText} {editButton}</Fragment>;
+      const className = (player._id === this.props.match.params.id)? 'text-success': '';
+      return <><span className={className}>{playerText}</span> {editButton}</>;
     };
     return (
       <div className="container-fluid pl-0">

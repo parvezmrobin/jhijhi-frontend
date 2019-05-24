@@ -34,11 +34,8 @@ class History extends Component {
     }
     const sidebar = <aside className="col-3">
       <CenterContent col="col">
-        <SidebarList
-          title="Completed Matches"
-          itemClass="text-white"
-          itemMapper={(match) => {
-            return <Link className={(match._id === matchId) ? 'text-primary' : 'text-info'}
+        <SidebarList title="Completed Matches" itemMapper={(match) => {
+            return <Link className={(match._id === matchId) ? 'text-info' : 'text-white'}
                          to={`history@${match._id}`}>{match.name}</Link>;
           }}
           list={matches || []}/>

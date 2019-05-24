@@ -17,6 +17,7 @@ $success: #127b8b !default;
 $dark: #151520 !default;
 $blue: #042c57 !default;
 $primary: #08468a !default;
+$primaryLight: #6a88ff !default;
 $warningLight: #eb6d1f !default;
 
 $theme-colors: ('warning-light': $warningLight, 'blue': $blue) !default;
@@ -34,6 +35,15 @@ body.home {
   nav {
     @extend .bg-dark;
     @extend .navbar-dark;
+
+    .text-primary {
+      color: $primaryLight !important;
+    }
+    a.text-primary{
+      @include hover-focus {
+        color: darken($primaryLight, $emphasized-link-hover-darken-percentage) !important;
+      }
+    }
   }
 }
 
@@ -112,7 +122,7 @@ section.score-input {
     padding-bottom: 0;
   }
 
-  .btn-lg-regular{
+  .btn-lg-regular {
     width: 100%;
   }
 }
@@ -136,10 +146,10 @@ section.score-input {
   @extend .bg-primary;
 }
 
-.bs-tooltip-top .arrow::before, .bs-tooltip-auto[x-placement^="top"] .arrow::before{
+.bs-tooltip-top .arrow::before, .bs-tooltip-auto[x-placement^="top"] .arrow::before {
   border-top-color: $primary;
 }
 
-.text-btn{
+.text-btn {
   @include button-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-line-height, $btn-border-radius);
 }
