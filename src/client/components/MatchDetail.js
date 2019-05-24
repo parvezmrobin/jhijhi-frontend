@@ -15,6 +15,7 @@ import CurrentOver from './CurrentOver';
 import { toTitleCase } from '../lib/utils';
 import * as PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
+import ScoreModal from './ScoreModal';
 
 export default class MatchDetail extends Component {
   constructor(props) {
@@ -23,6 +24,7 @@ export default class MatchDetail extends Component {
       match: null,
       overIndex: null,
       showSecondInnings: false,
+      showModal: false,
     };
   }
 
@@ -74,6 +76,8 @@ export default class MatchDetail extends Component {
       tossWinningTeamName,
       innings1TeamName,
       innings2TeamName,
+      battingTeamName,
+      bowlingTeamName,
       choice;
     if (match.team1WonToss) {
       choice = match.team1BatFirst ? 'bat' : 'bowl';
@@ -102,9 +106,13 @@ export default class MatchDetail extends Component {
       if (showSecondInnings) {
         bowlingTeamPlayers = match.team1Players;
         battingTeamPlayers = match.team2Players;
+        bowlingTeamName = match.team1.name;
+        battingTeamName = match.team2.name;
       } else {
         bowlingTeamPlayers = match.team2Players;
         battingTeamPlayers = match.team1Players;
+        bowlingTeamName = match.team2.name;
+        battingTeamName = match.team1.name;
       }
       innings1TeamName = match.team1.name;
       innings2TeamName = match.team2.name;
@@ -112,9 +120,13 @@ export default class MatchDetail extends Component {
       if (showSecondInnings) {
         bowlingTeamPlayers = match.team2Players;
         battingTeamPlayers = match.team1Players;
+        bowlingTeamName = match.team2.name;
+        battingTeamName = match.team1.name;
       } else {
         bowlingTeamPlayers = match.team1Players;
         battingTeamPlayers = match.team2Players;
+        bowlingTeamName = match.team1.name;
+        battingTeamName = match.team2.name;
       }
       innings2TeamName = match.team1.name;
       innings1TeamName = match.team2.name;
@@ -162,6 +174,9 @@ export default class MatchDetail extends Component {
               <strong>{innings2TeamName}:</strong> {innings2score}/{innings2wicket}{' '}
               <small>({numOfOvers2}.{numOfBowls2} overs)</small>
             </p>
+            <button onClick={() => this.setState({showModal: true})} className="btn btn-success btn-block">
+              Show Score Card
+            </button>
             <hr/>
             <button onClick={(e) => this.copySharableLink(e)} className="btn btn-success btn-block">
               Copy Sharable Link
@@ -179,6 +194,10 @@ export default class MatchDetail extends Component {
         </div>
 
       </div>
+
+      <ScoreModal isOpen={this.state.showModal} toggle={() => this.setState({showModal: false})}
+      innings={innings} battingTeamPlayers={battingTeamPlayers} bowlingTeamPlayers={bowlingTeamPlayers}
+      battingTeamName={battingTeamName} bowlingTeamName={bowlingTeamName}/>
     </main>;
   }
 
