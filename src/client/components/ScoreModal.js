@@ -48,7 +48,7 @@ class ScoreModal extends Component {
             <div className="row">
 
               <div className="col">
-                <h4>{`${this.props.battingTeamName} (${totalRun}/${totalWicket})`}</h4>
+                <h4 className="text-blue">{`${this.props.battingTeamName} (${totalRun}/${totalWicket})`}</h4>
                 <Table>
                   <thead>
                   <tr>
@@ -64,7 +64,7 @@ class ScoreModal extends Component {
                 </Table>
               </div>
               <div className="col">
-                <h4>{this.props.bowlingTeamName}</h4>
+                <h4 className="text-blue">{this.props.bowlingTeamName}</h4>
                 <Table>
                   <thead>
                   <tr>

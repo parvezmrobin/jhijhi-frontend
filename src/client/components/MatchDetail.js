@@ -150,7 +150,7 @@ export default class MatchDetail extends Component {
           <div className="bg-info shadow rounded pb-3 px-2">
             <h5 className="text-center">won the match {type}. </h5>
             <h5 className="d-flex justify-content-center my-3">
-              <label className={showSecondInnings ? 'badge' : 'badge badge-success'}>
+              <label className={showSecondInnings ? 'badge' : 'badge badge-blue'}>
                 1st innings
               </label>
               <CustomInput className="mx-3" checked={showSecondInnings} type="switch"
@@ -159,7 +159,7 @@ export default class MatchDetail extends Component {
                              showSecondInnings: e.target.checked,
                              overIndex: 0,
                            })} inline/>
-              <label className={showSecondInnings ? 'badge badge-success' : 'badge'}>
+              <label className={showSecondInnings ? 'badge badge-blue' : 'badge'}>
                 2nd innings
               </label>
             </h5>
@@ -174,7 +174,7 @@ export default class MatchDetail extends Component {
               <strong>{innings2TeamName}:</strong> {innings2score}/{innings2wicket}{' '}
               <small>({numOfOvers2}.{numOfBowls2} overs)</small>
             </p>
-            <button onClick={() => this.setState({showModal: true})} className="btn btn-success btn-block">
+            <button onClick={() => this.setState({showModal: true})} className="btn btn-primary btn-block">
               Show Score Card
             </button>
             <hr/>
