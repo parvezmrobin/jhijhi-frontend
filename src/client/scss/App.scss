@@ -17,12 +17,31 @@ $success: #127b8b !default;
 $dark: #151520 !default;
 $blue: #042c57 !default;
 $primary: #08468a !default;
-$primaryLight: #6a88ff !default;
+$info: #6a88ff !default;
 $warningLight: #eb6d1f !default;
 
-$theme-colors: ('warning-light': $warningLight, 'blue': $blue) !default;
+$theme-colors: ('info': $info, 'warning-light': $warningLight, 'blue': $blue) !default;
+$link-color: $info !default;
 
 @import "~bootstrap/scss/bootstrap";
+
+.navbar-light .navbar-nav.highlight {
+  .nav-link {
+    color: $info;
+
+    @include hover-focus {
+      color: darken($info, $emphasized-link-hover-darken-percentage);
+    }
+
+  }
+
+  .show > .nav-link,
+  .active > .nav-link,
+  .nav-link.show,
+  .nav-link.active {
+    color: $primary;
+  }
+}
 
 body.home {
   background: url(../assets/home-bg.jpg) no-repeat fixed center center;
@@ -35,15 +54,6 @@ body.home {
   nav {
     @extend .bg-dark;
     @extend .navbar-dark;
-
-    .text-primary {
-      color: $primaryLight !important;
-    }
-    a.text-primary{
-      @include hover-focus {
-        color: darken($primaryLight, $emphasized-link-hover-darken-percentage) !important;
-      }
-    }
   }
 }
 

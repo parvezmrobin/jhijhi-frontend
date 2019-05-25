@@ -162,7 +162,7 @@ class Match extends Component {
               <SidebarList
                 title="Upcoming Matches"
                 itemClass="text-white"
-                itemMapper={(match) => <Link className="text-info" to={`live@${match._id}`}>{match.name}</Link>}
+                itemMapper={(match) => <Link className="text-white" to={`live@${match._id}`}>{match.name}</Link>}
                 list={this.state.matches}/>
             </CenterContent>
           </aside>

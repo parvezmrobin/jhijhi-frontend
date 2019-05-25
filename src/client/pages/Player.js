@@ -187,8 +187,7 @@ class Player extends Component {
   render() {
     const renderPlayer = player => {
       const playerText = `${toTitleCase(player.name)} (${player.jerseyNo})`;
-      const editButton = <Link to={'player@' + player._id}
-                               className="float-right">
+      const editButton = <Link to={'player@' + player._id} className="float-right">
         <small className="text-white"><i data-feather="edit"/></small>
       </Link>;
       const className = (player._id === this.props.match.params.id)? 'text-success': '';
@@ -217,7 +216,7 @@ class Player extends Component {
           </aside>
           <main className="col">
             <CenterContent col="col-lg-8 col-md-10">
-              {this.state.redirected && <Alert color="info">
+              {this.state.redirected && <Alert color="primary">
                 <p className="lead mb-0">
                   You need at least 4 players to start a match.
                 </p>

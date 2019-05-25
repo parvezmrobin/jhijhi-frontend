@@ -18,12 +18,12 @@ function Navbar(props) {
           <NavLink exact className="nav-item nav-link" to="/">Home</NavLink>
           <NavLink className="nav-item nav-link" to="/contact">Contact</NavLink>
         </div>
-        <div className="navbar-nav mx-auto">
-          <NavLink className="nav-item nav-link text-primary" to="/player">Player</NavLink>
-          <NavLink className="nav-item nav-link text-primary" to="/team">Team</NavLink>
-          <NavLink className="nav-item nav-link text-primary" to="/umpire">Umpire</NavLink>
-          <NavLink className="nav-item nav-link text-primary" to="/match">Match</NavLink>
-          <NavLink className="nav-item nav-link text-primary" to="/history@null">Score</NavLink>
+        <div className="navbar-nav highlight mx-auto">
+          <NavLink className="nav-item nav-link" to="/player">Player</NavLink>
+          <NavLink className="nav-item nav-link" to="/team">Team</NavLink>
+          <NavLink className="nav-item nav-link" to="/umpire">Umpire</NavLink>
+          <NavLink className="nav-item nav-link" to="/match">Match</NavLink>
+          <NavLink className="nav-item nav-link" to="/history@null">Score</NavLink>
         </div>
         <div className="navbar-nav">
           <div className="nav-item dropdown" id="user">

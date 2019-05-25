@@ -132,7 +132,7 @@ class Team extends Component {
           </aside>
           <main className="col">
             <CenterContent col="col-lg-8 col-md-10">
-              {this.state.redirected && <Alert color="info">
+              {this.state.redirected && <Alert color="primary">
                 <p className="lead mb-0">
                   You need at least 2 teams to create a match.
                 </p>
