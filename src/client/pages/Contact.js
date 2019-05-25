@@ -20,10 +20,10 @@ class Contact extends Component {
   render() {
     return (
       <div className="d-flex align-items-center vh-100">
-        <div className="col-8 offset-2 bg-dark-trans rounded">
-          <div className="d-flex justify-content-center v-100">
+        <div className="col-md-8 offset-md-2 bg-dark-trans rounded">
+          <div className="d-flex justify-content-center text-center v-100">
             <div className="col-auto text-white p-1 fs-2">
-                <span className="">
+                <span>
                   Mail me at <a href="mailto:parvezmrobin@gmail.com">parvezmrobin@gmail.com</a>
                 </span>
             </div>

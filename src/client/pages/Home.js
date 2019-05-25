@@ -49,24 +49,30 @@ class Home extends Component {
   render() {
     const options = this.state.matches.map((match) => {
       return <Link key={match._id} to={`live@${match._id}`}>
-        <DropdownItem className="text-primary">{match.name}</DropdownItem>
+        <DropdownItem className="text-white">{match.name}</DropdownItem>
       </Link>;
     });
 
+    const content = options.length
+      ? <div className="col-auto">
+        <Dropdown isOpen={this.state.isDropdownOpen} toggle={this.toggle}>
+          <DropdownToggle className="fs-2 p-1 text-info bg-transparent border-0" caret>
+            Select Match
+          </DropdownToggle>
+          <DropdownMenu className="bg-dark w-100">
+            {options}
+          </DropdownMenu>
+        </Dropdown>
+      </div>
+      : <div className="col-auto p-1 fs-2">
+        <Link className="text-decoration-none" to="/match">Create A Match</Link>
+      </div>;
+
     return (
       <div className="d-flex align-items-center vh-100">
-        <div className="col-8 offset-2 bg-dark-trans rounded">
+        <div className="col-md-8 offset-md-2 bg-dark-trans rounded">
           <div className="d-flex justify-content-center v-100">
-            <div className="col-auto">
-              <Dropdown isOpen={this.state.isDropdownOpen} toggle={this.toggle}>
-                <DropdownToggle className="fs-2 p-1 text-info bg-transparent border-0" caret>
-                  Select Match
-                </DropdownToggle>
-                <DropdownMenu className="bg-dark w-100">
-                  {options}
-                </DropdownMenu>
-              </Dropdown>
-            </div>
+            {content}
           </div>
         </div>
       </div>
