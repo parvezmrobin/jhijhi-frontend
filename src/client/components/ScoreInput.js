@@ -199,14 +199,14 @@ export default class ScoreInput extends Component {
         </div>
 
         <div className="col-6 col-md-2 col-lg-auto">
-          <button type="button" className="btn btn-info btn-block btn-lg-regular my-2"
+          <button type="button" className="btn btn-primary btn-block btn-lg-regular my-2"
                   onClick={() => this.onBoundary(4)}>
             Four
           </button>
         </div>
 
         <div className="col-6 col-md-2 col-lg-auto">
-          <button type="button" className="btn btn-info btn-block btn-lg-regular my-2"
+          <button type="button" className="btn btn-primary btn-block btn-lg-regular my-2"
                   onClick={() => this.onBoundary(6)}>
             Six
           </button>

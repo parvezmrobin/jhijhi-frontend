@@ -10,7 +10,7 @@ import fetcher from '../lib/fetcher';
 import CenterContent from './layouts/CenterContent';
 import Score from './Score';
 import { CustomInput } from 'reactstrap';
-import PreviousOvers from './PreviousOvers';
+import Overs from './Overs';
 import CurrentOver from './CurrentOver';
 import { toTitleCase } from '../lib/utils';
 import * as PropTypes from 'prop-types';
@@ -184,8 +184,8 @@ export default class MatchDetail extends Component {
           </div>
         </div>
         <div className="pt-1 col">
-          <PreviousOvers overs={innings.overs} bowlingTeam={bowlingTeamPlayers}
-                         onOverClick={(index) => this.setState({ overIndex: index })}/>
+          <Overs overs={innings.overs} bowlingTeam={bowlingTeamPlayers}
+                 onOverClick={(index) => this.setState({ overIndex: index })}/>
         </div>
         <div className="pt-1 col">
           <CurrentOver balls={innings.overs[overIndex].bowls}

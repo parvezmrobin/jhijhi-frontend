@@ -40,7 +40,7 @@ function _genSidebarPlayerMapper(innings, battingTeamPlayers) {
     }
 
     const isOut = sidebarContent[name].isOut;
-    const className = isOut ? 'text-secondary' : 'text-primary';
+    const className = isOut ? 'text-secondary' : 'text-success';
     const status = isOut ? toTitleCase(isOut, ' ') : 'Playing';
     return <span className={className}>
         {toTitleCase(name, ' ')} ({sidebarContent[name].run}) - {status}

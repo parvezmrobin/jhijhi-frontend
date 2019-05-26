@@ -16,7 +16,7 @@ export default class Score extends Component {
     if (inningsNo === 1) {
       inningsText = 'Innings 1';
     } else {
-      const { totalRun: targetRun } = Score._getTotalScore(firstInnings);
+      const { totalRun: targetRun } = Score.getTotalScore(firstInnings);
       const { over: remainingOvers, bowl: remainingBowls } = Score._subtractOver(numberOfOvers, 0, numOvers, numBowls);
 
       const remainingRuns = targetRun - totalRun + 1;
@@ -36,13 +36,15 @@ export default class Score extends Component {
     }
 
     return <>
-      <div className='bg-dark text-info p-2 mt-5 rounded'>
+      <div className='bg-dark text-success p-2 mt-5 rounded'>
         <h4 className="mt-3 text-white">{battingTeamName} - {totalRun} / {totalWicket}</h4>
-        <h5 className="font-weight-normal">
-          <span
-            className="text-primary">{numOvers} overs {numBowls && `${numBowls} bowl${(numBowls > 1) ? 's' : ''}`}</span>
+        <h5>
+          <span className="text-info">
+            {numOvers} over{(numOvers > 1) && 's'}
+            {(numBowls || null) && ` ${numBowls} bowl`}{(numBowls > 1) && 's' }
+          </span>
           &nbsp;
-          <small>({numberOfOvers} overs)</small>
+          <small className="font-weight-normal">({numberOfOvers} overs)</small>
         </h5>
         <h5 className="font-weight-normal">{inningsText}</h5>
 
@@ -63,8 +65,8 @@ export default class Score extends Component {
     if (inningsNo === 1) {
       return;
     }
-    const {totalRun: firstInningsRuns} = Score._getTotalScore(firstInnings);
-    const {totalRun: secondInningsRuns} = Score._getTotalScore(innings);
+    const {totalRun: firstInningsRuns} = Score.getTotalScore(firstInnings);
+    const {totalRun: secondInningsRuns} = Score.getTotalScore(innings);
     if (secondInningsRuns > firstInningsRuns) {
       this.props.onWinning();
     }

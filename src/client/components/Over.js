@@ -8,7 +8,7 @@
 import React, { Component } from 'react';
 import { toTitleCase } from '../lib/utils';
 
-class PreviousOver extends Component {
+class Over extends Component {
 
   render() {
     const className = 'list-group-item ';
@@ -26,4 +26,4 @@ class PreviousOver extends Component {
 
 }
 
-export default PreviousOver;
+export default Over;

@@ -6,9 +6,9 @@
 
 
 import React, { Fragment } from 'react';
-import PreviousOver from './PreviousOver';
+import Over from './Over';
 
-function PreviousOvers(props) {
+function Overs(props) {
   const { overs, bowlingTeam, onOverClick } = props;
   const getWickets = (over) => {
     return over.bowls.reduce((wickets, bowl) => {
@@ -43,7 +43,7 @@ function PreviousOvers(props) {
   return (
     <Fragment>
       <h4 className="mt-2 pt-1 text-center text-white">
-        Previous Overs
+        Overs
       </h4>
       <ul className="list-group clickable">
         {overs.map(
@@ -56,7 +56,7 @@ function PreviousOvers(props) {
               wickets: getWickets(over),
               onOverClick: onOverClick,
             };
-            return (<PreviousOver {...props}/>);
+            return (<Over {...props}/>);
           },
         )}
       </ul>
@@ -64,4 +64,4 @@ function PreviousOvers(props) {
   );
 }
 
-export default PreviousOvers;
+export default Overs;

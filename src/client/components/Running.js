@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CurrentOver from './CurrentOver';
-import PreviousOvers from './PreviousOvers';
+import Overs from './Overs';
 import ScoreInput from './ScoreInput';
 import { bindMethods, optional, toTitleCase } from '../lib/utils';
 import Score from './Score';
@@ -435,8 +435,8 @@ export class Running extends Component {
                          onCrease={onCreaseBatsmanName} onBowlersEnd={onBowlersEnd}/>
           </div>
           <div className="col-md-4 px-0">
-            <PreviousOvers overs={overs.slice(0, -1)} bowlingTeam={bowlingTeamPlayers}
-                           onOverClick={this.openOverModal}/>
+            <Overs overs={overs.slice(0, -1)} bowlingTeam={bowlingTeamPlayers}
+                   onOverClick={this.openOverModal}/>
           </div>
         </div>
       </main>

@@ -36,7 +36,7 @@ class NextBall extends Component {
         {onCrease &&
         <li className="list-group-item text-white bg-dark">{onCrease} is on crease{dots}</li>}
         {onBowlersEnd &&
-        <li className="list-group-item text-white bg-info">{onBowlersEnd} is on bowler's end{dots}</li>}
+        <li className="list-group-item text-white bg-secondary">{onBowlersEnd} is on bowler's end{dots}</li>}
       </>
     );
   }
