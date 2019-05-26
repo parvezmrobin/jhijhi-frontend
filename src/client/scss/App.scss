@@ -163,3 +163,7 @@ section.score-input {
 .text-btn {
   @include button-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-line-height, $btn-border-radius);
 }
+
+th[scope="row"] {
+  @extend .text-right;
+}

@@ -15,13 +15,17 @@ class ScoreModal extends Component {
     const { battingCard, bowlingCard, totalRun, totalWicket } = this._calculateBattingScores();
     const battingRows = battingCard.map(entry => <tr key={entry.name}>
       <th scope="row">{toTitleCase(entry.name)}</th>
-      <td>{entry.bowls ? entry.runs : null}</td>
-      <td>{entry.bowls || 'Did not bat'}</td>
-      <td className={entry.out.kind ? 'text-danger' : 'text-success'}>
+      {(entry.bowls || null) && <td>{entry.runs}</td>}
+      <td className={!entry.bowls ? 'text-center' : ''}
+          colSpan={entry.bowls ? 1 : entry.out.kind ? 2 : 3}>
+        {entry.bowls || 'Did not bat'}
+      </td>
+      {(entry.out.kind || entry.bowls || null)
+      && <td className={entry.out.kind ? 'text-danger' : 'text-success'}>
         {entry.out.kind && toTitleCase(entry.out.kind, ' ')}
         {entry.out.by && ` (${toTitleCase(entry.out.by)})`}
         {(!entry.out.kind && entry.bowls) ? 'Not Out' : null}
-      </td>
+      </td>}
     </tr>);
 
     const bowlingRows = Object.keys(bowlingCard)
@@ -48,11 +52,12 @@ class ScoreModal extends Component {
             <div className="row">
 
               <div className="col">
-                <h4 className="text-primary">{`${this.props.battingTeamName} (${totalRun}/${totalWicket})`}</h4>
-                <Table>
+                <h4
+                  className="text-primary">{`${this.props.battingTeamName} (${totalRun}/${totalWicket})`}</h4>
+                <Table responsive>
                   <thead>
                   <tr>
-                    <th>Name</th>
+                    <th className="text-right">Name</th>
                     <th>Runs</th>
                     <th>Bowls</th>
                     <th/>
@@ -65,10 +70,10 @@ class ScoreModal extends Component {
               </div>
               <div className="col">
                 <h4 className="text-primary">{this.props.bowlingTeamName}</h4>
-                <Table>
+                <Table responsive>
                   <thead>
                   <tr>
-                    <th>Name</th>
+                    <th className="text-right">Name</th>
                     <th>Overs</th>
                     <th>Runs</th>
                     <th>Run Rate</th>

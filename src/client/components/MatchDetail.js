@@ -175,13 +175,13 @@ export default class MatchDetail extends Component {
               <small>({numOfOvers2}.{numOfBowls2} overs)</small>
             </p>
             <div className="row">
-              <div className="col col-lg-12">
+              <div className="col-12 col-md col-lg-12">
                 <button onClick={() => this.setState({ showModal: true })}
                         className="btn btn-primary btn-block">
                   Show Score Card
                 </button>
               </div>
-              <div className="col col-lg-12 pt-lg-1">
+              <div className="col-12 col-md col-lg-12 pt-1 pt-md-0 pt-lg-1">
                 <button onClick={(e) => this.copySharableLink(e)}
                         className="btn btn-outline-primary text-white btn-block">
                   Copy Sharable Link
