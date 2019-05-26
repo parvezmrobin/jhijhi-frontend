@@ -28,17 +28,17 @@ class History extends Component {
       return <CenterContent>
         <h2 className="text-center mt-10">You want score before even playing a match!</h2>
         <div className="row justify-content-center">
-          <img className="img-fluid" src="/frustrated.gif" alt="frustrated"/>
+          <img className="img-fluid" src={"/frustrated.gif"} alt="frustrated"/>
         </div>
-      </CenterContent>
+      </CenterContent>;
     }
     const sidebar = <aside className="col-3">
       <CenterContent col="col">
         <SidebarList title="Completed Matches" itemMapper={(match) => {
-            return <Link className={(match._id === matchId) ? 'text-info' : 'text-white'}
-                         to={`history@${match._id}`}>{match.name}</Link>;
-          }}
-          list={matches || []}/>
+          return <Link className={(match._id === matchId) ? 'text-success' : 'text-white'}
+                       to={`history@${match._id}`}>{match.name}</Link>;
+        }}
+                     list={matches || []}/>
       </CenterContent>
     </aside>;
 

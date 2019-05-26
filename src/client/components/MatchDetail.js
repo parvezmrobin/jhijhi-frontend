@@ -140,14 +140,14 @@ export default class MatchDetail extends Component {
     const innings = showSecondInnings ? match.innings2 : match.innings1;
 
     return <main className="col bg-success min-vh-100 pt-5">
-      <h2 className="text-info bg-dark-trans pt-2 pb-3 mt-3 rounded text-center">
+      <h2 className="text-success bg-dark-trans pt-2 pb-3 mt-3 rounded text-center">
         {match.name}
       </h2>
       <div className="row mt-1">
 
         <div className="pt-3 col text-white">
           <h4 className="text-center">{winningTeam}</h4>
-          <div className="bg-info shadow rounded pb-3 px-2">
+          <div className="shadow rounded pb-3 px-2">
             <h5 className="text-center">won the match {type}. </h5>
             <h5 className="d-flex justify-content-center my-3">
               <label className={showSecondInnings ? 'badge' : 'badge badge-primary'}>
@@ -178,7 +178,7 @@ export default class MatchDetail extends Component {
               Show Score Card
             </button>
             <hr/>
-            <button onClick={(e) => this.copySharableLink(e)} className="btn btn-success btn-block">
+            <button onClick={(e) => this.copySharableLink(e)} className="btn btn-outline-primary text-white btn-block">
               Copy Sharable Link
             </button>
           </div>
