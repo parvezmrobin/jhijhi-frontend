@@ -88,7 +88,7 @@ const matchTossValidations = [
         .exec()
         .then(match => {
           if (!(won === match.team1.toString() || won === match.team2.toString())) {
-            throw new Error('Select a team')
+            throw new Error('Select a team');
           }
           return match;
         });
@@ -399,7 +399,10 @@ router.get('/:id', (request, response) => {
 /* GET matches listing. */
 router.get('/', authenticateJwt(), (request, response) => {
   Match
-    .find({ creator: request.user._id })
+    .find({
+      creator: request.user._id,
+      state: { $ne: 'done' },
+    })
     .lean()
     .then(matches => response.json(matches))
     .catch(err => {
