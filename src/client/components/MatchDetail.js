@@ -145,7 +145,7 @@ export default class MatchDetail extends Component {
       </h2>
       <div className="row mt-1">
 
-        <div className="pt-3 col text-white">
+        <div className="pt-3 col-lg text-white">
           <h4 className="text-center">{winningTeam}</h4>
           <div className="shadow rounded pb-3 px-2">
             <h5 className="text-center">won the match {type}. </h5>
@@ -174,20 +174,27 @@ export default class MatchDetail extends Component {
               <strong>{innings2TeamName}:</strong> {innings2score}/{innings2wicket}{' '}
               <small>({numOfOvers2}.{numOfBowls2} overs)</small>
             </p>
-            <button onClick={() => this.setState({showModal: true})} className="btn btn-primary btn-block">
-              Show Score Card
-            </button>
-            <hr/>
-            <button onClick={(e) => this.copySharableLink(e)} className="btn btn-outline-primary text-white btn-block">
-              Copy Sharable Link
-            </button>
+            <div className="row">
+              <div className="col col-lg-12">
+                <button onClick={() => this.setState({ showModal: true })}
+                        className="btn btn-primary btn-block">
+                  Show Score Card
+                </button>
+              </div>
+              <div className="col col-lg-12 pt-lg-1">
+                <button onClick={(e) => this.copySharableLink(e)}
+                        className="btn btn-outline-primary text-white btn-block">
+                  Copy Sharable Link
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="pt-1 col">
+        <div className="pt-1 col-sm">
           <Overs overs={innings.overs} bowlingTeam={bowlingTeamPlayers}
                  onOverClick={(index) => this.setState({ overIndex: index })}/>
         </div>
-        <div className="pt-1 col">
+        <div className="pt-1 col-sm">
           <CurrentOver balls={innings.overs[overIndex].bowls}
                        title={`${toTitleCase(bowlerName)} bowled (Over ${overIndex + 1})`}
                        battingTeam={battingTeamPlayers}/>

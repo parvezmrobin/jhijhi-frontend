@@ -32,7 +32,7 @@ class History extends Component {
         </div>
       </CenterContent>;
     }
-    const sidebar = <aside className="col-3">
+    const sidebar = <aside className="col-md-3">
       <CenterContent col="col">
         <SidebarList title="Completed Matches" itemMapper={(match) => {
           return <Link className={(match._id === matchId) ? 'text-success' : 'text-white'}
