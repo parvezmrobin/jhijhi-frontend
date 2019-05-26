@@ -136,8 +136,8 @@ export default class MatchDetail extends Component {
     const { numOvers: numOfOvers2, numBowls: numOfBowls2 } = Score.getOverCount(match.innings2);
 
     const overIndex = this.state.overIndex || 0;
-    const bowlerName = bowlingTeamPlayers[match.innings1.overs[overIndex].bowledBy].name;
     const innings = showSecondInnings ? match.innings2 : match.innings1;
+    const bowlerName = bowlingTeamPlayers[innings.overs[overIndex].bowledBy].name;
 
     return <main className="col bg-success min-vh-100 pt-5">
       <h2 className="text-success bg-dark-trans pt-2 pb-3 mt-3 rounded text-center">
