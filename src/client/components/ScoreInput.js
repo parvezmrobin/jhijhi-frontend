@@ -21,6 +21,7 @@ export default class ScoreInput extends Component {
       wicket: 'Wicket',
       isModalOpen: false,
       batsman: '',
+      errorMessage: null,
     };
 
     bindMethods(this);
@@ -43,11 +44,15 @@ export default class ScoreInput extends Component {
     const isNewBowl = endPoint === 'bowl';
     const request = isNewBowl ? fetcher.post : fetcher.put;
     request(`matches/${this.props.matchId}/${endPoint}`, bowlEvent)
-      .then(res => this.prepareForNextInput(isNewBowl ? bowlEvent : res.data.bowl, !isNewBowl));
+      .then(res => this.prepareForNextInput(isNewBowl ? bowlEvent : res.data.bowl, !isNewBowl))
+      .catch(err => {
+        this.prepareForNextInput();
+        this.setState({errorMessage: err.response.data.err[0].msg})
+      });
   }
 
   prepareForNextInput(bowl, isUpdate) {
-    this.props.onInput(bowl, isUpdate);
+    bowl && this.props.onInput(bowl, isUpdate);
     this.setState(prevState => ({
       ...prevState,
       isBy: false,
@@ -108,8 +113,7 @@ export default class ScoreInput extends Component {
       this._makeServerRequest(bowlEvent);
     },
     onRunOut() {
-      let selectedBatsmanIndex;
-      selectedBatsmanIndex = this._getIndexOfBatsman(this.state.batsman);
+      const selectedBatsmanIndex = this._getIndexOfBatsman(this.state.batsman);
       this._makeServerRequest({ batsman: selectedBatsmanIndex }, 'run-out');
     },
   };
@@ -244,6 +248,16 @@ export default class ScoreInput extends Component {
           <ModalFooter>
             <Button color="primary" onClick={this.onRunOut}>Select</Button>
           </ModalFooter>
+        </Modal>
+
+        {/* Error Modal */}
+        <Modal isOpen={this.state.errorMessage}>
+          <ModalHeader className="text-danger" toggle={() => this.setState({errorMessage: null})}>
+            Error!
+          </ModalHeader>
+          <ModalBody className="text-danger">
+            {this.state.errorMessage}
+          </ModalBody>
         </Modal>
       </section>
     );

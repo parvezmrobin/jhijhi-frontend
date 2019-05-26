@@ -97,6 +97,38 @@ const matchTossValidations = [
     .isIn(['Bat', 'Bawl']),
 ];
 
+const runOutValidations = [
+  check('batsman')
+    .isInt({ min: 0 }),
+  check('batsman')
+    .custom((batsman, { req }) => {
+      return Match
+        .findById(req.params.id)
+        .lean()
+        .exec()
+        .then(match => {
+          if (!match) {
+            throw new Error('Invalid match id');
+          }
+          if (['innings1', 'innings2'].indexOf(match.state) === -1) {
+            throw new Error('No runout happens before or after match.');
+          }
+
+          const overs = match[match.state].overs;
+          const lastOver = overs[overs.length - 1].bowls;
+          const lastBowl = lastOver[lastOver.length - 1];
+
+          if (lastBowl.isWicket && lastBowl.isWicket.kind) {
+            const message = `Already a ${lastBowl.isWicket.kind} in this bowl. `
+              + 'To input a bowl with only a run-out, input a bowl with 0 run first.';
+            throw new Error(message);
+          }
+
+          return true;
+        });
+    }),
+];
+
 router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, response) => {
   const errors = validationResult(request);
   const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({
@@ -266,7 +298,6 @@ function _updateBowlAndSend(match, bowl, response) {
       .json({ success: false });
   }
   const updateQuery = { $set: { [field]: { ...lastBowl, ...bowl } } };
-  console.log('updateQuery', updateQuery.$set);
 
   return Match.findByIdAndUpdate(match._id, updateQuery)
     .exec()
@@ -308,16 +339,20 @@ router.put('/:id/by', authenticateJwt(), (request, response) => {
     });
 });
 
-router.put('/:id/run-out', authenticateJwt(), (request, response) => {
-  const { batsman } = nullEmptyValues(request);
+router.put('/:id/run-out', runOutValidations, authenticateJwt(), (request, response) => {
   const id = request.params.id;
-  Match.findById(id)
-    .lean()
+  const errors = validationResult(request);
+  const promise = errors.isEmpty() ? Match.findById(id)
+      .lean()
+      .exec()
+    : Promise.reject({
+      status: 400,
+      errors: errors.array(),
+    });
+  const { batsman } = nullEmptyValues(request);
+
+  promise
     .then(match => {
-      if (match.isWicket && match.isWicket.kind) {
-        return response.status(400)
-          .json({ success: false });
-      }
       const bowl = {
         isWicket: {
           kind: 'run out',
@@ -325,7 +360,8 @@ router.put('/:id/run-out', authenticateJwt(), (request, response) => {
         },
       };
       return _updateBowlAndSend(match, bowl, response);
-    });
+    })
+    .catch(err => sendErrorResponse(response, err, 'Error while run out'));
 });
 
 router.post('/:id/over', authenticateJwt(), (request, response) => {
