@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
+import { CustomInput } from 'reactstrap';
 
 export default class Score extends Component {
   render() {
@@ -47,7 +48,10 @@ export default class Score extends Component {
           <small className="font-weight-normal">({numberOfOvers} overs)</small>
         </h5>
         <h5 className="font-weight-normal">{inningsText}</h5>
-
+        <CustomInput type="switch" label="Single Batsman" id="single-batsman"
+                     className="pt-2 pb-2 my-1 text-white"
+                     checked={this.props.singleBatsman}
+                     onChange={e => this.setState({ singleBatsman: e.target.checked })}/>
       </div>
       <div className="mt-2 text-white">
         <div className="px-2">{runRateText}</div>
@@ -166,5 +170,6 @@ Score.propTypes = {
   firstInnings: PropTypes.object,
   inningsNo: PropTypes.number,
   numberOfOvers: PropTypes.number,
+  singleBatsman: PropTypes.bool,
   onWinning: PropTypes.func,
 };
