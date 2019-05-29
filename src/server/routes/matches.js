@@ -202,7 +202,7 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
       if (!match) {
         throw new Error404(responses.matches.e404);
       }
-      match.team1WonToss = match.team1 === won;
+      match.team1WonToss = match.team1.toString() === won;
       match.team1BatFirst = (match.team1WonToss && choice === 'Bat') || (!match.team1WonToss && choice === 'Bawl');
       match.state = state;
       match.innings1 = { overs: [] };
