@@ -16,7 +16,7 @@ class ErrorBoundary extends Component {
     this.state = {hasError: false};
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     // Update state so the next render will show the fallback UI.
     return {hasError: true};
   }
@@ -32,7 +32,9 @@ class ErrorBoundary extends Component {
         <span className="d-inline-flex text-danger">Something went wrong!</span>
         <br/>
         <span className="d-inline-flex mt-4">
-          Please<Link to="#" onClick={window.location.reload}>&nbsp;reload&nbsp;</Link>the page to retry.
+          Please&nbsp;
+          <Link to="#" className="text-decoration-none" onClick={window.location.reload}>reload</Link>
+          &nbsp;the page to retry.
         </span>
       </h1></CenterContent>;
     }
