@@ -20,7 +20,7 @@ class MatchForm extends Component {
         <h2>Create Match</h2>
         <hr/>
         <form onSubmit={(e) => {e.preventDefault(); this.props.onSubmit(e)}}>
-          <FormGroup name="name" value={this.props.values.name}
+          <FormGroup name="name" value={this.props.values.name} autoFocus={true}
                      onChange={(e) => this.props.onChange({name: e.target.value})}
                      isValid={this.props.isValid.name} feedback={this.props.feedback.name}/>
           <FormGroup name="team-1" type="select" options={this.props.teams} value={this.props.values.team1}

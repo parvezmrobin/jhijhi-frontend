@@ -22,7 +22,7 @@ class TeamForm extends Component {
           <FormGroup name="name" value={this.props.team.name}
                      onChange={(e) => this.props.onChange({name: e.target.value})}
                      isValid={this.props.isValid.name}
-                     feedback={this.props.feedback.name}/>
+                     feedback={this.props.feedback.name} autoFocus={true}/>
           <FormGroup name="short-name" value={this.props.team.shortName}
                      onChange={(e) => this.props.onChange({shortName: e.target.value})}
                      isValid={this.props.isValid.shortName}

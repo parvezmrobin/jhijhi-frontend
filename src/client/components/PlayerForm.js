@@ -25,7 +25,7 @@ function PlayerForm(props) {
       }}>
         <FormGroup name="name" onChange={e => props.onChange({ name: e.target.value })}
                    value={props.values.name} isValid={props.isValid.name}
-                   feedback={props.feedback.name}/>
+                   feedback={props.feedback.name} autoFocus={true}/>
         <FormGroup name="jersey-no" onChange={e => props.onChange({ jerseyNo: e.target.value })}
                    value={props.values.jerseyNo} isValid={props.isValid.jerseyNo}
                    feedback={props.feedback.jerseyNo}/>
