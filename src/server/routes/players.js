@@ -30,7 +30,7 @@ const playerCreateValidations = [
         })
         .exec()
         .then(player => {
-          return player ? Promise.reject('Player Name already taken.') : Promise.resolve();
+          return player ? Promise.reject('Player Name already taken.') : true;
         });
     }),
   check('jerseyNo', 'Jersey number should be between 0 to 999')
@@ -47,7 +47,7 @@ const playerCreateValidations = [
         })
         .exec()
         .then(player => {
-          return player ? Promise.reject('This jersey is already taken.') : Promise.resolve();
+          return player ? Promise.reject('This jersey is already taken.') : true;
         });
     }),
 ];
@@ -63,8 +63,10 @@ const playerEditValidations = [
         .lean()
         .exec()
         .then(player => {
-          return player && player._id.toString() !== req.params.id
-            ? Promise.reject('Player Name already taken.') : Promise.resolve();
+          if (player && player._id.toString() !== req.params.id) {
+            throw new Error('Player Name already taken.');
+          }
+          return true;
         });
     }),
   check('jerseyNo', 'Jersey number should be between 1 to 999')
@@ -82,8 +84,10 @@ const playerEditValidations = [
         .lean()
         .exec()
         .then(player => {
-          return player && player._id.toString() !== req.params.id
-            ? Promise.reject('This jersey is already taken.') : Promise.resolve();
+          if (player && player._id.toString() !== req.params.id) {
+            throw new Error('This jersey is already taken.');
+          }
+          return true;
         });
     }),
 ];

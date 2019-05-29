@@ -18,7 +18,7 @@ const { Error400, Error404 } = require('../lib/errors');
 
 
 const matchCreateValidations = [
-  check('name')
+  check('name', 'A unique match name is required')
     .trim()
     .exists({ checkFalsy: true }),
   check('name')
@@ -33,19 +33,19 @@ const matchCreateValidations = [
           if (match) {
             throw new Error('Match Name already taken.');
           }
-          return match;
+          return true;
         });
     }),
-  check('team1')
+  check('team1', 'Select a team')
     .isMongoId(),
-  check('team2')
+  check('team2', 'Select a team')
     .isMongoId(),
   check('team1')
     .custom((team1, { req }) => {
       if (team1 === req.body.team2) {
         throw new Error('Team 1 and Team 2 should be different.');
       }
-      return team1;
+      return true;
     }),
   check('overs', 'Overs must be greater than 0')
     .isInt({ min: 1 }),
@@ -90,7 +90,7 @@ const matchTossValidations = [
           if (!(won === match.team1.toString() || won === match.team2.toString())) {
             throw new Error('Select a team');
           }
-          return match;
+          return true;
         });
     }),
   check('choice')
@@ -453,18 +453,13 @@ router.get('/', authenticateJwt(), (request, response) => {
 
 router.post('/', authenticateJwt(), matchCreateValidations, (request, response) => {
   const errors = validationResult(request);
+  console.log(errors.array());
+
   const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({
     status: 400,
     errors: errors.array(),
   });
-  const params = request.body;
-  for (const key in params) {
-    if (params.hasOwnProperty(key)) {
-      if (!params[key]) {
-        params[key] = null;
-      }
-    }
-  }
+  const params = nullEmptyValues(request);
   const { name, team1, team2, umpire1, umpire2, umpire3, overs } = params;
 
   promise

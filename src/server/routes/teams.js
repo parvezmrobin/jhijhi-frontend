@@ -39,7 +39,7 @@ const teamCreateValidations = [
           if (team) {
             return Promise.reject('Team Name already taken.');
           }
-          return Promise.resolve();
+          return true;
         });
     }),
   check('shortName', 'Short name should be at least 2 characters')
@@ -57,7 +57,7 @@ const teamCreateValidations = [
           if (team) {
             return Promise.reject('This short name is already taken.');
           }
-          return Promise.resolve();
+          return true;
         });
     }),
 ];
