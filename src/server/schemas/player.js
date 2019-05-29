@@ -11,7 +11,7 @@ module.exports = new Schema({
   name: String,
   jerseyNo: {
     type: Number,
-    min: 1,
+    min: 0,
   },
   creator: {
     type: Schema.Types.ObjectId,
