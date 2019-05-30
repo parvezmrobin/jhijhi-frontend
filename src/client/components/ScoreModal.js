@@ -180,13 +180,6 @@ class ScoreModal extends Component {
       stat.runRate = (stat.run / (stat.overs * 6 + stat.bowls)) * 6;
     }
 
-    console.log({
-      battingCard,
-      bowlingCard,
-      totalRun,
-      totalWicket,
-    });
-
     return {
       battingCard,
       bowlingCard,

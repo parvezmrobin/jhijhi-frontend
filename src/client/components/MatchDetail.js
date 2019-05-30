@@ -50,7 +50,6 @@ export default class MatchDetail extends Component {
       .get(`/matches/${matchId}`)
       .then(response => {
         this.setState({ match: response.data });
-        console.log(response.data);
       });
   }
 
