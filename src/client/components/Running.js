@@ -8,7 +8,7 @@ import BatsmanSelectModal from './BatsmanSelectModal';
 import PreviousOverModal from './PreviousOverModal';
 import ScoreCard from './ScoreCard';
 import BowlerSelectModal from './BowlerSelectModal';
-import { CustomInput, Modal, ModalBody, Spinner } from 'reactstrap';
+import { Modal, ModalBody, Spinner } from 'reactstrap';
 import fetcher from '../lib/fetcher';
 import { Redirect } from 'react-router-dom';
 
@@ -113,27 +113,35 @@ export class Running extends Component {
 
       this.setState(genUpdatedState);
     },
+
     onDeclare() {
-      const { match: { state }, isDeclaring } = this.state;
+      const { match: { state, _id }, isDeclaring } = this.state;
       if (isDeclaring || state === 'done') {
         return;
       }
-      setTimeout(() => this.setState({ isDeclaring: true }), 0);
-      fetcher
-        .put(`matches/${this.state.match._id}/declare`)
-        .then(response => {
-          this.setState(prevState => {
-            return {
-              isDeclaring: false,
-              match: {
-                ...prevState.match,
-                ...response.data,
-              },
-              batsman1: null,
-              batsman2: null,
-            };
+      const updateState = () => {
+        const nextState = (state === 'innings1') ? 'innings2' : (state === 'innings2') ? 'done': null;
+        if (!nextState) {
+          return;
+        }
+        fetcher
+          .put(`matches/${_id}/declare`, {state: nextState})
+          .then(response => {
+            this.setState(prevState => {
+              return {
+                isDeclaring: false,
+                match: {
+                  ...prevState.match,
+                  ...response.data,
+                },
+                batsman1: null,
+                batsman2: null,
+              };
+            });
           });
-        });
+      };
+
+      this.setState({ isDeclaring: true }, updateState);
     },
   };
 
@@ -382,7 +390,7 @@ export class Running extends Component {
   componentDidUpdate() {
     let innings,
       battingTeamPlayers;
-    const { bowlerModalIsOpen, match: { state }, singleBatsman, batsman1, batsman2 } = this.state;
+    const { bowlerModalIsOpen, match: { state, overs: numOvers }, singleBatsman, batsman1, batsman2, isDeclaring } = this.state;
 
     try {
       ({
@@ -395,20 +403,21 @@ export class Running extends Component {
       }
       throw e;
     }
-    if (!bowlerModalIsOpen && this._shouldStartNewOver()) {
-      this.setState({ bowlerModalIsOpen: true });
-      if ((state !== 'done') && (innings.overs.length === this.state.match.overs)) {
-        return this.onDeclare();
-      }
-    }
-    if ((state !== 'done') && Running._isAllOut(innings, battingTeamPlayers.length, singleBatsman)) {
-      this.onDeclare();
-    }
     if (singleBatsman && !Number.isInteger(batsman1) && Number.isInteger(batsman2)) {
       this.setState({
         batsman1: batsman2,
         batsman2: null,
       });
+    }
+    if (!bowlerModalIsOpen && this._shouldStartNewOver()) {
+      this.setState({ bowlerModalIsOpen: true });
+      if ((state !== 'done') && !isDeclaring && (innings.overs.length === numOvers)) {
+        this.onDeclare();
+        return;
+      }
+    }
+    if ((state !== 'done') && !isDeclaring && Running._isAllOut(innings, battingTeamPlayers.length, singleBatsman)) {
+      this.onDeclare();
     }
   }
 

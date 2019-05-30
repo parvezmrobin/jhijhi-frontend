@@ -225,6 +225,7 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
 
 router.put('/:id/declare', authenticateJwt(), (request, response) => {
   const id = request.params.id;
+  const { state: nextState } = nullEmptyValues(request);
 
   Match.findById(id)
     .exec()
@@ -232,11 +233,22 @@ router.put('/:id/declare', authenticateJwt(), (request, response) => {
       if (!match) {
         throw new Error404(responses.matches.e404);
       }
-      if (['innings1', 'innings2'].indexOf(match.state) === -1) {
+      if (nextState && ['done', 'innings2'].indexOf(nextState) === -1) {
+        throw new Error400(`Next state must be either 'done' or 'innings1'`);
+      } else if (['innings1', 'innings2'].indexOf(match.state) === -1) {
         throw new Error400(`State must be either 'innings1' or 'innings1'`);
       }
       const updateState = {};
-      if (match.state.toString() === 'innings1') {
+      if (nextState === 'innings2') {
+        match.state = 'innings2';
+        // prevent double initialization of `match.innings2`
+        updateState.innings2 = match.innings2 ? match.innings2 : (match.innings2 = { overs: [] });
+      } else if (nextState === 'done') {
+        match.state = 'done';
+      }
+      // legacy option that deals request without state parameter
+      // not recommended
+      else if (match.state.toString() === 'innings1') {
         match.state = 'innings2';
         updateState.innings2 = match.innings2 = { overs: [] };
       } else {
@@ -246,14 +258,7 @@ router.put('/:id/declare', authenticateJwt(), (request, response) => {
       return match.save()
         .then(() => response.json(updateState));
     })
-    .catch(err => {
-      response.status(err.statusCode || err.status || 500);
-      response.json({
-        success: false,
-        message: responses.matches.get.err,
-        err: err.error || err.errors || err,
-      });
-    });
+    .catch(err => sendErrorResponse(response, err, responses.matches.get.err));
 });
 
 router.post('/:id/bowl', authenticateJwt(), (request, response) => {
