@@ -152,7 +152,6 @@ export class Running extends Component {
     if (inputEvent.isUpdate) {
       const lastBowl = bowls[bowls.length - 1];
       bowls[bowls.length - 1] = { ...lastBowl, ...bowl };
-      console.log('lastBowl', bowls[bowls.length - 1]);
     } else {
       bowls.push(bowl);
     }
@@ -250,6 +249,17 @@ export class Running extends Component {
     }
     if (batsman2Id) {
       indices.batsman2 = this._getIndexOfBatsman(battingTeamPlayers, batsman2Id);
+    }
+
+    if (!batsman1Id && indices.batsman1 === -1) {
+      // Batsman is selected while match was transitioning from innings1 to innings2
+      // and a batsman from innings1 is selected
+      return { errors: { batsman1: 'Error while selecting batsman. Try again.' } };
+    }
+    if (!batsman2Id && indices.batsman2 === -1) {
+      // Batsman is selected while match was transitioning from innings1 to innings2
+      // and a batsman from innings1 is selected
+      return { errors: { batsman2: 'Error while selecting batsman. Try again.' } };
     }
 
     if (!batsman1Id && (indices.batsman2 === this.state.batsman1)) {
