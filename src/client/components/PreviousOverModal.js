@@ -14,7 +14,7 @@ export default function PreviousOverModal(props) {
       (Over {props.overModal.overNo})
     </ModalHeader>
     <ModalBody>
-      <CurrentOver balls={props.overModal.over.bowls} battingTeam={props.battingTeamPlayers}/>
+      <CurrentOver bowls={props.overModal.over.bowls} battingTeam={props.battingTeamPlayers}/>
     </ModalBody>
     <ModalFooter>
       <Button color="secondary" onClick={props.toggle}>Close</Button>

@@ -5,20 +5,31 @@
  */
 
 
-import React, { Fragment } from 'react';
+import React, { Component } from 'react';
+import { toTitleCase } from '../lib/utils';
+import * as feather from 'feather-icons';
+import PropTypes from 'prop-types';
+
 import Bowl from './Bowl';
 import NextBall from './NextBall';
-import { toTitleCase } from '../lib/utils';
 
-function CurrentOver(props) {
-  const { bowler, battingTeam, balls, onCrease, onBowlersEnd, title } = props;
-  let bowlNo = 1;
-  const renderedBowls = balls.map((bowl, i) =>
-    <Bowl bowlNo={(bowl.isNo || bowl.isWide) ? bowlNo : bowlNo++} key={i} {...bowl}
-          battingTeam={battingTeam}/>);
 
-  return (
-    <Fragment>
+class CurrentOver extends Component {
+
+  componentDidUpdate() {
+    feather.replace();
+  }
+
+  render() {
+    const { bowler, battingTeam, bowls, onCrease, onBowlersEnd, title, overNo, onEdit } = this.props;
+    let bowlNo = 1;
+    let actualBowlNo = 0;
+    const renderedBowls = bowls.map((bowl, i) =>
+      <Bowl actualBowlNo={actualBowlNo++} bowlNo={(bowl.isNo || bowl.isWide) ? bowlNo : bowlNo++}
+            key={i} {...bowl} battingTeam={battingTeam} onEdit={bowlNo => onEdit(overNo, bowlNo)}/>,
+    );
+
+    return (<>
       {title &&
       <h4 className="mt-2 pt-1 text-center text-white">{title}</h4>}
       {bowler &&
@@ -29,8 +40,20 @@ function CurrentOver(props) {
         {renderedBowls}
         <NextBall onCrease={onCrease} onBowlersEnd={onBowlersEnd}/>
       </ul>
-    </Fragment>
-  );
+    </>);
+  }
 }
+
+CurrentOver.propTypes = {
+  bowler: PropTypes.object,
+  battingTeam: PropTypes.arrayOf(PropTypes.object).isRequired,
+  bowls: PropTypes.arrayOf(PropTypes.object),
+  onCrease: PropTypes.string,
+  onBowlersEnd: PropTypes.string,
+  title: PropTypes.string,
+  overNo: PropTypes.number,
+  onEdit: PropTypes.func,
+};
+
 
 export default CurrentOver;

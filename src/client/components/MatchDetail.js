@@ -194,7 +194,7 @@ export default class MatchDetail extends Component {
                  onOverClick={(index) => this.setState({ overIndex: index })}/>
         </div>
         <div className="pt-1 col-sm">
-          <CurrentOver balls={innings.overs[overIndex].bowls}
+          <CurrentOver bowls={innings.overs[overIndex].bowls}
                        title={`${toTitleCase(bowlerName)} bowled (Over ${overIndex + 1})`}
                        battingTeam={battingTeamPlayers}/>
         </div>

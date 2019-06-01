@@ -12,6 +12,7 @@ import ScoreCard from './ScoreCard';
 import BowlerSelectModal from './BowlerSelectModal';
 import { Redirect } from 'react-router-dom';
 import { Modal, ModalBody, Spinner } from 'reactstrap';
+import ScoreEditModal from './ScoreEditModal';
 
 export class Running extends Component {
   constructor(props) {
@@ -25,6 +26,11 @@ export class Running extends Component {
       batsman1: null,
       batsman2: null,
       singleBatsman: false,
+      editModal: {
+        show: false,
+        overNo: -1,
+        bowlNo: -1,
+      },
     };
 
     bindMethods(this);
@@ -121,12 +127,12 @@ export class Running extends Component {
         return;
       }
       const updateState = () => {
-        const nextState = (state === 'innings1') ? 'innings2' : (state === 'innings2') ? 'done': null;
+        const nextState = (state === 'innings1') ? 'innings2' : (state === 'innings2') ? 'done' : null;
         if (!nextState) {
           return;
         }
         fetcher
-          .put(`matches/${_id}/declare`, {state: nextState})
+          .put(`matches/${_id}/declare`, { state: nextState })
           .then(response => {
             this.setState(prevState => {
               return {
@@ -143,6 +149,16 @@ export class Running extends Component {
       };
 
       this.setState({ isDeclaring: true }, updateState);
+    },
+
+    onEditClick: function (overNo, bowlNo) {
+      this.setState({
+        editModal: {
+          show: true,
+          overNo,
+          bowlNo,
+        },
+      });
     },
   };
 
@@ -479,10 +495,10 @@ export class Running extends Component {
           <ScoreInsert batsmen={[battingTeamPlayers[batsman1], battingTeamPlayers[batsman2]]}
                        batsmanIndices={[batsman1, batsman2]} matchId={match._id}
                        onInput={(bowl, isUpdate = false) => this.onInput({
-                        type: 'bowl',
-                        bowl,
-                        isUpdate,
-                      })}/>
+                         type: 'bowl',
+                         bowl,
+                         isUpdate,
+                       })}/>
           <div className="col-md-4 px-0">
             <Score battingTeamName={battingTeamShortName} numberOfOvers={numOvers}
                    tossOwner={team1WonToss ? team1.name : team2.name}
@@ -491,8 +507,9 @@ export class Running extends Component {
                    firstInnings={innings1} matchId={match._id} onWinning={this.onDeclare}/>
           </div>
           <div className="col-md-4">
-            <CurrentOver balls={lastOver.bowls} bowler={bowler} battingTeam={battingTeamPlayers}
-                         onCrease={onCreaseBatsmanName} onBowlersEnd={onBowlersEnd}/>
+            <CurrentOver overNo={overs.length - 1} bowls={lastOver.bowls} bowler={bowler}
+                         battingTeam={battingTeamPlayers} onCrease={onCreaseBatsmanName}
+                         onBowlersEnd={onBowlersEnd} onEdit={this.onEditClick}/>
           </div>
           <div className="col-md-4 px-0">
             <Overs overs={overs.slice(0, -1)} bowlingTeam={bowlingTeamPlayers}
@@ -515,6 +532,17 @@ export class Running extends Component {
                            type: 'over',
                            bowler: bowler,
                          })}/>
+      <ScoreEditModal isOpen={this.state.editModal.show} overNo={this.state.editModal.overNo}
+                      bowlNo={this.state.editModal.bowlNo} onInput={() => {
+      }} batsmanIndices={[batsman1, batsman2]} batsmen={battingTeamPlayers}
+                      matchId={match._id}
+                      close={() => this.setState({
+                        editModal: {
+                          show: false,
+                          overNo: -1,
+                          bowlNo: -1,
+                        },
+                      })}/>
       <Modal centered={true} contentClassName="bg-transparent border-0"
              isOpen={this.state.isDeclaring}>
         <ModalBody>
