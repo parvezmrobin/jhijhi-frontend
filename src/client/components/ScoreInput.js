@@ -27,6 +27,9 @@ export default class ScoreInput extends Component {
     bindMethods(this);
   }
 
+  static defaultProps = {
+  };
+
   _createBowlEvent() {
     return {
       playedBy: this._getIndexOfBatsman(this.props.batsmen[0]._id),
@@ -41,18 +44,22 @@ export default class ScoreInput extends Component {
   }
 
   _makeServerRequest(bowlEvent, endPoint = 'bowl') {
+    const {matchId, onInput, defaultHttpVerb, injectBowlEvent, shouldResetAfterInput} = this.props;
+    bowlEvent = injectBowlEvent(bowlEvent);
     const isNewBowl = endPoint === 'bowl';
-    const request = isNewBowl ? fetcher.post : fetcher.put;
-    request(`matches/${this.props.matchId}/${endPoint}`, bowlEvent)
-      .then(res => this.prepareForNextInput(isNewBowl ? bowlEvent : res.data.bowl, !isNewBowl))
+    const request = isNewBowl ? fetcher[defaultHttpVerb.toLowerCase()] : fetcher.put;
+    request(`matches/${matchId}/${endPoint}`, bowlEvent)
+      .then(res => {
+        onInput(isNewBowl ? bowlEvent : res.data.bowl, !isNewBowl);
+        shouldResetAfterInput && this.resentInputFields();
+      })
       .catch(err => {
-        this.prepareForNextInput();
+        shouldResetAfterInput && this.resentInputFields();
         this.setState({errorMessage: err.response.data.err[0].msg})
       });
   }
 
-  prepareForNextInput(bowl, isUpdate) {
-    bowl && this.props.onInput(bowl, isUpdate);
+  resentInputFields() {
     this.setState(prevState => ({
       ...prevState,
       isBy: false,
@@ -265,8 +272,11 @@ export default class ScoreInput extends Component {
 }
 
 ScoreInput.propTypes = {
-  batsmen: PropTypes.arrayOf(PropTypes.object),
-  batsmanIndices: PropTypes.arrayOf(PropTypes.number),
-  matchId: PropTypes.string,
-  onInput: PropTypes.func,
+  batsmen: PropTypes.arrayOf(PropTypes.object).isRequired,
+  batsmanIndices: PropTypes.arrayOf(PropTypes.number).isRequired,
+  matchId: PropTypes.string.isRequired,
+  onInput: PropTypes.func.isRequired,
+  defaultHttpVerb: PropTypes.oneOf(['post', 'put']).isRequired,
+  injectBowlEvent: PropTypes.func.isRequired,  // to support injecting over and bowl number while editing
+  shouldResetAfterInput: PropTypes.bool.isRequired,
 };

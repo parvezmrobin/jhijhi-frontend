@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
+import { bindMethods, optional, toTitleCase } from '../lib/utils';
+import fetcher from '../lib/fetcher';
+
 import CurrentOver from './CurrentOver';
 import Overs from './Overs';
-import ScoreInput from './ScoreInput';
-import { bindMethods, optional, toTitleCase } from '../lib/utils';
+import ScoreInsert from './ScoreInsert';
 import Score from './Score';
 import BatsmanSelectModal from './BatsmanSelectModal';
 import PreviousOverModal from './PreviousOverModal';
 import ScoreCard from './ScoreCard';
 import BowlerSelectModal from './BowlerSelectModal';
-import { Modal, ModalBody, Spinner } from 'reactstrap';
-import fetcher from '../lib/fetcher';
 import { Redirect } from 'react-router-dom';
+import { Modal, ModalBody, Spinner } from 'reactstrap';
 
 export class Running extends Component {
   constructor(props) {
@@ -475,9 +476,9 @@ export class Running extends Component {
             </h2>
           </header>
           <hr/>
-          <ScoreInput batsmen={[battingTeamPlayers[batsman1], battingTeamPlayers[batsman2]]}
-                      batsmanIndices={[batsman1, batsman2]} matchId={match._id}
-                      onInput={(bowl, isUpdate = false) => this.onInput({
+          <ScoreInsert batsmen={[battingTeamPlayers[batsman1], battingTeamPlayers[batsman2]]}
+                       batsmanIndices={[batsman1, batsman2]} matchId={match._id}
+                       onInput={(bowl, isUpdate = false) => this.onInput({
                         type: 'bowl',
                         bowl,
                         isUpdate,
