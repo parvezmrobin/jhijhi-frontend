@@ -17,7 +17,8 @@ export function toTitleCase(str, delimiter = '-') {
   }
   return str
     .split(delimiter)
-    .map(word => word[0].toUpperCase() + word.substr(1).toLowerCase())
+    .map(word => word[0].toUpperCase() + word.substr(1)
+      .toLowerCase())
     .join(' ');
 }
 
@@ -36,10 +37,10 @@ export function optional(object) {
  * @param {Object} object - the object to which methods will be bound
  * @param {String} property - propertyName that contains the methods to be bound
  */
-export function bindMethods(object, property = "handlers") {
+export function bindMethods(object, property = 'handlers') {
   for (const methodName in object[property]) {
     if (object[property].hasOwnProperty(methodName)) {
-      if (typeof object[property][methodName] !== "function") {
+      if (typeof object[property][methodName] !== 'function') {
         continue;
       }
       object[methodName] = object[property][methodName].bind(object);
@@ -61,7 +62,26 @@ export function subtract(from, subtrahend, matcher = ((el1, el2) => el1 === el2)
       }
     }
     return true;
-  })
+  });
+}
+
+export function ordinal(number) {
+  if (number < 1) {
+    return `${number}th`;
+  }
+  if (number === 11) {
+    return '11th';
+  }
+  if (number === 12) {
+    return '12th';
+  }
+  if (number % 10 === 1) {
+    return `${number}st`;
+  }
+  if (number % 10 === 2) {
+    return `${number}nd`;
+  }
+  return `${number}th`;
 }
 
 export function logout() {
