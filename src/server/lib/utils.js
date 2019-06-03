@@ -4,7 +4,16 @@
  * Date: Apr 10, 2019
  */
 
-
+/**
+ * @param response
+ * @param err
+ * @param [err.statusCode]
+ * @param [err.status]
+ * @param [err.error]
+ * @param [err.errors]
+ * @param message
+ * @param suppressError
+ */
 module.exports.sendErrorResponse = function (response, err, message, suppressError = false) {
   console.log(err);
 
