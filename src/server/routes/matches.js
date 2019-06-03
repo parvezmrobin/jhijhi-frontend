@@ -285,24 +285,46 @@ router.post('/:id/bowl', authenticateJwt(), (request, response) => {
     });
 });
 
-function _updateBowlAndSend(match, bowl, response) {
+router.put('/:id/bowl', authenticateJwt(), (request, response) => {
+  const { bowl, overNo, bowlNo } = nullEmptyValues(request);
+  const matchId = request.params.id;
+  Match.findById(matchId)
+    .lean()
+    .exec()
+    .then(match => _updateBowlAndSend(match, bowl, response, overNo, bowlNo));
+});
+
+const _updateBowlAndSend = (match, bowl, response, overNo, bowlNo) => {
+  const overExists = Number.isInteger(overNo);
+  const bowlExists = Number.isInteger(bowlNo);
+  if ((overExists || bowlExists) && !(overExists && bowlExists)) {
+    // provided either `overNo` or `bowlNo` but not both.
+    return sendErrorResponse(
+      response,
+      { statusCode: 400 },
+      'Must provide either both `overNo` and `bowlNo` or none',
+    );
+  }
   let field,
-    lastBowl;
+    prevBowl;  // if `overNo` and `bowlNo` is not provided, then update the last bowl
   if (match.state === 'innings1') {
     const overs = match.innings1.overs;
-    const bowls = overs[overs.length - 1].bowls;
-    lastBowl = bowls[bowls.length - 1];
-    field = `innings1.overs.${overs.length - 1}.bowls.${bowls.length - 1}`;
+    overNo = overExists ? overNo : overs.length - 1;
+    const bowls = overs[overNo].bowls;
+    bowlNo = bowlExists ? bowlNo : bowls.length - 1;
+    prevBowl = bowls[bowlNo];
+    field = `innings1.overs.${overNo}.bowls.${bowlNo}`;
   } else if (match.state === 'innings2') {
     const overs = match.innings2.overs;
-    const bowls = overs[overs.length - 1].bowls;
-    lastBowl = bowls[bowls.length - 1];
-    field = `innings2.overs.${overs.length - 1}.bowls.${bowls.length - 1}`;
+    overNo = overExists ? overNo : overs.length - 1;
+    const bowls = overs[overNo].bowls;
+    bowlNo = bowlExists ? bowlNo : bowls.length - 1;
+    prevBowl = bowls[bowlNo];
+    field = `innings2.overs.${overNo}.bowls.${bowlNo}`;
   } else {
-    return response.status(400)
-      .json({ success: false });
+    return sendErrorResponse(response, { statusCode: 400 }, 'State should be either innings 1 or innings 2');
   }
-  const updateQuery = { $set: { [field]: { ...lastBowl, ...bowl } } };
+  const updateQuery = { $set: { [field]: { ...prevBowl, ...bowl } } };
 
   return Match.findByIdAndUpdate(match._id, updateQuery)
     .exec()
@@ -312,35 +334,23 @@ function _updateBowlAndSend(match, bowl, response) {
         bowl,
       });
     })
-    .catch((err) => {
-      console.error(err);
-      return response.status(500)
-        .json({ success: false });
-    });
-}
+    .catch((err) => sendErrorResponse(response, err, 'Error while updating bowl'));
+};
 
 router.put('/:id/by', authenticateJwt(), (request, response) => {
-  const { run, boundary } = nullEmptyValues(request);
+  const { run, boundary, overNo, bowlNo } = nullEmptyValues(request);
   const id = request.params.id;
   Match.findById(id, 'state innings1 innings2')
     .lean()
+    .exec()
     .then(match => {
-      if (match.boundary && match.boundary.run && boundary) {
-        return response.status(400)
-          .json({ success: false });
-      }
-      let bowl;
-      if (boundary) {
-        bowl = {
-          boundary: {
-            run,
-            kind: 'by',
-          },
-        };
-      } else {
-        bowl = { by: run };
-      }
-      return _updateBowlAndSend(match, bowl, response);
+      const bowl = !boundary ? { by: run } : {
+        boundary: {
+          run,
+          kind: 'by',
+        },
+      };
+      return _updateBowlAndSend(match, bowl, response, overNo, bowlNo);
     });
 });
 
@@ -354,17 +364,17 @@ router.put('/:id/run-out', runOutValidations, authenticateJwt(), (request, respo
       status: 400,
       errors: errors.array(),
     });
-  const { batsman } = nullEmptyValues(request);
 
   promise
     .then(match => {
+      const { batsman, overNo, bowlNo } = nullEmptyValues(request);
       const bowl = {
         isWicket: {
           kind: 'run out',
           player: batsman,
         },
       };
-      return _updateBowlAndSend(match, bowl, response);
+      return _updateBowlAndSend(match, bowl, response, overNo, bowlNo);
     })
     .catch(err => sendErrorResponse(response, err, 'Error while run out'));
 });

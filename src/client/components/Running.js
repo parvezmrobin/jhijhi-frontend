@@ -82,7 +82,7 @@ export class Running extends Component {
     /**
      * Event handler for score input
      * @param inputEvent
-     * @param inputEvent.type
+     * @param inputEvent.type either bowl or over
      * @param [inputEvent.bowl]
      * @param [inputEvent.bowler]
      * @param inputEvent.isUpdate
@@ -119,6 +119,26 @@ export class Running extends Component {
       };
 
       this.setState(genUpdatedState);
+    },
+
+    /**
+     * Event handler for score update
+     */
+    onUpdate(bowl) {
+      const { overNo, bowlNo } = this.state.editModal;
+      if (overNo < 0 || bowlNo < 0) {
+        throw new Error('Can\'t update bowl without `overNo` and `bowlNo` initialized');
+      }
+
+      const innings = this._getCurrentInnings();
+      const prevBowl = innings.overs[overNo].bowls[bowlNo];
+      innings.overs[overNo].bowls[bowlNo] = { ...prevBowl, ...bowl };
+      this.setState(prevState => ({
+        match: {
+          ...prevState.match,
+          [prevState.match.state]: innings,
+        },
+      }));
     },
 
     onDeclare() {
@@ -533,8 +553,8 @@ export class Running extends Component {
                            bowler: bowler,
                          })}/>
       <ScoreEditModal isOpen={this.state.editModal.show} overNo={this.state.editModal.overNo}
-                      bowlNo={this.state.editModal.bowlNo} onInput={() => {
-      }} batsmanIndices={[batsman1, batsman2]} batsmen={battingTeamPlayers}
+                      bowlNo={this.state.editModal.bowlNo} onInput={this.onUpdate}
+                      batsmanIndices={[batsman1, batsman2]} batsmen={battingTeamPlayers}
                       matchId={match._id}
                       close={() => this.setState({
                         editModal: {

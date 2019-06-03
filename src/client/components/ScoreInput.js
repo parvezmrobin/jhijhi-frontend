@@ -36,7 +36,7 @@ export default class ScoreInput extends Component {
       by: this.state.isBy,
       legBy: this.state.isLegBy,
       isWide: this.state.isWide,
-      isNo: this.state.isNo ? 'True' : null,
+      isNo: this.state.isNo ? 'True' : null,  // later can be replaced by reason of no
       boundary: {
         run: 0,
       },
@@ -45,7 +45,7 @@ export default class ScoreInput extends Component {
 
   _makeServerRequest(bowlEvent, endPoint = 'bowl') {
     const {matchId, onInput, defaultHttpVerb, injectBowlEvent, shouldResetAfterInput} = this.props;
-    bowlEvent = injectBowlEvent(bowlEvent);
+    bowlEvent = injectBowlEvent(bowlEvent, endPoint);
     const isNewBowl = endPoint === 'bowl';
     const request = isNewBowl ? fetcher[defaultHttpVerb.toLowerCase()] : fetcher.put;
     request(`matches/${matchId}/${endPoint}`, bowlEvent)
@@ -82,9 +82,11 @@ export default class ScoreInput extends Component {
       if (bowlEvent.by) {
         return this._makeServerRequest({ run }, 'by');
       }
+      delete bowlEvent.by;
       if (bowlEvent.legBy) {
         bowlEvent.legBy = run;
       } else {
+        delete bowlEvent.legBy;
         bowlEvent.singles = run;
       }
       this._makeServerRequest(bowlEvent);

@@ -14,10 +14,24 @@ function ScoreEdit(props) {
     batsmen: props.batsmen,
     batsmanIndices: props.batsmanIndices,
     matchId: props.matchId,
-    injectBowlEvent: el => ({...el, overNo: props.overNo, bowlNo: props.bowlNo}),
-    defaultHttpVerb: 'post',
+    injectBowlEvent: (bowl, endPoint) => {
+      delete bowl.playedBy;
+      if (endPoint === 'bowl') {
+        return {
+          bowl,
+          overNo: props.overNo,
+          bowlNo: props.bowlNo,
+        };
+      }
+      return {
+        ...bowl,
+        overNo: props.overNo,
+        bowlNo: props.bowlNo,
+      };
+    },
+    defaultHttpVerb: 'put',
     shouldResetAfterInput: true,
-    onInput: props.onInput,
+    onInput: bowlEvent => props.onInput(bowlEvent.bowl || bowlEvent),
   };
   return <ScoreInput {...propsToBePassed}/>;
 }
