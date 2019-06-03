@@ -15,7 +15,7 @@ class Over extends Component {
     const { overNo, runs, bowler, onOverClick } = this.props;
     const badges = this.props.events.map(
       (event, i) => (
-        <span key={i} className={`bowl-event ${(event === 'w') ? 'wicket' : 'boundary'}`}>
+        <span key={i} className={`bowl-event ${(event === 'W') ? 'wicket' : 'boundary'}`}>
         {event}
       </span>),
     );

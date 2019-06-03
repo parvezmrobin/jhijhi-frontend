@@ -182,7 +182,6 @@ th[scope="row"] {
   height: $wicketHeight;
   width: $wicketHeight;
   padding-top: $wicketHeight/4;
-  margin-top: -$wicketHeight/4;
 
   &.wicket {
     @extend .badge-danger;

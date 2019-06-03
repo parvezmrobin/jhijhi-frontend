@@ -14,7 +14,7 @@ function Overs(props) {
   const getEvents = (over) => {
     return over.bowls.reduce((events, bowl) => {
       if (bowl.isWicket) {
-        events.push('w');
+        events.push('W');
       }
       if (optional(bowl.boundary).run) {
         events.push(String(bowl.boundary.run));
