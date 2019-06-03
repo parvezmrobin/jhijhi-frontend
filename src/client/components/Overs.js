@@ -7,15 +7,19 @@
 
 import React, { Fragment } from 'react';
 import Over from './Over';
+import { optional } from '../lib/utils';
 
 function Overs(props) {
   const { overs, bowlingTeam, onOverClick } = props;
-  const getWickets = (over) => {
-    return over.bowls.reduce((wickets, bowl) => {
+  const getEvents = (over) => {
+    return over.bowls.reduce((events, bowl) => {
       if (bowl.isWicket) {
-        wickets.push(bowl.isWicket);
+        events.push('w');
       }
-      return wickets;
+      if (optional(bowl.boundary).run) {
+        events.push(String(bowl.boundary.run));
+      }
+      return events;
     }, []);
   };
 
@@ -53,7 +57,7 @@ function Overs(props) {
               overNo: i + 1,
               bowler: bowlingTeam[over.bowledBy].name,
               runs: getRuns(over),
-              wickets: getWickets(over),
+              events: getEvents(over),
               onOverClick: onOverClick,
             };
             return (<Over {...props}/>);

@@ -23,6 +23,8 @@ $warningLight: #eb6d1f !default;
 $theme-colors: ('info': $info, 'warning-light': $warningLight, 'blue': $blue) !default;
 $link-color: $info !default;
 
+$wicketHeight: 1.5rem;
+
 @import "~bootstrap/scss/bootstrap";
 
 .navbar-light .navbar-nav.highlight {
@@ -168,6 +170,25 @@ th[scope="row"] {
   @extend .text-right;
 }
 
-.bg-dark button.close{
+.bg-dark button.close {
   @extend .text-white;
+}
+
+.bowl-event {
+  @extend .badge;
+  @extend .rounded-circle;
+  @extend .mr-1;
+
+  height: $wicketHeight;
+  width: $wicketHeight;
+  padding-top: $wicketHeight/4;
+  margin-top: -$wicketHeight/4;
+
+  &.wicket {
+    @extend .badge-danger;
+  }
+
+  &.boundary {
+    @extend .badge-primary;
+  }
 }

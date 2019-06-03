@@ -12,9 +12,12 @@ class Over extends Component {
 
   render() {
     const className = 'list-group-item ';
-    const {overNo, runs, bowler, onOverClick} = this.props;
-    const badges = this.props.wickets.map(
-      (wicket, i) => (<kbd key={i} className="bg-danger mr-1">{toTitleCase(wicket.kind, ' ')}</kbd>),
+    const { overNo, runs, bowler, onOverClick } = this.props;
+    const badges = this.props.events.map(
+      (event, i) => (
+        <span key={i} className={`bowl-event ${(event === 'w') ? 'wicket' : 'boundary'}`}>
+        {event}
+      </span>),
     );
 
     return (
