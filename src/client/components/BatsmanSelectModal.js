@@ -52,22 +52,28 @@ export default class BatsmanSelectModal extends Component {
     onSelectionChange(newValue) {
       this.setState({ ...newValue });
     },
-
-    initialize() {
-      const batsman1Exists = Number.isInteger(this.props.batsman1Index);
-      const batsman2Exists = Number.isInteger(this.props.batsman2Index);
-      const { batsmanList } = this.props;
-      const initialBatsmanSelection = {};
-      if (!batsman1Exists) {
-        initialBatsmanSelection.batsman1Id = batsmanList[0]._id;
-      }
-      if (!batsman2Exists) {
-        initialBatsmanSelection.batsman2Id = batsmanList[0]._id;
-      }
-
-      this.setState({ ...initialBatsmanSelection });
-    },
   };
+
+
+  /**
+   * whether `batsman1Index`, `batsman2Index` or `batsmanList` updates
+   * reinitialize batsmenId selection
+   */
+  componentWillReceiveProps(nextProps) {
+    const batsman1Exists = Number.isInteger(nextProps.batsman1Index);
+    const batsman2Exists = Number.isInteger(nextProps.batsman2Index);
+    const { batsmanList } = nextProps;
+    const initialBatsmanSelection = {};
+    if (!batsman1Exists) {
+      initialBatsmanSelection.batsman1Id = batsmanList[0]._id;
+    }
+    if (!batsman2Exists) {
+      initialBatsmanSelection.batsman2Id = batsmanList[0]._id;
+    }
+
+    this.setState({ ...initialBatsmanSelection });
+  }
+
 
   render() {
     const { batsman1Index, batsman2Index, batsmanList, singleBatsman } = this.props;
@@ -75,8 +81,7 @@ export default class BatsmanSelectModal extends Component {
     const batsman2Exists = Number.isInteger(batsman2Index);
     const { errors } = this.state;
 
-    return <Modal isOpen={!batsman1Exists || (!singleBatsman && !batsman2Exists)}
-                  onOpened={this.initialize}>
+    return <Modal isOpen={!batsman1Exists || (!singleBatsman && !batsman2Exists)}>
       <ModalHeader className="text-primary">
         Select {!(batsman1Exists || batsman2Exists) ? 'Batsmen' : 'Batsman'}
       </ModalHeader>
