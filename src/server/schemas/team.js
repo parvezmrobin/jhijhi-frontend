@@ -6,6 +6,7 @@
 
 
 const {Schema} = require('mongoose');
+const schemaOptions = require('./schemaOptions');
 
 module.exports = new Schema({
   name: String,
@@ -14,4 +15,4 @@ module.exports = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
-});
+}, schemaOptions);

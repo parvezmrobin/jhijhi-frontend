@@ -6,6 +6,8 @@
 
 
 const { Schema } = require('mongoose');
+const schemaOptions = require('./schemaOptions');
+
 
 const inningsSchema = new Schema({
   overs: [{
@@ -117,4 +119,4 @@ module.exports = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
-});
+}, schemaOptions);
