@@ -10,8 +10,8 @@ import { optional, toTitleCase } from '../lib/utils';
 import * as PropTypes from 'prop-types';
 
 function Over(props) {
-  const className = 'list-group-item ';
-  const { overNo, over, bowlerName, onOverClick } = props;
+  const { overNo, over, bowlerName, onOverClick, active } = props;
+  const className = `list-group-item ${active ? 'active' : ''}`;
   const badges = props.over.bowls.filter(bowl => bowl.isWicket || optional(bowl.boundary).run)
     .map(bowl => bowl.isWicket ? 'W' : bowl.boundary.run)
     .map(
@@ -23,7 +23,7 @@ function Over(props) {
 
   return (
     <li onClick={() => onOverClick(overNo - 1)} className={className}>
-      {overNo}. <strong>{toTitleCase(bowlerName, ' ')}</strong> - {Over.getRuns(over)} {badges}
+      {overNo}. <strong>{toTitleCase(bowlerName, ' ')}</strong> 🡆 {Over.getRuns(over)} {badges}
     </li>
   );
 }
@@ -58,6 +58,7 @@ Over.propTypes = {
   }).isRequired,
   bowlerName: PropTypes.string.isRequired,
   onOverClick: PropTypes.func.isRequired,
+  active: PropTypes.bool,
 };
 
 

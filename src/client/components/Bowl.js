@@ -37,13 +37,17 @@ function Bowl(props) {
     </kbd>)
   }
 
-  const editButton = <Link to="#" onClick={() => onEdit(bowlIndex)} className="float-right">
+  if (elements.length > 1 && !singles) {
+    elements.shift();
+  }
+
+  const editButton = onEdit && <Link to="#" onClick={() => onEdit(bowlIndex)} className="float-right">
     <small className={active ? 'text-white' : 'text-dark'}><i data-feather="edit"/></small>
   </Link>;
 
   return (
     <li className={className}>
-      {bowlNo}. <strong>{toTitleCase(batsman.name)}</strong> - {elements} {editButton}
+      {bowlNo}. <strong>{toTitleCase(batsman.name)}</strong> 🡆 {elements} {editButton}
     </li>
   );
 }
@@ -54,7 +58,7 @@ Bowl.propTypes = {
   active: PropTypes.bool,
   bowl: PropTypes.object.isRequired,
   battingTeam: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onEdit: PropTypes.func.isRequired,
+  onEdit: PropTypes.func,
 };
 
 

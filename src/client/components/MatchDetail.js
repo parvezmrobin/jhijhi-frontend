@@ -190,7 +190,7 @@ export default class MatchDetail extends Component {
           </div>
         </div>
         <div className="pt-1 col-sm">
-          <Overs overs={innings.overs} bowlingTeam={bowlingTeamPlayers}
+          <Overs overs={innings.overs} bowlingTeam={bowlingTeamPlayers} activeIndex={overIndex}
                  onOverClick={(index) => this.setState({ overIndex: index })}/>
         </div>
         <div className="pt-1 col-sm">

@@ -26,9 +26,9 @@ class CurrentOver extends Component {
     let bowlNo = 1;
     let bowlIndex = 0;
     const renderedBowls = bowls.map((bowl, i) =>
-      <Bowl key={i} active={Number.isInteger(activeIndex) && i === activeIndex}
+      <Bowl key={i} active={Number.isInteger(activeIndex) && i === activeIndex} bowl={bowl}
             bowlIndex={bowlIndex++} bowlNo={(bowl.isNo || bowl.isWide) ? bowlNo : bowlNo++}
-            bowl={bowl} battingTeam={battingTeam} onEdit={bowlNo => onEdit(overNo, bowlNo)}/>,
+            battingTeam={battingTeam} onEdit={onEdit && (bowlNo => onEdit(overNo, bowlNo))}/>,
     );
 
     return (<div className={this.props.className}>
@@ -54,9 +54,9 @@ CurrentOver.propTypes = {
   onCrease: PropTypes.string,
   onBowlersEnd: PropTypes.string,
   title: PropTypes.string,
-  overNo: PropTypes.number.isRequired,
+  overNo: PropTypes.number,
   activeIndex: PropTypes.number,
-  onEdit: PropTypes.func.isRequired,
+  onEdit: PropTypes.func,
   onSwitch: PropTypes.func,
 };
 

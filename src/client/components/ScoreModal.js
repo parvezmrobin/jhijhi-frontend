@@ -21,7 +21,7 @@ class ScoreModal extends Component {
         {entry.bowls || 'Did not bat'}
       </td>
       {(entry.out.kind || entry.bowls || null)
-      && <td className={entry.out.kind ? 'text-danger' : 'text-success'}>
+      && <td className={entry.out.kind ? 'text-danger font-weight-bold' : 'text-success'}>
         {entry.out.kind && toTitleCase(entry.out.kind, ' ')}
         {entry.out.by && ` (${toTitleCase(entry.out.by)})`}
         {(!entry.out.kind && entry.bowls) ? 'Not Out' : null}
@@ -37,7 +37,7 @@ class ScoreModal extends Component {
         </td>
         <td>{bowlingCard[bowler].run}</td>
         <td>{bowlingCard[bowler].runRate}</td>
-        <td className={bowlingCard[bowler].wicket && 'text-danger'}>
+        <td className={bowlingCard[bowler].wicket && 'text-danger font-weight-bold'}>
           {bowlingCard[bowler].wicket}
         </td>
       </tr>);

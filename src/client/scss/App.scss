@@ -181,7 +181,7 @@ th[scope="row"] {
 
   height: $wicketHeight;
   width: $wicketHeight;
-  padding-top: $wicketHeight/4;
+  padding-top: $wicketHeight/4.5;
 
   &.wicket {
     @extend .badge-danger;
@@ -190,6 +190,11 @@ th[scope="row"] {
   &.boundary {
     @extend .badge-primary;
   }
+}
+
+.list-group-item.active .bowl-event{
+  @extend .border;
+  border-color: $white;
 }
 
 .feather {
