@@ -299,20 +299,19 @@ export class Running extends Component {
     const indices = {};
     if (batsman1Id) {
       indices.batsman1 = this._getIndexOfBatsman(battingTeamPlayers, batsman1Id);
+      if (indices.batsman1 === -1) {
+        // Batsman is selected while match was transitioning from innings1 to innings2
+        // and a batsman from innings1 is selected
+        return { errors: { batsman1: 'Error while selecting batsman. Try again.' } };
+      }
     }
     if (batsman2Id) {
       indices.batsman2 = this._getIndexOfBatsman(battingTeamPlayers, batsman2Id);
-    }
-
-    if (batsman1Id && indices.batsman1 === -1) {
-      // Batsman is selected while match was transitioning from innings1 to innings2
-      // and a batsman from innings1 is selected
-      return { errors: { batsman1: 'Error while selecting batsman. Try again.' } };
-    }
-    if (batsman2Id && indices.batsman2 === -1) {
-      // Batsman is selected while match was transitioning from innings1 to innings2
-      // and a batsman from innings1 is selected
-      return { errors: { batsman2: 'Error while selecting batsman. Try again.' } };
+      if (indices.batsman2 === -1) {
+        // Batsman is selected while match was transitioning from innings1 to innings2
+        // and a batsman from innings1 is selected
+        return { errors: { batsman2: 'Error while selecting batsman. Try again.' } };
+      }
     }
 
     if (!batsman1Id && (indices.batsman2 === this.state.batsman1)) {
