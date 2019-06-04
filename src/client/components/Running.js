@@ -7,7 +7,7 @@ import Overs from './Overs';
 import ScoreInsert from './ScoreInsert';
 import Score from './Score';
 import BatsmanSelectModal from './BatsmanSelectModal';
-import PreviousOverModal from './PreviousOverModal';
+import OverModal from './OverModal';
 import ScoreCard from './ScoreCard';
 import BowlerSelectModal from './BowlerSelectModal';
 import { Redirect } from 'react-router-dom';
@@ -41,8 +41,8 @@ export class Running extends Component {
       this.setState({
         overModal: {
           open: true,
-          overNo: i + 1,
-          over: this.props.match.innings1.overs[i],
+          overIndex: i,
+          over: this._getCurrentInnings().overs[i],
         },
       });
     },
@@ -182,6 +182,15 @@ export class Running extends Component {
       this.setState({
         editModal: {
           show: true,
+          overNo,
+          bowlNo,
+        },
+      });
+    },
+    onOverModalEditClick: function (overNo, bowlNo) {
+      this.setState({
+        editModal: {
+          show: false,
           overNo,
           bowlNo,
         },
@@ -545,9 +554,6 @@ export class Running extends Component {
           </div>
         </div>
       </main>
-      <PreviousOverModal overModal={overModal} toggle={this.closeOverModal}
-                         bowlingTeamPlayers={bowlingTeamPlayers}
-                         battingTeamPlayers={battingTeamPlayers}/>
       <BatsmanSelectModal
         batsman1Index={batsman1} batsman2Index={batsman2} batsmanList={battingTeamPlayers}
         onSelect={this.onBatsmenSelect} singleBatsman={this.state.singleBatsman}
@@ -560,6 +566,10 @@ export class Running extends Component {
                            type: 'over',
                            bowler: bowler,
                          })}/>
+      <OverModal overModal={overModal} toggle={this.closeOverModal}
+                 batsmanIndices={[batsman1, batsman2]} bowlingTeamPlayers={bowlingTeamPlayers}
+                 battingTeamPlayers={battingTeamPlayers} matchId={match._id}
+                 onEditClick={this.onOverModalEditClick} onEdit={this.onUpdate}/>
       <ScoreEditModal isOpen={this.state.editModal.show} overNo={this.state.editModal.overNo}
                       bowlNo={this.state.editModal.bowlNo} onInput={this.onUpdate}
                       batsmanIndices={[batsman1, batsman2]} batsmen={battingTeamPlayers}

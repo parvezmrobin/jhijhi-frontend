@@ -66,7 +66,7 @@ class NextBall extends Component {
 NextBall.propTypes = {
   onCrease: PropTypes.string,
   onBowlersEnd: PropTypes.string,
-  onSwitch: PropTypes.func.isRequired,
+  onSwitch: PropTypes.func,
 };
 
 

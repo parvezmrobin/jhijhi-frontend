@@ -21,15 +21,17 @@ class CurrentOver extends Component {
   }
 
   render() {
-    const { bowler, battingTeam, bowls, onCrease, onBowlersEnd, title, overNo, onEdit, onSwitch } = this.props;
+    const { bowler, battingTeam, bowls, onCrease, onBowlersEnd, title, overNo, onEdit, onSwitch, activeIndex } = this.props;
+
     let bowlNo = 1;
-    let actualBowlNo = 0;
+    let bowlIndex = 0;
     const renderedBowls = bowls.map((bowl, i) =>
-      <Bowl actualBowlNo={actualBowlNo++} bowlNo={(bowl.isNo || bowl.isWide) ? bowlNo : bowlNo++}
-            key={i} {...bowl} battingTeam={battingTeam} onEdit={bowlNo => onEdit(overNo, bowlNo)}/>,
+      <Bowl key={i} active={Number.isInteger(activeIndex) && i === activeIndex}
+            bowlIndex={bowlIndex++} bowlNo={(bowl.isNo || bowl.isWide) ? bowlNo : bowlNo++}
+            bowl={bowl} battingTeam={battingTeam} onEdit={bowlNo => onEdit(overNo, bowlNo)}/>,
     );
 
-    return (<>
+    return (<div className={this.props.className}>
       {title &&
       <h4 className="mt-2 pt-1 text-center text-white">{title}</h4>}
       {bowler &&
@@ -40,11 +42,12 @@ class CurrentOver extends Component {
         {renderedBowls}
         <NextBall onSwitch={onSwitch} onCrease={onCrease} onBowlersEnd={onBowlersEnd}/>
       </ul>
-    </>);
+    </div>);
   }
 }
 
 CurrentOver.propTypes = {
+  className: PropTypes.string,
   bowler: PropTypes.object,
   battingTeam: PropTypes.arrayOf(PropTypes.object).isRequired,
   bowls: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -52,8 +55,9 @@ CurrentOver.propTypes = {
   onBowlersEnd: PropTypes.string,
   title: PropTypes.string,
   overNo: PropTypes.number.isRequired,
+  activeIndex: PropTypes.number,
   onEdit: PropTypes.func.isRequired,
-  onSwitch: PropTypes.func.isRequired,
+  onSwitch: PropTypes.func,
 };
 
 

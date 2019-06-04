@@ -17,13 +17,13 @@ function ScoreEdit(props) {
     injectBowlEvent: (bowl, endPoint) => {
       delete bowl.playedBy;
       if (endPoint === 'bowl') {
-        return {
+        return {  // structure required by /bowl PUT api
           bowl,
           overNo: props.overNo,
           bowlNo: props.bowlNo,
         };
       }
-      return {
+      return {  // structure required by /by PUT and /run-out PUT api
         ...bowl,
         overNo: props.overNo,
         bowlNo: props.bowlNo,

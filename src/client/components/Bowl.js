@@ -11,61 +11,49 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 function Bowl(props) {
-  let className = 'list-group-item ';
-  let badge;
-  let run = props.singles;
-  const { bowlNo, actualBowlNo, isWicket, boundary, isWide, isNo, playedBy, battingTeam, by, legBy, onEdit } = props;
+  const { bowlNo, bowlIndex, active, bowl, battingTeam, onEdit } = props;
+  const {singles, isWicket, boundary, isWide, isNo, playedBy, by, legBy } = bowl;
   const batsman = battingTeam[playedBy];
 
+  const className = `list-group-item${active? ' active': ''}`;
+  const elements = [<span key="singles" className="mr-1">{singles}</span>];
   if (isWicket) {
-    className += 'text-danger';
-    badge = <kbd className="bg-danger">{toTitleCase(isWicket.kind, ' ')}</kbd>;
+    elements.push(<kbd className="bg-danger mr-1" key="wicket">{toTitleCase(isWicket.kind, ' ')}</kbd>);
   } else if (boundary.run) {
-    className += 'text-info ';
-    run = <>
-      {run || ''} <kbd className="bg-info">
+    const boundaryElement = <kbd className="bg-info mr-1" key="boundary">
       {boundary.run}{(boundary.kind === 'by') ? '(By)' : (boundary.kind === 'legBy') ? '(Leg By)' : ''}
-    </kbd>
-    </>;
+    </kbd>;
+    elements.push(boundaryElement);
   }
   if (legBy) {
-    run = <>{run || ''} <kbd className="bg-dark-trans">Leg By {legBy}</kbd></>;
+    elements.push(<kbd className="bg-dark-trans mr-1" key="legBy">Leg By {legBy}</kbd>);
   }
   if (by) {
-    run = <>{run || ''} <kbd className="bg-dark-trans">By {by}</kbd></>;
+    elements.push(<kbd className="bg-dark-trans mr-1" key="by">By {by}</kbd>);
   }
   if (!isWicket && (isWide || isNo)) {
-    className += 'text-warning';
-    badge = <kbd className="bg-warning">
+    elements.push(<kbd className="bg-warning-light mr-1" key="wide">
       {isWide ? 'Wide' : 'No'}
-    </kbd>;
-  }
-  if (badge) {
-    run = run || '';
+    </kbd>)
   }
 
-  const editButton = <Link to="#" onClick={() => onEdit(actualBowlNo)} className="float-right">
-    <small className="text-dark"><i data-feather="edit"/></small>
+  const editButton = <Link to="#" onClick={() => onEdit(bowlIndex)} className="float-right">
+    <small className={active ? 'text-white' : 'text-dark'}><i data-feather="edit"/></small>
   </Link>;
 
   return (
     <li className={className}>
-      {bowlNo}. <strong>{toTitleCase(batsman.name)}</strong> - {run} {badge} {editButton}
+      {bowlNo}. <strong>{toTitleCase(batsman.name)}</strong> - {elements} {editButton}
     </li>
   );
 }
 
 Bowl.propTypes = {
   bowlNo: PropTypes.number.isRequired,
-  actualBowlNo: PropTypes.number.isRequired,
-  isWicket: PropTypes.object,
-  boundary: PropTypes.object,
-  isWide: PropTypes.bool,
-  isNo: PropTypes.string,
-  playedBy: PropTypes.number.isRequired,
+  bowlIndex: PropTypes.number.isRequired,
+  active: PropTypes.bool,
+  bowl: PropTypes.object.isRequired,
   battingTeam: PropTypes.arrayOf(PropTypes.object).isRequired,
-  by: PropTypes.number,
-  legBy: PropTypes.number,
   onEdit: PropTypes.func.isRequired,
 };
 
