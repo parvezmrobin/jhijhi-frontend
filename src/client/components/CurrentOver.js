@@ -21,7 +21,7 @@ class CurrentOver extends Component {
   }
 
   render() {
-    const { bowler, battingTeam, bowls, onCrease, onBowlersEnd, title, overNo, onEdit } = this.props;
+    const { bowler, battingTeam, bowls, onCrease, onBowlersEnd, title, overNo, onEdit, onSwitch } = this.props;
     let bowlNo = 1;
     let actualBowlNo = 0;
     const renderedBowls = bowls.map((bowl, i) =>
@@ -38,7 +38,7 @@ class CurrentOver extends Component {
       </h4>}
       <ul className="list-group">
         {renderedBowls}
-        <NextBall onCrease={onCrease} onBowlersEnd={onBowlersEnd}/>
+        <NextBall onSwitch={onSwitch} onCrease={onCrease} onBowlersEnd={onBowlersEnd}/>
       </ul>
     </>);
   }
@@ -47,12 +47,13 @@ class CurrentOver extends Component {
 CurrentOver.propTypes = {
   bowler: PropTypes.object,
   battingTeam: PropTypes.arrayOf(PropTypes.object).isRequired,
-  bowls: PropTypes.arrayOf(PropTypes.object),
+  bowls: PropTypes.arrayOf(PropTypes.object).isRequired,
   onCrease: PropTypes.string,
   onBowlersEnd: PropTypes.string,
   title: PropTypes.string,
-  overNo: PropTypes.number,
-  onEdit: PropTypes.func,
+  overNo: PropTypes.number.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onSwitch: PropTypes.func.isRequired,
 };
 
 

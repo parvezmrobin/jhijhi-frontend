@@ -191,3 +191,16 @@ th[scope="row"] {
     @extend .badge-primary;
   }
 }
+
+.feather {
+  width: 1.375rem;
+  height: 1.375rem;
+
+  &.feather-chevrons-up {
+    position: absolute;
+    top: .25rem;
+    right: .75rem;
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}

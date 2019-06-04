@@ -79,6 +79,13 @@ export class Running extends Component {
         batsman2: null,
       };
     },
+    switchBatsmen() {
+      this.setState(prevState => ({
+        batsman1: prevState.batsman2,
+        batsman2: prevState.batsman1,
+      }));
+    },
+
     /**
      * Event handler for score input
      * @param inputEvent
@@ -529,7 +536,8 @@ export class Running extends Component {
           <div className="col-md-4">
             <CurrentOver overNo={overs.length - 1} bowls={lastOver.bowls} bowler={bowler}
                          battingTeam={battingTeamPlayers} onCrease={onCreaseBatsmanName}
-                         onBowlersEnd={onBowlersEnd} onEdit={this.onEditClick}/>
+                         onBowlersEnd={onBowlersEnd} onEdit={this.onEditClick}
+                         onSwitch={this.switchBatsmen}/>
           </div>
           <div className="col-md-4 px-0">
             <Overs overs={overs.slice(0, -1)} bowlingTeam={bowlingTeamPlayers}
