@@ -61,7 +61,7 @@ Bowl.propTypes = {
   isWicket: PropTypes.object,
   boundary: PropTypes.object,
   isWide: PropTypes.bool,
-  isNo: PropTypes.bool,
+  isNo: PropTypes.string,
   playedBy: PropTypes.number.isRequired,
   battingTeam: PropTypes.arrayOf(PropTypes.object).isRequired,
   by: PropTypes.number,
