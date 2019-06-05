@@ -10,7 +10,7 @@ export default class BowlerSelectModal extends Component {
     super(props);
     this.state = {
       bowler: '',
-      error: 'aaa',
+      error: '',
     };
     bindMethods(this);
   }
