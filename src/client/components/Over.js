@@ -23,7 +23,7 @@ function Over(props) {
 
   return (
     <li onClick={() => onOverClick(overNo - 1)} className={className}>
-      {overNo}. <strong>{toTitleCase(bowlerName, ' ')}</strong> 🡆 {Over.getRuns(over)} {badges}
+      {overNo}. <strong>{toTitleCase(bowlerName, ' ')}</strong> » {Over.getRuns(over)} {badges}
     </li>
   );
 }
