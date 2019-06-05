@@ -54,7 +54,7 @@ function Navbar(props) {
     );
   }
   return (
-    <nav className="navbar navbar-expand-md navbar-light bg-light fixed-top">
+    <nav className="navbar navbar-expand-sm navbar-light bg-light fixed-top">
       <NavLink exact className="navbar-brand" to="/">Jhijhi</NavLink>
       <button className="navbar-toggler" type="button" data-toggle="collapse"
               data-target="#navbar" aria-controls="navbar"
