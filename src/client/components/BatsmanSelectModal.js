@@ -76,12 +76,12 @@ export default class BatsmanSelectModal extends Component {
 
 
   render() {
-    const { batsman1Index, batsman2Index, batsmanList, singleBatsman } = this.props;
+    const { batsman1Index, batsman2Index, batsmanList, singleBatsman, allOutPrompted } = this.props;
     const batsman1Exists = Number.isInteger(batsman1Index);
     const batsman2Exists = Number.isInteger(batsman2Index);
     const { errors } = this.state;
 
-    return <Modal isOpen={!batsman1Exists || (!singleBatsman && !batsman2Exists)}>
+    return <Modal isOpen={!allOutPrompted && (!batsman1Exists || (!singleBatsman && !batsman2Exists))}>
       <ModalHeader className="text-primary">
         Select {!(batsman1Exists || batsman2Exists) ? 'Batsmen' : 'Batsman'}
       </ModalHeader>
@@ -116,4 +116,5 @@ BatsmanSelectModal.propTypes = {
   singleBatsman: PropTypes.bool,
   onNumberOfBatsmenChange: PropTypes.func,
   onSelect: PropTypes.func,
+  allOutPrompted: PropTypes.bool,
 };

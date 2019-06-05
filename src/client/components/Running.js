@@ -11,7 +11,7 @@ import OverModal from './OverModal';
 import ScoreCard from './ScoreCard';
 import BowlerSelectModal from './BowlerSelectModal';
 import { Redirect } from 'react-router-dom';
-import { Modal, ModalBody, Spinner } from 'reactstrap';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Spinner } from 'reactstrap';
 import ScoreEditModal from './ScoreEditModal';
 
 export class Running extends Component {
@@ -31,6 +31,7 @@ export class Running extends Component {
         overNo: -1,
         bowlNo: -1,
       },
+      showSingleBatsmanModal: false,
     };
 
     bindMethods(this);
@@ -240,13 +241,13 @@ export class Running extends Component {
   }
 
   /**
-   * @param {{}} innings
-   * @param {Number} totalBattingTeamPlayers
-   * @param {Boolean} [singleBatsman]
    * @return {boolean}
    * @private
    */
-  static _isAllOut(innings, totalBattingTeamPlayers, singleBatsman) {
+  _isAllOut() {
+    const { innings, battingTeamPlayers } = this._getCurrentInningsDescription();
+    const totalBattingTeamPlayers = battingTeamPlayers.length;
+    const singleBatsman = this.state.singleBatsman;
     let outCount = 0;
     const totalWickets = singleBatsman ? totalBattingTeamPlayers : totalBattingTeamPlayers - 1;
     for (const over of innings.overs) {
@@ -450,15 +451,14 @@ export class Running extends Component {
 
 
   componentDidUpdate() {
-    let innings,
-      battingTeamPlayers;
-    const { bowlerModalIsOpen, match: { state, overs: numOvers }, singleBatsman, batsman1, batsman2, isDeclaring } = this.state;
+    let innings;
+    const {
+      bowlerModalIsOpen, match: { state, overs: numOvers }, singleBatsman,
+      showSingleBatsmanModal, batsman1, batsman2, isDeclaring,
+    } = this.state;
 
     try {
-      ({
-        innings,
-        battingTeamPlayers,
-      } = this._getCurrentInningsDescription());
+      innings = this._getCurrentInnings();
     } catch (e) {
       if (e.message === 'State is done in Running page') {
         return;
@@ -478,7 +478,13 @@ export class Running extends Component {
         return;
       }
     }
-    if ((state !== 'done') && !isDeclaring && Running._isAllOut(innings, battingTeamPlayers.length, singleBatsman)) {
+    if ((state !== 'done') && !isDeclaring && this._isAllOut()) {
+      if (!singleBatsman) {
+        if (!showSingleBatsmanModal) {
+          this.setState({ showSingleBatsmanModal: true });
+        }
+        return;
+      }
       this.onDeclare();
     }
   }
@@ -554,32 +560,50 @@ export class Running extends Component {
         </div>
       </main>
       <BatsmanSelectModal
-        batsman1Index={batsman1} batsman2Index={batsman2} batsmanList={battingTeamPlayers}
-        onSelect={this.onBatsmenSelect} singleBatsman={this.state.singleBatsman}
+        allOutPrompted={this.state.showSingleBatsmanModal} batsman1Index={batsman1}
+        batsman2Index={batsman2} batsmanList={battingTeamPlayers} onSelect={this.onBatsmenSelect}
+        singleBatsman={this.state.singleBatsman}
         onNumberOfBatsmenChange={e => {
           this.setState({ singleBatsman: e.target.checked });
         }}/>
-      <BowlerSelectModal open={this.state.bowlerModalIsOpen} bowlers={bowlingTeamPlayers}
-                         lastBowler={bowler} matchId={match._id}
-                         onSelect={bowler => this.onInput({
-                           type: 'over',
-                           bowler: bowler,
-                         })}/>
-      <OverModal overModal={overModal} toggle={this.closeOverModal}
-                 batsmanIndices={[batsman1, batsman2]} bowlingTeamPlayers={bowlingTeamPlayers}
-                 battingTeamPlayers={battingTeamPlayers} matchId={match._id}
-                 onEditClick={this.onOverModalEditClick} onEdit={this.onUpdate}/>
-      <ScoreEditModal isOpen={this.state.editModal.show} overNo={this.state.editModal.overNo}
-                      bowlNo={this.state.editModal.bowlNo} onInput={this.onUpdate}
-                      batsmanIndices={[batsman1, batsman2]} batsmen={battingTeamPlayers}
-                      matchId={match._id}
-                      close={() => this.setState({
-                        editModal: {
-                          show: false,
-                          overNo: -1,
-                          bowlNo: -1,
-                        },
-                      })}/>
+      <BowlerSelectModal
+        open={this.state.bowlerModalIsOpen} bowlers={bowlingTeamPlayers} lastBowler={bowler}
+        matchId={match._id}
+        onSelect={bowler => this.onInput({
+          type: 'over',
+          bowler: bowler,
+        })}/>
+      <OverModal
+        overModal={overModal} toggle={this.closeOverModal}
+        batsmanIndices={[batsman1, batsman2]} bowlingTeamPlayers={bowlingTeamPlayers}
+        battingTeamPlayers={battingTeamPlayers} matchId={match._id}
+        onEditClick={this.onOverModalEditClick} onEdit={this.onUpdate}/>
+      <ScoreEditModal
+        isOpen={this.state.editModal.show} overNo={this.state.editModal.overNo}
+        bowlNo={this.state.editModal.bowlNo} onInput={this.onUpdate}
+        batsmanIndices={[batsman1, batsman2]} batsmen={battingTeamPlayers} matchId={match._id}
+        close={() => this.setState({
+          editModal: {
+            show: false,
+            overNo: -1,
+            bowlNo: -1,
+          },
+        })}/>
+      <Modal isOpen={this.state.showSingleBatsmanModal}>
+        <ModalHeader>
+          Want to play with single batsman?
+        </ModalHeader>
+        <ModalFooter>
+          <Button color="primary" onClick={() => this.setState({
+            singleBatsman: true,
+            showSingleBatsmanModal: false,
+          })}>Yeah</Button>
+          <Button onClick={() => {
+            this.setState({ showSingleBatsmanModal: false });
+            this.onDeclare();
+          }}>Nah</Button>
+        </ModalFooter>
+      </Modal>
       <Modal centered={true} contentClassName="bg-transparent border-0"
              isOpen={this.state.isDeclaring}>
         <ModalBody>
