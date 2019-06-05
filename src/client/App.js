@@ -20,6 +20,7 @@ const Login = React.lazy(() => import(/* webpackChunkName: "Login" */ './pages/L
 const Contact = React.lazy(() => import(/* webpackChunkName: "Contact" */ './pages/Contact'));
 const Team = React.lazy(() => import(/* webpackChunkName: "Team" */ './pages/Team'));
 const Player = React.lazy(() => import(/* webpackChunkName: "Player" */ './pages/Player'));
+const PlayerDetails = React.lazy(() => import(/* webpackChunkName: "Player" */ './pages/PlayerDetails'));
 const Umpire = React.lazy(() => import(/* webpackChunkName: "Umpire" */ './pages/Umpire'));
 const Match = React.lazy(() => import(/* webpackChunkName: "Match" */ './pages/Match'));
 const Live = React.lazy(() => import(/* webpackChunkName: "Live" */ './pages/Live'));
@@ -62,6 +63,7 @@ class App extends Component {
                     {shouldRedirect && <Redirect to="/login"/>}
                     <Route path="/" exact component={Home}/>
                     <Route path="/contact" component={Contact}/>
+                    <Route path="/player-stat@:id" component={PlayerDetails}/>
                     <Route path="/player@:id" component={Player}/>
                     <Route path="/player" component={Player}/>
                     <Route path="/team" exact component={Team}/>

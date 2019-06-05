@@ -7,14 +7,12 @@
 
 import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
-import SidebarList from '../components/SidebarList';
 import PlayerForm from '../components/PlayerForm';
 import fetcher from '../lib/fetcher';
-import { bindMethods, toTitleCase } from '../lib/utils';
-import { Link } from 'react-router-dom';
+import { bindMethods } from '../lib/utils';
 import { Alert, Toast, ToastBody, ToastHeader } from 'reactstrap';
 import * as feather from 'feather-icons';
-
+import PlayerSidebar from '../components/PlayerSidebar';
 
 class Player extends Component {
   constructor(props) {
@@ -185,14 +183,7 @@ class Player extends Component {
   };
 
   render() {
-    const renderPlayer = player => {
-      const playerText = `${toTitleCase(player.name)} (${player.jerseyNo})`;
-      const editButton = <Link to={'player@' + player._id} className="float-right">
-        <small className="text-white"><i data-feather="edit"/></small>
-      </Link>;
-      const className = (player._id === this.props.match.params.id)? 'text-success': '';
-      return <><span className={className}>{playerText}</span> {editButton}</>;
-    };
+    const playerId = this.props.match.params.id;
     return (
       <div className="container-fluid pl-0">
         <Toast isOpen={!!this.state.message}>
@@ -205,15 +196,7 @@ class Player extends Component {
         </Toast>
 
         <div className="row">
-          <aside className="col-md-3">
-            <CenterContent col="col">
-              <SidebarList
-                title="Existing Players"
-                itemClass="text-white"
-                itemMapper={renderPlayer}
-                list={this.state.players}/>
-            </CenterContent>
-          </aside>
+          <PlayerSidebar playerId={playerId} players={this.state.players}/>
           <main className="col">
             <CenterContent col="col-lg-8 col-md-10">
               {this.state.redirected && <Alert color="primary">
