@@ -79,6 +79,7 @@ class App extends Component {
             </div>
           </div>
         </div>
+        <footer className="py-2 py-sm-0"/>
       </Router>
     );
   }
