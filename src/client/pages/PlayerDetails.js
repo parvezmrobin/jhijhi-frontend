@@ -21,19 +21,20 @@ class PlayerDetails extends PureComponent {
 
 
   componentDidMount() {
-    this.unlisten = this.props.history.listen(() => {
-      this._loadPlayer();
+    this.unlisten = this.props.history.listen((location) => {
+      // this event handler is called before `this.props.match.params.id` is updated
+      const playerId = location.pathname.substr(13);
+      this._loadPlayer(playerId);
     });
 
-    this._loadPlayer();
+    this._loadPlayer(this.props.match.params.id);
     fetcher.get('/players')
       .then(response => {
         this.setState({ players: response.data });
       });
   }
 
-  _loadPlayer() {
-    const playerId = this.props.match.params.id;
+  _loadPlayer(playerId) {
     fetcher.get(`/players/${playerId}`)
       .then(response => {
         this.setState({
@@ -68,8 +69,16 @@ class PlayerDetails extends PureComponent {
                   <td>{stat.numMatches}</td>
                 </tr>
                 <tr>
+                  <th scope="row">Innings</th>
+                  <td>{stat.numInningses}</td>
+                </tr>
+                <tr>
                   <th scope="row">Total Runs</th>
                   <td>{stat.totalRun}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Average</th>
+                  <td>{Number.isNaN(stat.avgRun)? 'N/A' : Number(stat.avgRun).toFixed(2)}</td>
                 </tr>
                 <tr>
                   <th scope="row">Highest Score</th>
@@ -77,8 +86,7 @@ class PlayerDetails extends PureComponent {
                 </tr>
                 <tr>
                   <th scope="row">Strike Rate</th>
-                  <td>{Number(stat.strikeRate)
-                    .toFixed(2)}</td>
+                  <td>{Number.isNaN(stat.strikeRate)? 'N/A' : Number(stat.strikeRate).toFixed(2)}</td>
                 </tr>
                 </tbody>
               </Table>

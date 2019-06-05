@@ -153,21 +153,39 @@ router.get('/:id', authenticateJwt(), playerGetValidations, (request, response) 
         }
       });
     })
-    // get the innings he/she played
+    // get the bowls of inningses he/she played
     .then(matches => {
-      return matches.map((match) => {
+      let numOuts = 0;
+      const matchWiseBowls = matches.map((match) => {
         return match.innings.overs.reduce((bowls, over) => {
           const filteredBowls = over.bowls.filter(bowl => bowl.playedBy === match.playerIndex);
+
+          // `numOuts` needed to be calculated here
+          // because a player can be out in a bowl he/she didn't played
+          const isOut = over.bowls.find(bowl => {
+            return bowl.isWicket && Number.isInteger(bowl.isWicket.player) && (bowl.isWicket.player === match.playerIndex);
+          });
+          if (isOut) {
+            numOuts++;
+          } else if (filteredBowls.find(bowl => bowl.isWicket && !Number.isInteger(bowl.isWicket.player))) {
+            // it is a bowl where only on-crease batsman can get out
+            numOuts++;
+          }
+
           bowls.push(...filteredBowls);
           return bowls;
         }, []);
       });
+      return {
+        numOuts,
+        matchWiseBowls,
+      };
     })
-    // filter inningses whether he/she played
-    .then(inningses => inningses.filter(innings => innings.length))
     // calculate stat of each innings
-    .then(inningses => {
-      return inningses.map(bowls => {
+    .then(({ numOuts, matchWiseBowls }) => {
+      // filter inningses whether he/she played
+      const inningses = matchWiseBowls.filter(innings => innings.length);
+      const inningsStats = inningses.map(bowls => {
         const run = bowls.reduce((run, bowl) => {
           run += bowl.singles;
           if (bowl.boundary.kind === 'regular' && Number.isInteger(bowl.boundary.run)) {
@@ -183,20 +201,28 @@ router.get('/:id', authenticateJwt(), playerGetValidations, (request, response) 
           strikeRate,
         };
       });
+      return {
+        numMatches: matchWiseBowls.length,
+        inningsStats,
+        numOuts,
+      };
     })
     // generate the stat
-    .then(inningses => {
-      const numMatches = inningses.length;
-      const highestRun = inningses.reduce((hr, innings) => (hr > innings.run) ? hr : innings.run, 0);
-      const totalRun = inningses.reduce((tr, innings) => tr + innings.run, 0);
-      const strikeRate = inningses.reduce((sr, innings) => sr + innings.strikeRate, 0) / numMatches * 100;
+    .then(({ numMatches, inningsStats, numOuts }) => {
+      const numInningses = inningsStats.length;
+      const highestRun = inningsStats.reduce((hr, innings) => (hr > innings.run) ? hr : innings.run, 0);
+      const totalRun = inningsStats.reduce((tr, innings) => tr + innings.run, 0);
+      const avgRun = totalRun / numOuts;
+      const strikeRate = inningsStats.reduce((sr, innings) => sr + innings.strikeRate, 0) / numInningses * 100;
 
       return response.json({
         success: true,
         message: 'Successfully generated stat',
         stat: {
           numMatches,
+          numInningses,
           totalRun,
+          avgRun,
           highestRun,
           strikeRate,
         },
