@@ -11,7 +11,6 @@ import PlayerForm from '../components/PlayerForm';
 import fetcher from '../lib/fetcher';
 import { bindMethods } from '../lib/utils';
 import { Alert, Toast, ToastBody, ToastHeader } from 'reactstrap';
-import * as feather from 'feather-icons';
 import PlayerSidebar from '../components/PlayerSidebar';
 
 class Player extends Component {
@@ -55,11 +54,6 @@ class Player extends Component {
 
   componentWillUnmount() {
     this.unlisten();
-  }
-
-
-  componentDidUpdate() {
-    feather.replace();
   }
 
 
@@ -196,7 +190,7 @@ class Player extends Component {
         </Toast>
 
         <div className="row">
-          <PlayerSidebar playerId={playerId} players={this.state.players}/>
+          <PlayerSidebar editable playerId={playerId} players={this.state.players}/>
           <main className="col">
             <CenterContent col="col-lg-8 col-md-10">
               {this.state.redirected && <Alert color="primary">

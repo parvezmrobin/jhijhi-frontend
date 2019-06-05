@@ -57,7 +57,7 @@ class PlayerDetails extends PureComponent {
       <div>
         <div className="row">
 
-          <PlayerSidebar playerId={player._id} players={players}/>
+          <PlayerSidebar editable playerId={player._id} players={players}/>
           <main className="col">
             <CenterContent col="col-lg-6 col-md-8">
               <h2 className="text-primary text-center">{toTitleCase(player.name)}</h2>
