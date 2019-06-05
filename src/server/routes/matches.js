@@ -141,7 +141,11 @@ router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, res
 
   promise
     .then(() => {
-      return Match.findById(id)
+      return Match
+        .findOne({
+          _id: id,
+          creator: request.user._id,
+        })
         .exec();
     })
     .then((match) => {
@@ -195,7 +199,11 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
 
   promise
     .then(() => {
-      return Match.findById(id)
+      return Match
+        .findOne({
+          _id: id,
+          creator: request.user._id,
+        })
         .exec();
     })
     .then(match => {
@@ -227,7 +235,11 @@ router.put('/:id/declare', authenticateJwt(), (request, response) => {
   const id = request.params.id;
   const { state: nextState } = nullEmptyValues(request);
 
-  Match.findById(id)
+  Match
+    .findOne({
+      _id: id,
+      creator: request.user._id,
+    })
     .exec()
     .then(match => {
       if (!match) {
@@ -264,7 +276,11 @@ router.put('/:id/declare', authenticateJwt(), (request, response) => {
 router.post('/:id/bowl', authenticateJwt(), (request, response) => {
   const bowl = nullEmptyValues(request);
   const id = request.params.id;
-  Match.findById(id)
+  Match
+    .findOne({
+      _id: id,
+      creator: request.user._id,
+    })
     .then(match => {
       let updateQuery;
       if (match.state === 'innings1') {
@@ -288,7 +304,11 @@ router.post('/:id/bowl', authenticateJwt(), (request, response) => {
 router.put('/:id/bowl', authenticateJwt(), (request, response) => {
   const { bowl, overNo, bowlNo } = nullEmptyValues(request);
   const matchId = request.params.id;
-  Match.findById(matchId)
+  Match
+    .findOne({
+      _id: matchId,
+      creator: request.user._id,
+    })
     .lean()
     .exec()
     .then(match => _updateBowlAndSend(match, bowl, response, overNo, bowlNo));
@@ -340,7 +360,11 @@ const _updateBowlAndSend = (match, bowl, response, overNo, bowlNo) => {
 router.put('/:id/by', authenticateJwt(), (request, response) => {
   const { run, boundary, overNo, bowlNo } = nullEmptyValues(request);
   const id = request.params.id;
-  Match.findById(id, 'state innings1 innings2')
+  Match
+    .findOne({
+      _id: id,
+      creator: request.user._id,
+    }, 'state innings1 innings2')
     .lean()
     .exec()
     .then(match => {
@@ -357,7 +381,12 @@ router.put('/:id/by', authenticateJwt(), (request, response) => {
 router.put('/:id/run-out', runOutValidations, authenticateJwt(), (request, response) => {
   const id = request.params.id;
   const errors = validationResult(request);
-  const promise = errors.isEmpty() ? Match.findById(id)
+  const promise = errors.isEmpty()
+    ? Match
+      .findOne({
+        _id: id,
+        creator: request.user._id,
+      })
       .lean()
       .exec()
     : Promise.reject({
@@ -383,7 +412,11 @@ router.post('/:id/over', authenticateJwt(), (request, response) => {
   const over = nullEmptyValues(request);
   over.bowls = [];
   const id = request.params.id;
-  Match.findById(id)
+  Match
+    .findOne({
+      _id: id,
+      creator: request.user._id,
+    })
     .then(match => {
       let updateQuery;
       if (match.state === 'innings1') {
@@ -423,7 +456,6 @@ router.get('/done', authenticateJwt(), function (request, response) {
         err: err.error || err.errors || err,
       });
     });
-
 });
 
 router.get('/:id', (request, response) => {

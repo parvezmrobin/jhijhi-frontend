@@ -15,6 +15,7 @@ const passport = require('passport');
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 const { check, validationResult } = require('express-validator/check');
 const ObjectId = require('mongoose/lib/types/objectid');
+const { send404Response } = require('../lib/utils');
 const { namify, sendErrorResponse } = require('../lib/utils');
 
 
@@ -119,6 +120,7 @@ router.get('/:id', authenticateJwt(), playerGetValidations, (request, response) 
         ],
       },
       { state: 'done' },
+      { creator: request.user._id },
     ],
   };
   Promise.all([
@@ -271,19 +273,28 @@ router.put('/:id', authenticateJwt(), playerEditValidations, (request, response)
   const { name, jerseyNo } = request.body;
 
   promise
-    .then(() => Player.findOneAndUpdate({ _id: ObjectId(request.params.id) }, {
-      name: namify(name),
-      jerseyNo,
-      creator: request.user._id,
-    }, { new: true }))
-    .then(createdPlayer => {
+    .then(() => {
+      return Player
+        .findOneAndUpdate({
+          _id: ObjectId(request.params.id),
+          creator: request.user._id,
+        }, {
+          name: namify(name),
+          jerseyNo,
+          creator: request.user._id,
+        }, { new: true });
+    })
+    .then(editedPlayer => {
+      if (!editedPlayer) {
+        return send404Response(response, 'Player could not found');
+      }
       response.json({
         success: true,
         message: responses.players.edit.ok(name),
         player: {
-          _id: createdPlayer._id,
-          name: createdPlayer.name,
-          jerseyNo: createdPlayer.jerseyNo,
+          _id: editedPlayer._id,
+          name: editedPlayer.name,
+          jerseyNo: editedPlayer.jerseyNo,
         },
       });
     })
