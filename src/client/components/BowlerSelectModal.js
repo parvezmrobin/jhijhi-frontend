@@ -50,7 +50,7 @@ export default class BowlerSelectModal extends Component {
       <ModalBody>
         <FormGroup type="select" name="bowler" value={this.state.bowler}
                    onChange={e => this.setState({ bowler: e.target.value })}
-                   options={availableBowlers} isValid={!this.state.error}
+                   options={availableBowlers} isValid={this.state.error ? false : null}
                    feedback={this.state.error}/>
       </ModalBody>
       <ModalFooter>
