@@ -18,7 +18,7 @@ class UmpireForm extends Component{
         <h2>Create Umpire</h2>
         <hr/>
         <form>
-          <FormGroup name="name"/>
+          <FormGroup autoFocus name="name"/>
           <FormButton type="submit" text="Create" btnClass="outline-success">
             {this.props.children}
           </FormButton>

@@ -90,16 +90,22 @@ aside {
   }
 }
 
-.dropdown#select-match .dropdown-toggle {
-  @extend .fs-2;
-  @extend .p-1;
-  @extend .text-info;
-  @extend .bg-transparent;
-  @extend .border-0;
+.dropdown#select-match {
+  .dropdown-item:hover, .dropdown-item:focus {
+    @extend .bg-primary;
+  }
 
-  &:focus {
-    outline: 0 !important;
-    box-shadow: none;
+  .dropdown-toggle {
+    @extend .fs-2;
+    @extend .p-1;
+    @extend .text-info;
+    @extend .bg-transparent;
+    @extend .border-0;
+
+    &:focus {
+      outline: 0 !important;
+      box-shadow: none;
+    }
   }
 }
 
