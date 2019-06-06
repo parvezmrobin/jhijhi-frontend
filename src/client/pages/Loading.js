@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import CenterContent from '../components/layouts/CenterContent';
-
+import '../styles/Loading.css'
 
 export default class Loading extends Component {
   constructor(props) {
@@ -25,11 +24,11 @@ export default class Loading extends Component {
 
   render() {
     return (
-      <CenterContent>
-        <h2 className="text-center mt-10 mt-lg-0">
+      <div className="load-container">
+        <h1>
           Loading{this.state.dots}
-        </h2>
-      </CenterContent>
+        </h1>
+      </div>
     );
   }
 }

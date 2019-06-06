@@ -10,7 +10,7 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 import { toTitleCase } from './lib/utils';
 import fetcher from './lib/fetcher';
 import ErrorBoundary from './ErrorBoundary';
-import './scss/App.scss';
+import './styles/App.scss';
 import 'bootstrap';
 
 const Home = React.lazy(() => import(/* webpackChunkName: "Home" */ './pages/Home'));
