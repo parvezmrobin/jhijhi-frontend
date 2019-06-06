@@ -228,12 +228,12 @@ export class Running extends Component {
       return [batsman1Index, batsman2Index];
     }
 
-    if (inputEvent.isUpdate) {
-      if (bowl.by % 2) {
+    if (inputEvent.isUpdate && bowl.by % 2) {
         [batsman1Index, batsman2Index] = [batsman2Index, batsman1Index];
-      }
     } else {
-      if ((bowl.singles + bowl.legBy) % 2) {
+      // if undefined, add 0 instead
+      const run = (bowl.singles || 0) + (bowl.legBy || 0);
+      if (run % 2) {
         [batsman1Index, batsman2Index] = [batsman2Index, batsman1Index];
       }
     }
