@@ -60,9 +60,9 @@ export default class MatchDetail extends Component {
 
     if (match === null) {
       const text = (matchId === 'null') ? 'Select a Match' : 'Loading...';
-      const loading = <div className="col"><CenterContent><h2 className="text-center">
+      const loading = <div className="col"><CenterContent><p className="text-center display-2">
         {text}
-      </h2></CenterContent></div>;
+      </p></CenterContent></div>;
       return <div className="col">{loading}</div>;
     }
     if (match.state !== 'done') {
