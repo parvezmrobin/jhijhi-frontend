@@ -485,11 +485,15 @@ router.get('/:id', (request, response) => {
 
 /* GET matches listing. */
 router.get('/', authenticateJwt(), (request, response) => {
+  const query = {
+    creator: request.user._id,
+    state: { $ne: 'done' },
+  };
+  if (request.query.search) {
+    query.name = new RegExp(request.query.search, 'i');
+  }
   Match
-    .find({
-      creator: request.user._id,
-      state: { $ne: 'done' },
-    })
+    .find(query)
     .lean()
     .then(matches => response.json(matches))
     .catch(err => {

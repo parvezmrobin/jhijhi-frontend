@@ -5,14 +5,15 @@
  */
 
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
-import MatchForm from "../components/MatchForm";
-import {bindMethods} from "../lib/utils";
-import fetcher from "../lib/fetcher";
-import {Toast, ToastBody, ToastHeader} from "reactstrap";
+import MatchForm from '../components/MatchForm';
+import { bindMethods } from '../lib/utils';
+import fetcher from '../lib/fetcher';
+import { Toast, ToastBody, ToastHeader } from 'reactstrap';
 import { Link, Redirect } from 'react-router-dom';
+import debounce from 'lodash/debounce';
 
 
 class Match extends Component {
@@ -51,13 +52,13 @@ class Match extends Component {
   handlers = {
     onChange(action) {
       this.setState(prevState => {
-        return {match: {...prevState.match, ...action}};
+        return { match: { ...prevState.match, ...action } };
       });
     },
 
     onSubmit() {
       // clone necessary data from `this.state`
-      const postData = {...this.state.match};
+      const postData = { ...this.state.match };
 
       fetcher
         .post('matches', postData)
@@ -73,7 +74,10 @@ class Match extends Component {
               umpire3: '',
               overs: '',
             },
-            matches: prevState.matches.concat({...prevState.match, _id: response.data.match._id}),
+            matches: prevState.matches.concat({
+              ...prevState.match,
+              _id: response.data.match._id,
+            }),
             isValid: {
               name: null,
               team1: null,
@@ -124,28 +128,41 @@ class Match extends Component {
       .get('teams')
       .then(response => {
         this.setState({
-          teams: [{_id: null, name: 'None'}].concat(response.data),
+          teams: [{
+            _id: null,
+            name: 'None',
+          }].concat(response.data),
         });
       });
     fetcher
       .get('umpires')
       .then(response => {
         this.setState({
-          umpires: [{_id: null, name: 'None'}].concat(response.data),
+          umpires: [{
+            _id: null,
+            name: 'None',
+          }].concat(response.data),
         });
       });
-    fetcher
-      .get('matches')
-      .then(response => {
-        this.setState({matches: response.data})
-      });
+    this._loadMatches();
   }
 
+  _loadMatches = (keyword = '') => {
+    fetcher
+      .get(`matches?search=${keyword}`)
+      .then(response => {
+        this.setState({ matches: response.data });
+      });
+  };
+
   render() {
-    const {message, teams} = this.state;
+    const { message, teams } = this.state;
     if (teams && teams.length < 3) {
-      return <Redirect to="/team?redirected=1"/>
+      return <Redirect to="/team?redirected=1"/>;
     }
+    const sidebarItemMapper = (match) => {
+      return <Link className="text-white" to={`live@${match._id}`}>{match.name}</Link>;
+    };
     return (
       <div className="container-fluid pl-0">
         <Toast isOpen={!!message}>
@@ -162,8 +179,9 @@ class Match extends Component {
               <SidebarList
                 title="Upcoming Matches"
                 itemClass="text-white"
-                itemMapper={(match) => <Link className="text-white" to={`live@${match._id}`}>{match.name}</Link>}
-                list={this.state.matches}/>
+                itemMapper={sidebarItemMapper}
+                list={this.state.matches}
+                onFilter={debounce(this._loadMatches, 1000)}/>
             </CenterContent>
           </aside>
           <main className="col">
