@@ -52,7 +52,7 @@ FormGroup.propTypes = {
   feedback: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   autoFocus: PropTypes.bool,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   options: PropTypes.array,
 };
 

@@ -36,7 +36,7 @@ export default class PlayerSidebar extends Component {
       </>;
     };
 
-    return <aside className="col-md-3">
+    return <aside className="col-md-4 col-lg-3">
       <CenterContent col="col">
         <SidebarList
           title="Existing Players"
