@@ -22,9 +22,13 @@ class Contact extends Component {
       <div className="d-flex align-items-center vh-100">
         <div className="col-md-8 offset-md-2 bg-dark-trans rounded">
           <div className="d-flex justify-content-center text-center v-100">
-            <div className="col-auto text-white p-1 fs-2">
+            <div className="col-auto text-white p-1 fs-1 fs-md-2">
                 <span>
-                  Mail me at <a href="mailto:parvezmrobin@gmail.com">parvezmrobin@gmail.com</a>
+                  <span className="d-inline-block">Mail me at</span>
+                  {' '}
+                  <a className="d-inline-block" href="mailto:parvezmrobin@gmail.com">
+                    parvezmrobin@gmail.com
+                  </a>
                 </span>
             </div>
           </div>

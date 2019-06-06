@@ -63,8 +63,18 @@ aside {
   background-color: #11111a;
 }
 
+.fs-1 {
+  font-size: 1.5rem !important;
+}
+
 .fs-2 {
   font-size: 2rem !important;
+}
+
+@include media-breakpoint-up(md) {
+  .fs-md-2 {
+    font-size: 2rem !important;
+  }
 }
 
 .bg-dark-trans {
