@@ -100,13 +100,26 @@ const playerGetValidations = [
 
 /* GET players listing. */
 router.get('/', authenticateJwt(), (request, response) => {
-  const query = { creator: request.user._id };
+  let query;
   if (request.query.search) {
-    query.name = new RegExp(request.query.search, 'i');
+    const regExp = new RegExp(request.query.search, 'i');
+    query = Player.aggregate([
+      { $match: { creator: request.user._id } },
+      { $addFields: { jerseyString: { $toLower: '$jerseyNo' } } },
+      {
+        $match: {
+          $or: [
+            { name: regExp },
+            { jerseyString: regExp },
+          ],
+        },
+      },
+    ]).exec();
+  } else {
+    query = Player.find({ creator: request.user._id }).lean().exec();
   }
-  Player
-    .find(query)
-    .lean()
+
+  query
     .then(players => response.json(players))
     .catch(err => sendErrorResponse(response, err, responses.players.index.err));
 });
