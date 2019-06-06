@@ -33,7 +33,9 @@ class History extends Component {
 
     if (matches && !matches.length) {
       return <CenterContent>
-        <h2 className="text-center mt-10">You want score before even playing a match!</h2>
+        <h2 className="text-center mt-10" style={{fontFamily: 'cursive'}}>
+          You want score before even playing a match!
+        </h2>
         <div className="row justify-content-center">
           <img className="img-fluid" src={'/frustrated.gif'} alt="frustrated"/>
         </div>
