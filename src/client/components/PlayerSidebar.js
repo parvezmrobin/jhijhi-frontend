@@ -5,6 +5,7 @@ import SidebarList from './SidebarList';
 import * as PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import * as feather from 'feather-icons';
+import debounce from 'lodash/debounce';
 
 /**
  * Parvez M Robin
@@ -42,7 +43,7 @@ export default class PlayerSidebar extends Component {
           title="Existing Players"
           itemMapper={renderPlayer}
           list={this.props.players}
-          onFilter={this.props.onFilter}/>
+          onFilter={debounce(this.props.onFilter, 1000)}/>
       </CenterContent>
     </aside>;
   }
