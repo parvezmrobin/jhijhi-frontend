@@ -35,7 +35,7 @@ class Match extends Component {
         name: null,
         team1: null,
         team2: null,
-        overs: '',
+        overs: null,
       },
       feedback: {
         name: null,

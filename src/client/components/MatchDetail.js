@@ -200,6 +200,7 @@ export default class MatchDetail extends Component {
         </div>
 
       </div>
+      <footer className="py-3 py-sm-0"/>
 
       <ScoreModal isOpen={this.state.showModal} toggle={() => this.setState({showModal: false})}
       innings={innings} battingTeamPlayers={battingTeamPlayers} bowlingTeamPlayers={bowlingTeamPlayers}

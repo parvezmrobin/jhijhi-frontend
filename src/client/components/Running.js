@@ -558,6 +558,8 @@ export class Running extends Component {
                    onOverClick={this.openOverModal}/>
           </div>
         </div>
+
+        <footer className="py-3 py-sm-0"/>
       </main>
       <BatsmanSelectModal
         allOutPrompted={this.state.showSingleBatsmanModal} batsman1Index={batsman1}

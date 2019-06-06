@@ -15,7 +15,7 @@ function Overs(props) {
   return (
     <Fragment>
       <h4 className="mt-2 pt-1 text-center text-white">
-        Overs
+        {!!overs.length && 'Overs'}
       </h4>
       <ul className="list-group clickable">
         {overs.map(
