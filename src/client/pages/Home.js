@@ -55,8 +55,8 @@ class Home extends Component {
 
     const content = options.length
       ? <div className="col-auto">
-        <Dropdown isOpen={this.state.isDropdownOpen} toggle={this.toggle}>
-          <DropdownToggle className="fs-2 p-1 text-info bg-transparent border-0" caret>
+        <Dropdown id="select-match" isOpen={this.state.isDropdownOpen} toggle={this.toggle}>
+          <DropdownToggle caret>
             Select Match
           </DropdownToggle>
           <DropdownMenu className="bg-dark w-100">
