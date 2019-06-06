@@ -112,7 +112,7 @@ aside {
   @extend .flex-wrap;
 }
 
-@include media-breakpoint-up(md) {
+@include media-breakpoint-up(lg) {
   .list-group-select {
     max-height: calc(100vh - 20rem);
     overflow-y: auto;

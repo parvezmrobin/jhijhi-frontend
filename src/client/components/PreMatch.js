@@ -198,7 +198,7 @@ export default class PreMatch extends Component {
       <CenterContent>
         <h2 className="text-center text-white bg-success py-3 rounded">{this.props.name}</h2>
         <div className="row">
-          <div className="col">
+          <div className="col-12 col-sm">
             <h2 className="text-center text-primary">{this.props.team1.name}</h2>
             <hr/>
             <FormGroup label="Captain" type="select"
@@ -210,7 +210,7 @@ export default class PreMatch extends Component {
                        isValid={this.state.isValid.team1Captain}
                        feedback={this.state.feedback.team1Captain}/>
             <div className="form-group row">
-              <label className="col-form-label col-md-4 col-lg-3">
+              <label className="col-form-label col-lg-3">
                 Choose Players
               </label>
               <div className="col">
@@ -218,7 +218,7 @@ export default class PreMatch extends Component {
               </div>
             </div>
           </div>
-          <div className="col">
+          <div className="col-12 col-sm">
             <h2 className="text-center text-primary">{this.props.team2.name}</h2>
             <hr/>
             <FormGroup label="Captain" type="select"
@@ -230,7 +230,7 @@ export default class PreMatch extends Component {
                        isValid={this.state.isValid.team2Captain}
                        feedback={this.state.feedback.team2Captain}/>
             <div className="form-group row">
-              <label className="col-form-label col-md-4 col-lg-3">
+              <label className="col-form-label col-lg-3">
                 Choose Players
               </label>
               <div className="col">
