@@ -441,11 +441,15 @@ router.post('/:id/over', authenticateJwt(), (request, response) => {
 });
 
 router.get('/done', authenticateJwt(), function (request, response) {
+  const query = {
+    creator: request.user._id,
+    state: 'done',
+  };
+  if (request.query.search) {
+    query.name = new RegExp(request.query.search, 'i');
+  }
   Match
-    .find({
-      creator: request.user._id,
-      state: 'done',
-    })
+    .find(query)
     .lean()
     .then(matches => response.json(matches))
     .catch(err => {

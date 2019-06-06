@@ -5,26 +5,35 @@
  */
 
 
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
+import InputControl from './form/control/input';
 
 
-class SidebarList extends Component {
-  itemClass;
-  itemMapper;
-
-  render() {
-    const className = "list-group-item bg-transparent " + (this.props.itemClass || "");
-    const mapper = this.props.itemMapper || (item => item);
-    const items = this.props.list.map(((item, i) => <li key={item._id} className={className}>{mapper(item, i)}</li>));
-    return (
-      <Fragment>
-        <h3 className="text-center text-info mt-10 mt-md-0">{this.props.title}</h3>
-        <hr/>
-        <ul className="list-group">{items}</ul>
-      </Fragment>
-    );
-  }
-
+function SidebarList(props) {
+  const className = 'list-group-item bg-transparent ' + (props.itemClass || '');
+  const mapper = props.itemMapper || (item => item);
+  const items = props.list.map(
+    (item, i) => <li key={item._id} className={className}>{mapper(item, i)}</li>,
+  );
+  return (
+    <Fragment>
+      <h3>{props.title}</h3>
+      {props.onFilter && <InputControl autoFocus placeholder="Type here to filter list"
+                                       onChange={e => props.onFilter(e.target.value)}/>}
+      <hr/>
+      <ul className="list-group">{items}</ul>
+    </Fragment>
+  );
 }
+
+SidebarList.propTypes = {
+  title: PropTypes.string.isRequired,
+  itemClass: PropTypes.string,
+  itemMapper: PropTypes.func,
+  list: PropTypes.array.isRequired,
+  onFilter: PropTypes.func,
+};
+
 
 export default SidebarList;

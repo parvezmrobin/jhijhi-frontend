@@ -71,6 +71,15 @@ aside {
   background-color: #151520d6;
 }
 
+aside {
+  h1, h2, h3, .h1, .h2, .h3 {
+    @extend .text-center;
+    @extend .text-info;
+    @extend .mt-10;
+    @extend .mt-sm-5;
+  }
+}
+
 @include media-breakpoint-up(md) {
   aside .list-group {
     max-height: calc(100vh - 12rem);
@@ -192,7 +201,7 @@ th[scope="row"] {
   }
 }
 
-.list-group-item.active .bowl-event{
+.list-group-item.active .bowl-event {
   @extend .border;
   border-color: $white;
 }

@@ -4,25 +4,28 @@
  * Date: Apr 04, 2019
  */
 
-import React, {Component} from "react";
+import React from 'react';
+import PropTypes from 'prop-types';
 
 
-class InputControl extends Component {
-
-  render() {
-    const props = {...this.props};
-    let className = "form-control ";
-    if (props.isValid === true) {
-      className += "is-valid";
-    } else if (props.isValid === false) {
-      className += "is-invalid";
-    }
-    delete props.isValid;
-    return (
-      <input className={className} {...props}/>
-    );
+function InputControl(props) {
+  props = Object.assign({}, props);
+  let className = 'form-control ';
+  if (props.isValid === true) {
+    className += 'is-valid';
+  } else if (props.isValid === false) {
+    className += 'is-invalid';
   }
-
+  delete props.isValid;
+  return (
+    <input className={className} {...props}/>
+  );
 }
+
+InputControl.propTypes = {
+  isValid: PropTypes.bool,
+  onChange: PropTypes.func.isRequired,
+};
+
 
 export default InputControl;
