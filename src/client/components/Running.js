@@ -96,11 +96,12 @@ export class Running extends Component {
      * @param inputEvent.isUpdate
      */
     onInput(inputEvent) {
-      const genUpdatedState = prevState => {
+      const genUpdatedState = (prevState) => {
         let { batsman1: batsman1Index, batsman2: batsman2Index, bowlerModalIsOpen, singleBatsman } = prevState;
         const innings = this._getCurrentInnings();
 
         if (inputEvent.type === 'bowl') {
+          // should be a static function since used inside a callback
           [batsman1Index, batsman2Index] = Running._onBowlEvent(
             inputEvent, innings, batsman1Index, batsman2Index, singleBatsman,
           );
@@ -199,6 +200,18 @@ export class Running extends Component {
     },
   };
 
+  /**
+   * Event handler for bowl input
+   * @param inputEvent
+   * @param [inputEvent.bowl]
+   * @param inputEvent.isUpdate
+   * @param innings
+   * @param batsman1Index
+   * @param batsman2Index
+   * @param singleBatsman
+   * @return {[Number|null, Number|null]}
+   * @private
+   */
   static _onBowlEvent(inputEvent, innings, batsman1Index, batsman2Index, singleBatsman) {
     const bowl = inputEvent.bowl;
     const bowls = innings.overs[innings.overs.length - 1].bowls;
@@ -229,7 +242,7 @@ export class Running extends Component {
     }
 
     if (inputEvent.isUpdate && bowl.by % 2) {
-        [batsman1Index, batsman2Index] = [batsman2Index, batsman1Index];
+      [batsman1Index, batsman2Index] = [batsman2Index, batsman1Index];
     } else {
       // if undefined, add 0 instead
       const run = (bowl.singles || 0) + (bowl.legBy || 0);
