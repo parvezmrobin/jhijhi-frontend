@@ -100,8 +100,12 @@ const playerGetValidations = [
 
 /* GET players listing. */
 router.get('/', authenticateJwt(), (request, response) => {
+  const query = { creator: request.user._id };
+  if (request.query.search) {
+    query.name = new RegExp(request.query.search, 'i');
+  }
   Player
-    .find({ creator: request.user._id })
+    .find(query)
     .lean()
     .then(players => response.json(players))
     .catch(err => sendErrorResponse(response, err, responses.players.index.err));

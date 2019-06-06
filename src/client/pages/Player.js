@@ -43,14 +43,18 @@ class Player extends Component {
       this._loadPlayerIfNecessary(playerId);
     });
 
-    fetcher.get('players')
+    this._loadPlayers();
+  }
+
+  _loadPlayers = (keyword = '') => {
+    fetcher.get(`players?search=${keyword}`)
       .then(response => {
         this.setState({ players: response.data });
         if (this.props.match.params.id) {
           this._loadPlayer(response.data, this.props.match.params.id);
         }
       });
-  }
+  };
 
   componentWillUnmount() {
     this.unlisten();
@@ -190,7 +194,8 @@ class Player extends Component {
         </Toast>
 
         <div className="row">
-          <PlayerSidebar editable playerId={playerId} players={this.state.players}/>
+          <PlayerSidebar editable playerId={playerId} players={this.state.players}
+                         onFilter={this._loadPlayers}/>
           <main className="col">
             <CenterContent col="col-lg-8 col-md-10">
               {this.state.redirected && <Alert color="primary">

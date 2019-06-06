@@ -41,7 +41,8 @@ export default class PlayerSidebar extends Component {
         <SidebarList
           title="Existing Players"
           itemMapper={renderPlayer}
-          list={this.props.players}/>
+          list={this.props.players}
+          onFilter={this.props.onFilter}/>
       </CenterContent>
     </aside>;
   }
@@ -51,4 +52,5 @@ PlayerSidebar.propTypes = {
   playerId: PropTypes.string,
   players: PropTypes.arrayOf(PropTypes.object).isRequired,
   editable: PropTypes.bool,
+  onFilter: PropTypes.func.isRequired,
 };

@@ -28,11 +28,15 @@ class PlayerDetails extends PureComponent {
     });
 
     this._loadPlayer(this.props.match.params.id);
-    fetcher.get('/players')
+    this._loadPlayers();
+  }
+
+  _loadPlayers = (keyword = '') => {
+    fetcher.get(`/players?search=${keyword}`)
       .then(response => {
         this.setState({ players: response.data });
       });
-  }
+  };
 
   _loadPlayer(playerId) {
     fetcher.get(`/players/${playerId}`)
@@ -57,7 +61,8 @@ class PlayerDetails extends PureComponent {
       <div>
         <div className="row">
 
-          <PlayerSidebar editable playerId={player._id} players={players}/>
+          <PlayerSidebar editable playerId={player._id} players={players}
+                         onFilter={this._loadPlayers}/>
           <main className="col">
             <CenterContent col="col-lg-6 col-md-8">
               <h2 className="text-primary text-center">{toTitleCase(player.name)}</h2>
@@ -78,7 +83,8 @@ class PlayerDetails extends PureComponent {
                 </tr>
                 <tr>
                   <th scope="row">Average</th>
-                  <td>{Number.isNaN(stat.avgRun)? 'N/A' : Number(stat.avgRun).toFixed(2)}</td>
+                  <td>{Number.isNaN(stat.avgRun) ? 'N/A' : Number(stat.avgRun)
+                    .toFixed(2)}</td>
                 </tr>
                 <tr>
                   <th scope="row">Highest Score</th>
@@ -86,7 +92,8 @@ class PlayerDetails extends PureComponent {
                 </tr>
                 <tr>
                   <th scope="row">Strike Rate</th>
-                  <td>{Number.isNaN(stat.strikeRate)? 'N/A' : Number(stat.strikeRate).toFixed(2)}</td>
+                  <td>{Number.isNaN(stat.strikeRate) ? 'N/A' : Number(stat.strikeRate)
+                    .toFixed(2)}</td>
                 </tr>
                 </tbody>
               </Table>
