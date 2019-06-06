@@ -64,7 +64,10 @@ const teamCreateValidations = [
 
 router.get('/:id', authenticateJwt(), (request, response) => {
   Team
-    .findOne({ _id: request.params.id, creator: request.user._id })
+    .findOne({
+      _id: request.params.id,
+      creator: request.user._id,
+    })
     .lean()
     .populate('players')
     .then(teams => response.json(teams))
@@ -73,8 +76,24 @@ router.get('/:id', authenticateJwt(), (request, response) => {
 
 /* GET teams listing. */
 router.get('/', authenticateJwt(), (request, response) => {
+  let query = { creator: request.user._id };
+  if (request.query.search) {
+    const regex = new RegExp(request.query.search, 'i');
+    query = {
+      $and: [
+        query,
+        {
+          $or: [
+            { name: regex },
+            { shortName: regex },
+          ],
+        },
+      ],
+    };
+  }
+
   Team
-    .find({ creator: request.user._id })
+    .find(query)
     .lean()
     .then(teams => response.json(teams))
     .catch(err => sendErrorResponse(response, err, responses.teams.index.err));

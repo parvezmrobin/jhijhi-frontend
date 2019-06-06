@@ -5,13 +5,14 @@
  */
 
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
 import TeamForm from '../components/TeamForm';
-import fetcher from "../lib/fetcher";
-import {bindMethods} from "../lib/utils";
+import fetcher from '../lib/fetcher';
+import { bindMethods } from '../lib/utils';
 import { Alert, Toast, ToastBody, ToastHeader } from 'reactstrap';
+import debounce from 'lodash/debounce';
 
 
 class Team extends Component {
@@ -44,12 +45,12 @@ class Team extends Component {
      */
     onChange(action) {
       this.setState(prevState => {
-        return {team: {...prevState.team, ...action}};
+        return { team: { ...prevState.team, ...action } };
       });
     },
 
     onSubmit() {
-      const postData = {...this.state.team};
+      const postData = { ...this.state.team };
 
       fetcher
         .post('teams', postData)
@@ -99,12 +100,16 @@ class Team extends Component {
   };
 
   componentDidMount() {
-    fetcher
-      .get('teams')
-      .then(response => {
-        this.setState({teams: response.data})
-      });
+    this._loadTeams();
   }
+
+  _loadTeams = (keyword = '') => {
+    fetcher
+      .get(`teams?search=${keyword}`)
+      .then(response => {
+        this.setState({ teams: response.data });
+      });
+  };
 
   render() {
     const message = this.state.message;
@@ -112,7 +117,7 @@ class Team extends Component {
       <div className="container-fluid px-0">
 
         <Toast isOpen={!!message}>
-          <ToastHeader icon="primary" toggle={() => this.setState({message: null})}>
+          <ToastHeader icon="primary" toggle={() => this.setState({ message: null })}>
             Jhijhi
           </ToastHeader>
           <ToastBody>
@@ -127,7 +132,8 @@ class Team extends Component {
                 title="Existing Teams"
                 itemClass="text-white"
                 itemMapper={(team) => `${team.name} (${team.shortName})`}
-                list={this.state.teams}/>
+                list={this.state.teams}
+                onFilter={debounce(this._loadTeams, 1000)}/>
             </CenterContent>
           </aside>
           <main className="col">
@@ -137,7 +143,8 @@ class Team extends Component {
                   You need at least 2 teams to create a match.
                 </p>
               </Alert>}
-              <TeamForm players={this.state.players} onChange={this.onChange} onSubmit={this.onSubmit}
+              <TeamForm players={this.state.players} onChange={this.onChange}
+                        onSubmit={this.onSubmit}
                         team={this.state.team}
                         isValid={this.state.isValid} feedback={this.state.feedback}/>
             </CenterContent>
