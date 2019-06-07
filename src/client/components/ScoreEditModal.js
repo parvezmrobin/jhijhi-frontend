@@ -17,7 +17,7 @@ class ScoreEditModal extends Component {
     return (
       <Modal isOpen={isOpen} size="xl" toggle={close} contentClassName="bg-dark">
         <ModalHeader className="border-0 text-white ml-3" tag="h4" toggle={close}>
-          {ordinal(overNo + 1)} Over, Bowl {bowlNo + 1}
+          {overNo + 1}<sup>{ordinal(overNo + 1)}</sup> Over, Bowl {bowlNo + 1}
         </ModalHeader>
         <ModalBody className="p-0">
           <ScoreEdit matchId={matchId} batsmen={batsmen} batsmanIndices={batsmanIndices}

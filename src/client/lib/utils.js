@@ -67,21 +67,21 @@ export function subtract(from, subtrahend, matcher = ((el1, el2) => el1 === el2)
 
 export function ordinal(number) {
   if (number < 1) {
-    return `${number}th`;
+    return 'th';
   }
   if (number === 11) {
-    return '11th';
+    return 'th';
   }
   if (number === 12) {
-    return '12th';
+    return 'th';
   }
   if (number % 10 === 1) {
-    return `${number}st`;
+    return 'st';
   }
   if (number % 10 === 2) {
-    return `${number}nd`;
+    return 'nd';
   }
-  return `${number}th`;
+  return 'th';
 }
 
 export function logout() {
