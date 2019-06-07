@@ -15,6 +15,7 @@ import PlayerSidebar from '../components/PlayerSidebar';
 class PlayerDetails extends PureComponent {
   state = {
     stat: {},
+    numMatch: null,
     player: {},
     players: [],
   };
@@ -53,7 +54,7 @@ class PlayerDetails extends PureComponent {
   }
 
   render() {
-    const { player, stat, players } = this.state;
+    const { player, stat: { bat: battingStat, bowl: bowlingStat, numMatch }, players } = this.state;
     if (!player.name) {
       return <Loading/>;
     }
@@ -70,30 +71,71 @@ class PlayerDetails extends PureComponent {
               <Table>
                 <tbody>
                 <tr>
-                  <th scope="row">Matches</th>
-                  <td>{stat.numMatches}</td>
+                  <th scope="row" colSpan="2">Matches</th>
+                  <td colSpan="2">{numMatch}</td>
                 </tr>
                 <tr>
-                  <th scope="row">Innings</th>
-                  <td>{stat.numInningses}</td>
+                  {battingStat.numInnings > 0 && <>
+                    <th scope="row">Innings Batted</th>
+                    <td>{battingStat.numInnings}</td>
+                  </>}
+                  {!battingStat.numInnings &&
+                  <th scope="row" rowSpan="5" colSpan="2" className="fs-2 font-weight-normal">
+                    Never Batted
+                  </th>}
+                  {bowlingStat.numInnings > 0 && <>
+                    <th scope="row">Innings Bowled</th>
+                    <td>{bowlingStat.numInnings}</td>
+                  </>}
+                  {!bowlingStat.numInnings &&
+                  <th scope="row" rowSpan="5" colSpan="2" className="fs-2 font-weight-normal">
+                    Never Bowled
+                  </th>}
                 </tr>
                 <tr>
-                  <th scope="row">Total Runs</th>
-                  <td>{stat.totalRun}</td>
+                  {battingStat.numInnings > 0 && <>
+                    <th scope="row">Total Runs</th>
+                    <td>{battingStat.totalRun}</td>
+                  </>}
+                  {bowlingStat.numInnings > 0 && <>
+                    <th scope="row">Total Wickets</th>
+                    <td>{bowlingStat.totalWickets}</td>
+                  </>}
                 </tr>
                 <tr>
-                  <th scope="row">Average</th>
-                  <td>{Number.isNaN(stat.avgRun) ? 'N/A' : Number(stat.avgRun)
-                    .toFixed(2)}</td>
+                  {battingStat.numInnings > 0 && <>
+                    <th scope="row">Batting Average</th>
+                    <td>{!Number.isFinite(battingStat.avgRun) ? 'N/A'
+                      : Math.round(battingStat.avgRun * 100) / 100}</td>
+                  </>}
+                  {bowlingStat.numInnings > 0 && <>
+                    <th scope="row">Bowling Average</th>
+                    <td>{!Number.isFinite(bowlingStat.avgWicket) ? 'N/A'
+                      : Math.round(bowlingStat.avgWicket * 100) / 100}</td>
+                  </>}
                 </tr>
                 <tr>
-                  <th scope="row">Highest Score</th>
-                  <td>{stat.highestRun}</td>
+                  {battingStat.numInnings > 0 && <>
+                    <th scope="row">Highest Score</th>
+                    <td>{battingStat.highestRun}</td>
+                  </>}
+                  {bowlingStat.numInnings > 0 && <>
+                    <th scope="row">Best Figure</th>
+                    <td>{Number.isInteger(bowlingStat.bestFigure.run) &&
+                    `${bowlingStat.bestFigure.wicket}-${bowlingStat.bestFigure.run}`}</td>
+                  </>}
                 </tr>
                 <tr>
-                  <th scope="row">Strike Rate</th>
-                  <td>{Number.isNaN(stat.strikeRate) ? 'N/A' : Number(stat.strikeRate)
-                    .toFixed(2)}</td>
+                  {battingStat.numInnings > 0 && <>
+                    <th scope="row">Batting Strike Rate</th>
+                    <td>{!Number.isFinite(battingStat.strikeRate) ? 'N/A'
+                      : Math.round(battingStat.strikeRate * 100) / 100}</td>
+                  </>}
+                  {bowlingStat.numInnings > 0 && <>
+                    <th scope="row">Bowling Strike Rate</th>
+                    <td>{!Number.isFinite(bowlingStat.strikeRate) ? 'N/A'
+                      : Math.round(bowlingStat.strikeRate * 100) / 100}</td>
+                  </>}
                 </tr>
                 </tbody>
               </Table>

@@ -114,9 +114,12 @@ router.get('/', authenticateJwt(), (request, response) => {
           ],
         },
       },
-    ]).exec();
+    ])
+      .exec();
   } else {
-    query = Player.find({ creator: request.user._id }).lean().exec();
+    query = Player.find({ creator: request.user._id })
+      .lean()
+      .exec();
   }
 
   query
@@ -155,8 +158,12 @@ router.get('/:id', authenticateJwt(), playerGetValidations, (request, response) 
         const team1Index = match.team1Players.map(playerId => playerId.toString())
           .indexOf(playerId);
         if (team1Index !== -1) {
+          const [battingInnings, bowlingInnings] = match.team1BatFirst
+            ? [match.innings1, match.innings2]
+            : [match.innings2, match.innings1];
           return {
-            innings: match.team1BatFirst ? match.innings1 : match.innings2,
+            battingInnings,
+            bowlingInnings,
             playerIndex: team1Index,
           };
         } else {
@@ -165,9 +172,13 @@ router.get('/:id', authenticateJwt(), playerGetValidations, (request, response) 
           if (team2Index === -1) {
             throw new Error('Error in player stat query');
           }
+          const [battingInnings, bowlingInnings] = match.team1BatFirst
+            ? [match.innings2, match.innings1]
+            : [match.innings1, match.innings2];
           return {
-            innings: match.team1BatFirst ? match.innings2 : match.innings1,
-            playerIndex: team2Index,
+            battingInnings,
+            bowlingInnings,
+            playerIndex: team1Index,
           };
         }
       });
@@ -175,8 +186,8 @@ router.get('/:id', authenticateJwt(), playerGetValidations, (request, response) 
     // get the bowls of inningses he/she played
     .then(matches => {
       let numOuts = 0;
-      const matchWiseBowls = matches.map((match) => {
-        return match.innings.overs.reduce((bowls, over) => {
+      const matchWiseBattedBowls = matches.map((match) => {
+        return match.battingInnings.overs.reduce((bowls, over) => {
           const filteredBowls = over.bowls.filter(bowl => bowl.playedBy === match.playerIndex);
 
           // `numOuts` needed to be calculated here
@@ -195,16 +206,20 @@ router.get('/:id', authenticateJwt(), playerGetValidations, (request, response) 
           return bowls;
         }, []);
       });
+      const matchWiseBowledOvers = matches.map(match => {
+        return match.bowlingInnings.overs.filter(over => over.bowledBy === match.playerIndex);
+      });
       return {
         numOuts,
-        matchWiseBowls,
+        matchWiseBattedBowls,
+        matchWiseBowledOvers,
       };
     })
     // calculate stat of each innings
-    .then(({ numOuts, matchWiseBowls }) => {
-      // filter inningses whether he/she played
-      const inningses = matchWiseBowls.filter(innings => innings.length);
-      const inningsStats = inningses.map(bowls => {
+    .then(({ numOuts, matchWiseBattedBowls, matchWiseBowledOvers }) => {
+      // filter battingInningses whether he/she played
+      const battingInningses = matchWiseBattedBowls.filter(innings => innings.length);
+      const battingInningsStats = battingInningses.map(bowls => {
         const run = bowls.reduce((run, bowl) => {
           run += bowl.singles;
           if (bowl.boundary.kind === 'regular' && Number.isInteger(bowl.boundary.run)) {
@@ -220,30 +235,112 @@ router.get('/:id', authenticateJwt(), playerGetValidations, (request, response) 
           strikeRate,
         };
       });
+
+      const bowlingInningses = matchWiseBowledOvers.filter(innings => innings.length);
+      const bowlingInningsStats = bowlingInningses.map(overs => {
+        const { run, wicket, totalBowl } = overs.reduce(({ run, wicket, totalBowl }, over) => {
+          const { overRun, overWicket } = over.bowls.reduce(({ overRun, overWicket }, bowl) => {
+            // assuming bowling strike rate counts wide and no bowls
+            const isWicket = bowl.isWicket && bowl.isWicket.kind
+              && (bowl.isWicket.kind.toLowerCase() !== 'run out')
+              && (bowl.isWicket.kind.toLowerCase() !== 'run-out');
+            if (isWicket) {
+              overWicket++;
+            }
+            if (bowl.singles) {
+              overRun += bowl.singles;
+            }
+            if (bowl.by) {
+              overRun += bowl.by;
+            }
+            if (bowl.legBy) {
+              overRun += bowl.legBy;
+            }
+            if (bowl.boundary.run) {
+              overRun += bowl.boundary.run;
+            }
+            if (bowl.isWide || bowl.isNo) {
+              overRun++;
+            }
+
+            return {
+              overRun,
+              overWicket,
+            };
+          }, {
+            overRun: 0,
+            overWicket: 0,
+          });
+          return {
+            run: run + overRun,
+            wicket: wicket + overWicket,
+            totalBowl: totalBowl + over.bowls.length,
+          };
+        }, {
+          run: 0,
+          wicket: 0,
+          totalBowl: 0,
+        });
+        return {
+          run,
+          wicket,
+          totalBowl,
+        };
+      });
+
       return {
-        numMatches: matchWiseBowls.length,
-        inningsStats,
+        numMatch: matchWiseBattedBowls.length, // same as `matchWiseBowledOvers.length`
         numOuts,
+        battingInningsStats,
+        bowlingInningsStats,
       };
     })
     // generate the stat
-    .then(({ numMatches, inningsStats, numOuts }) => {
-      const numInningses = inningsStats.length;
-      const highestRun = inningsStats.reduce((hr, innings) => (hr > innings.run) ? hr : innings.run, 0);
-      const totalRun = inningsStats.reduce((tr, innings) => tr + innings.run, 0);
+    .then(({ numMatch, numOuts, battingInningsStats, bowlingInningsStats }) => {
+      const numInningsBatted = battingInningsStats.length;
+      const highestRun = battingInningsStats.reduce((hr, innings) => (hr > innings.run) ? hr : innings.run, 0);
+      const totalRun = battingInningsStats.reduce((tr, innings) => tr + innings.run, 0);
       const avgRun = totalRun / numOuts;
-      const strikeRate = inningsStats.reduce((sr, innings) => sr + innings.strikeRate, 0) / numInningses * 100;
+      const battingStrikeRate = battingInningsStats.reduce((sr, innings) => sr + innings.strikeRate, 0) / numInningsBatted * 100;
+
+      const numInningsBowled = bowlingInningsStats.length;
+      const bestFigure = bowlingInningsStats.reduce(([wicket, run], innings) => {
+        if (innings.wicket > wicket) {
+          return [innings.wicket, innings.run];
+        }
+        if ((innings.wicket === wicket) && (innings.run < run)) {
+          return [innings.wicket, innings.run];
+        }
+        return [wicket, run];
+      }, [0, Number.POSITIVE_INFINITY]);
+      const totalWickets = bowlingInningsStats.reduce((tw, innings) => tw + innings.wicket, 0);
+      const totalConcededRuns = bowlingInningsStats.reduce((tcr, innings) => tcr + innings.run, 0);
+      const totalBowls = bowlingInningsStats.reduce((tb, innings) => tb + innings.totalBowl, 0);
+      const avgWicket = totalConcededRuns / totalWickets;
+      const bowlingStrikeRate = totalBowls / totalWickets;
 
       return response.json({
         success: true,
         message: 'Successfully generated stat',
         stat: {
-          numMatches,
-          numInningses,
-          totalRun,
-          avgRun,
-          highestRun,
-          strikeRate,
+          numMatch,
+          bat: {
+            numInnings: numInningsBatted,
+            totalRun,
+            avgRun,
+            highestRun,
+            strikeRate: battingStrikeRate,
+          },
+          bowl: {
+            numInnings: numInningsBowled,
+            totalWickets,
+            avgWicket,
+            bestFigure: {
+              wicket: bestFigure[0],
+              run: bestFigure[1],
+            },
+            strikeRate: bowlingStrikeRate,
+          },
         },
         player,
       });
