@@ -23,6 +23,11 @@ $warningLight: #eb6d1f !default;
 $theme-colors: ('info': $info, 'warning-light': $warningLight, 'blue': $blue) !default;
 $link-color: $info !default;
 
+$modal-dialog-margin: 4rem !default;
+$modal-dialog-margin-y-sm-up: $modal-dialog-margin !default;
+
+$zindex-fixed: 1060 !default;
+
 $wicketHeight: 1.5rem;
 
 @import "~bootstrap/scss/bootstrap";
