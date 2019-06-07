@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import ScoreEdit from './ScoreEdit';
+import { ordinal } from '../lib/utils';
 
 class ScoreEditModal extends Component {
   render() {
@@ -16,7 +17,7 @@ class ScoreEditModal extends Component {
     return (
       <Modal isOpen={isOpen} size="xl" toggle={close} contentClassName="bg-dark">
         <ModalHeader className="border-0 text-white ml-3" tag="h4" toggle={close}>
-          Over {overNo} Bowl {bowlNo + 1}
+          {ordinal(overNo + 1)} Over, Bowl {bowlNo + 1}
         </ModalHeader>
         <ModalBody className="p-0">
           <ScoreEdit matchId={matchId} batsmen={batsmen} batsmanIndices={batsmanIndices}
