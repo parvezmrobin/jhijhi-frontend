@@ -1,6 +1,6 @@
 {
   "parser": "babel-eslint",
-  "extends": ["react-app"],
+  "extends": ["react-app", "plugin:promise/recommended"],
   "env": {
     "browser": true,
     "node": true,
