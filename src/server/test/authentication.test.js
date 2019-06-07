@@ -1,4 +1,4 @@
-const {describe} = require("mocha");
+const { describe } = require('mocha');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 chai.should();
@@ -12,68 +12,57 @@ describe('Test JWT authentication', function () {
   let backup;
   let token;
 
-  before(function (done) {
-    User.find({})
+  before(function () {
+    return User.find({})
       .then(users => {
         backup = users;
-        User.deleteMany({})
-          .then(() => done());
-      })
+        return User.deleteMany({});
+      });
   });
 
-  it('should make a new user', function (done) {
-    chai.request(app)
+  it('should make a new user', function () {
+    return chai.request(app)
       .post('/api/auth/register')
       .send({
         username: 'username',
         password: '1234',
+        confirm: '1234',
       })
-      .end(((err, res) => {
+      .then((res) => {
         res.should.have.status(200);
         res.body.should.be.an('object');
-        res.body.username.should.be.equals('username');
-        res.body.password.should.not.be.equals('1234');
-
-        done();
-      }));
+        res.body.user.should.be.an('object');
+        res.body.user._id.should.be.a('string');
+      });
   });
 
-  it('should login with the new user', function (done) {
-    chai.request(app)
+  it('should login with the new user', function () {
+    return chai.request(app)
       .post('/api/auth/login')
       .send({
         username: 'username',
         password: '1234',
       })
-      .end((err, res) => {
+      .then((res) => {
         res.should.have.status(200);
         res.body.success.should.be.equals(true);
         res.body.token.should.be.a('string');
         token = res.body.token;
-
-        done();
       });
   });
 
-  it('should authenticate using token', function (done) {
-    chai.request(app)
+  it('should authenticate using token', function () {
+    return chai.request(app)
       .get('/api/auth/user')
       .set('Authorization', `Bearer ${token}`)
-      .end((err, res) => {
+      .then((res) => {
         res.should.have.status(200);
-
-        done();
       });
   });
 
-  after(function (done) {
-    User.deleteMany({})
-      .then(() => {
-        User.insertMany(backup)
-          .then(users => {
-            console.log(`${users.length} users backed up`);
-            done();
-          });
-      });
+  after(function () {
+    return User.deleteMany({})
+      .then(() => User.insertMany(backup))
+      .then(users => console.log(`${users.length} users restored`));
   });
 });
