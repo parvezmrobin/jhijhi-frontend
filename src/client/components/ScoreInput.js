@@ -8,6 +8,10 @@ import fetcher from '../lib/fetcher';
 import FormGroup from './form/FormGroup';
 
 export default class ScoreInput extends Component {
+  static RUN_OUT = 'Run out';
+  static OBSTRUCTING_THE_FIELD = 'Obstructing the field';
+  static UNCERTAIN_WICKETS = [ScoreInput.RUN_OUT, ScoreInput.OBSTRUCTING_THE_FIELD];
+
   constructor(props) {
     super(props);
     this.state = {
@@ -19,16 +23,13 @@ export default class ScoreInput extends Component {
       isNo: false,
       singles: 'Singles',
       wicket: 'Wicket',
-      isModalOpen: false,
+      uncertainWicket: null,
       batsman: '',
       errorMessage: null,
     };
 
     bindMethods(this);
   }
-
-  static defaultProps = {
-  };
 
   _createBowlEvent() {
     return {
@@ -44,22 +45,22 @@ export default class ScoreInput extends Component {
   }
 
   _makeServerRequest(bowlEvent, endPoint = 'bowl') {
-    const {matchId, onInput, defaultHttpVerb, injectBowlEvent, shouldResetAfterInput} = this.props;
+    const { matchId, onInput, defaultHttpVerb, injectBowlEvent, shouldResetAfterInput } = this.props;
     bowlEvent = injectBowlEvent(bowlEvent, endPoint);
     const isNewBowl = endPoint === 'bowl';
     const request = isNewBowl ? fetcher[defaultHttpVerb.toLowerCase()] : fetcher.put;
     request(`matches/${matchId}/${endPoint}`, bowlEvent)
       .then(res => {
         onInput(isNewBowl ? bowlEvent : res.data.bowl, !isNewBowl);
-        shouldResetAfterInput && this.resentInputFields();
+        shouldResetAfterInput && this.resetInputFields();
       })
       .catch(err => {
-        shouldResetAfterInput && this.resentInputFields();
-        this.setState({errorMessage: err.response.data.err[0].msg})
+        shouldResetAfterInput && this.resetInputFields();
+        this.setState({ errorMessage: err.response.data.err[0].msg });
       });
   }
 
-  resentInputFields() {
+  resetInputFields() {
     this.setState(prevState => ({
       ...prevState,
       isBy: false,
@@ -68,7 +69,7 @@ export default class ScoreInput extends Component {
       isNo: false,
       singles: 'Singles',
       wicket: 'Wicket',
-      isModalOpen: false,
+      uncertainWicket: null,
       batsman: '',
     }));
   }
@@ -103,13 +104,14 @@ export default class ScoreInput extends Component {
         run,
         kind: bowlEvent.legBy ? 'legBy' : 'regular',
       };
+      delete bowlEvent.by;
       delete bowlEvent.legBy;
       this._makeServerRequest(bowlEvent);
     },
     onWicket(wicket) {
-      if (wicket.toLowerCase() === 'run out') {
+      if (ScoreInput.UNCERTAIN_WICKETS.includes(wicket)) {
         return this.setState({
-          isModalOpen: true,
+          uncertainWicket: wicket,
           batsman: this.props.batsmen[0]._id,
         });
       }
@@ -117,13 +119,14 @@ export default class ScoreInput extends Component {
       bowlEvent.isWicket = {
         kind: wicket,
       };
-      delete bowlEvent.legBy;
       delete bowlEvent.by;
+      delete bowlEvent.legBy;
       this._makeServerRequest(bowlEvent);
     },
-    onRunOut() {
+    onUncertainWicket() {
       const selectedBatsmanIndex = this._getIndexOfBatsman(this.state.batsman);
-      this._makeServerRequest({ batsman: selectedBatsmanIndex }, 'run-out');
+      const bowlEvent = { batsman: selectedBatsmanIndex, kind: this.state.uncertainWicket };
+      this._makeServerRequest(bowlEvent, 'uncertain-out');
     },
   };
 
@@ -142,7 +145,7 @@ export default class ScoreInput extends Component {
 
   wickets = [
     'Wicket', 'Bowled', 'Caught', 'Leg before wicket', 'Run out', 'Stumped', 'Hit the ball twice',
-    'Hit wicket', 'Obstructing the field', 'Timed out', 'Retired',
+    'Hit wicket', 'Obstructing the field', /*'Timed out',*/ 'Retired',
   ].map(wicket => ({
     _id: wicket,
     name: wicket,
@@ -154,11 +157,11 @@ export default class ScoreInput extends Component {
   }));
 
   render() {
-    const { isBy, isLegBy, isWide, isNo, singles, wicket, isModalOpen } = this.state;
+    const { isBy, isLegBy, isWide, isNo, singles, wicket, uncertainWicket } = this.state;
     const { batsmen } = this.props;
     // prevent error while any of the batsmen changed to null
-    batsmen[0] = batsmen[0] || {_id: 0};
-    batsmen[1] = batsmen[1] || {_id: 1};
+    batsmen[0] = batsmen[0] || { _id: 0 };
+    batsmen[1] = batsmen[1] || { _id: 1 };
 
     return (
       <section className="score-input rounded">
@@ -241,10 +244,10 @@ export default class ScoreInput extends Component {
             Insert a zero run first to add bowl with only <em>run out</em>.
           </Tooltip>
         </div>
-        <Modal isOpen={isModalOpen} onOpened={this.onOpen}>
+        <Modal isOpen={!!uncertainWicket} onOpened={this.onOpen}>
           <ModalHeader className="text-primary" toggle={() => this.setState({
             wicket: 'Wicket',
-            isModalOpen: false,
+            uncertainWicket: null,
             batsman: '',
           })}>
             Which batsman is out?
@@ -255,13 +258,13 @@ export default class ScoreInput extends Component {
                        options={batsmen}/>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this.onRunOut}>Select</Button>
+            <Button color="primary" onClick={this.onUncertainWicket}>Select</Button>
           </ModalFooter>
         </Modal>
 
         {/* Error Modal */}
         <Modal isOpen={this.state.errorMessage}>
-          <ModalHeader className="text-danger" toggle={() => this.setState({errorMessage: null})}>
+          <ModalHeader className="text-danger" toggle={() => this.setState({ errorMessage: null })}>
             Error!
           </ModalHeader>
           <ModalBody className="text-danger">

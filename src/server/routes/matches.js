@@ -97,7 +97,7 @@ const matchTossValidations = [
     .isIn(['Bat', 'Bawl']),
 ];
 
-const runOutValidations = [
+const uncertainOutValidations = [
   check('batsman')
     .isInt({ min: 0 }),
   check('batsman')
@@ -119,14 +119,17 @@ const runOutValidations = [
           const lastBowl = lastOver[lastOver.length - 1];
 
           if (lastBowl.isWicket && lastBowl.isWicket.kind) {
-            const message = `Already a ${lastBowl.isWicket.kind} in this bowl. `
-              + 'To input a bowl with only a run-out, input a bowl with 0 run first.';
+            const message = `Already a ${lastBowl.isWicket.kind} in this bowl. ` +
+              'To input a bowl with only a run out or obstructing the field, ' +
+              'input a bowl with 0 run first.';
             throw new Error(message);
           }
 
           return true;
         });
     }),
+  check('kind', '`kind` should be either run out or obstructing the field')
+    .isIn(['Run out', 'Obstructing the field']),
 ];
 
 router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, response) => {
@@ -378,7 +381,7 @@ router.put('/:id/by', authenticateJwt(), (request, response) => {
     });
 });
 
-router.put('/:id/run-out', runOutValidations, authenticateJwt(), (request, response) => {
+router.put('/:id/uncertain-out', uncertainOutValidations, authenticateJwt(), (request, response) => {
   const id = request.params.id;
   const errors = validationResult(request);
   const promise = errors.isEmpty()
@@ -396,10 +399,10 @@ router.put('/:id/run-out', runOutValidations, authenticateJwt(), (request, respo
 
   promise
     .then(match => {
-      const { batsman, overNo, bowlNo } = nullEmptyValues(request);
+      const { batsman, kind, overNo, bowlNo } = nullEmptyValues(request);
       const bowl = {
         isWicket: {
-          kind: 'run out',
+          kind,
           player: batsman,
         },
       };
