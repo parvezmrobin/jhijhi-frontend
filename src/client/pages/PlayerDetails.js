@@ -15,7 +15,6 @@ import PlayerSidebar from '../components/PlayerSidebar';
 class PlayerDetails extends PureComponent {
   state = {
     stat: {},
-    numMatch: null,
     player: {},
     players: [],
   };
