@@ -114,7 +114,7 @@ router.post('/', authenticateJwt(), teamCreateValidations, (request, response) =
       creator: request.user._id,
     }))
     .then(createdTeam => {
-      response.json({
+      return response.json({
         success: true,
         message: responses.teams.create.ok(createdTeam.name),
         team: createdTeam,

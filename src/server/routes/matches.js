@@ -164,27 +164,27 @@ router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, res
         state,
       });
 
-      return match.save()
-        .then(() => {
-          return match.populate('team1Captain')
-            .populate('team2Captain')
-            .populate('team1Players')
-            .populate('team2Players')
-            .execPopulate();
-        })
-        .then(() => {
-          return response.json({
-            success: true,
-            message: responses.matches.begin.ok,
-            match: {
-              team1Captain: match.team1Captain,
-              team2Captain: match.team2Captain,
-              team1Players: match.team1Players,
-              team2Players: match.team2Players,
-              state: 'toss',
-            },
-          });
-        });
+      return match.save();
+    })
+    .then((match) => {
+      return match.populate('team1Captain')
+        .populate('team2Captain')
+        .populate('team1Players')
+        .populate('team2Players')
+        .execPopulate();
+    })
+    .then((match) => {
+      return response.json({
+        success: true,
+        message: responses.matches.begin.ok,
+        match: {
+          team1Captain: match.team1Captain,
+          team2Captain: match.team2Captain,
+          team1Players: match.team1Players,
+          team2Players: match.team2Players,
+          state: 'toss',
+        },
+      });
     })
     .catch(err => sendErrorResponse(response, err, responses.matches.begin.err));
 });
@@ -217,19 +217,19 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
       match.team1BatFirst = (match.team1WonToss && choice === 'Bat') || (!match.team1WonToss && choice === 'Bawl');
       match.state = state;
       match.innings1 = { overs: [] };
-      return match.save()
-        .then(() => {
-          response.json({
-            success: true,
-            message: responses.matches.toss.ok,
-            match: {
-              team1WonToss: match.team1WonToss,
-              team1BatFirst: match.team1BatFirst,
-              state: 'innings1',
-              innings1: { overs: [] },
-            },
-          });
-        });
+      return match.save();
+    })
+    .then((match) => {
+      return response.json({
+        success: true,
+        message: responses.matches.toss.ok,
+        match: {
+          team1WonToss: match.team1WonToss,
+          team1BatFirst: match.team1BatFirst,
+          state: 'innings1',
+          innings1: { overs: [] },
+        },
+      });
     })
     .catch(err => sendErrorResponse(response, err, responses.matches.toss.err));
 });
@@ -270,9 +270,9 @@ router.put('/:id/declare', authenticateJwt(), (request, response) => {
         match.state = 'done';
       }
       updateState.state = match.state;
-      return match.save()
-        .then(() => response.json(updateState));
+      return Promise.all([updateState, match.save()]);
     })
+    .then(([updateState]) => response.json(updateState))
     .catch(err => sendErrorResponse(response, err, responses.matches.get.err));
 });
 
@@ -295,13 +295,12 @@ router.post('/:id/bowl', authenticateJwt(), (request, response) => {
           .json({ success: false });
       }
       return match.update(updateQuery)
-        .exec()
-        .then(() => {
-          response.json({
-            success: true,
-          });
-        });
-    });
+        .exec();
+    })
+    .then(() => {
+      return response.json({ success: true });
+    })
+    .catch(err => sendErrorResponse(response, err, 'Error while saving bowl'));
 });
 
 router.put('/:id/bowl', authenticateJwt(), (request, response) => {
@@ -314,7 +313,8 @@ router.put('/:id/bowl', authenticateJwt(), (request, response) => {
     })
     .lean()
     .exec()
-    .then(match => _updateBowlAndSend(match, bowl, response, overNo, bowlNo));
+    .then(match => _updateBowlAndSend(match, bowl, response, overNo, bowlNo))
+    .catch((err) => sendErrorResponse(response, err, 'Error while updating bowl'));
 });
 
 const _updateBowlAndSend = (match, bowl, response, overNo, bowlNo) => {
@@ -352,12 +352,11 @@ const _updateBowlAndSend = (match, bowl, response, overNo, bowlNo) => {
   return Match.findByIdAndUpdate(match._id, updateQuery)
     .exec()
     .then(() => {
-      response.json({
+      return response.json({
         success: true,
         bowl,
       });
-    })
-    .catch((err) => sendErrorResponse(response, err, 'Error while updating bowl'));
+    });
 };
 
 router.put('/:id/by', authenticateJwt(), (request, response) => {
@@ -378,7 +377,8 @@ router.put('/:id/by', authenticateJwt(), (request, response) => {
         },
       };
       return _updateBowlAndSend(match, bowl, response, overNo, bowlNo);
-    });
+    })
+    .catch((err) => sendErrorResponse(response, err, 'Error while updating bowl'));
 });
 
 router.put('/:id/uncertain-out', uncertainOutValidations, authenticateJwt(), (request, response) => {
@@ -408,7 +408,7 @@ router.put('/:id/uncertain-out', uncertainOutValidations, authenticateJwt(), (re
       };
       return _updateBowlAndSend(match, bowl, response, overNo, bowlNo);
     })
-    .catch(err => sendErrorResponse(response, err, 'Error while run out'));
+    .catch(err => sendErrorResponse(response, err, 'Error while adding out'));
 });
 
 router.post('/:id/over', authenticateJwt(), (request, response) => {
@@ -434,13 +434,14 @@ router.post('/:id/over', authenticateJwt(), (request, response) => {
           });
       }
       return match.update(updateQuery)
-        .exec()
-        .then(() => {
-          response.json({
-            success: true,
-          });
-        });
-    });
+        .exec();
+    })
+    .then(() => {
+      return response.json({
+        success: true,
+      });
+    })
+    .catch((err) => sendErrorResponse(response, err, 'Error while saving over'));
 });
 
 router.get('/done', authenticateJwt(), function (request, response) {
@@ -532,20 +533,13 @@ router.post('/', authenticateJwt(), matchCreateValidations, (request, response) 
       creator: request.user._id,
     }))
     .then(createdMatch => {
-      response.json({
+      return response.json({
         success: true,
         message: responses.matches.create.ok(name),
         match: { _id: createdMatch._id },
       });
     })
-    .catch(err => {
-      response.status(err.statusCode || err.status || 500);
-      response.json({
-        success: false,
-        message: responses.matches.create.err,
-        err: err.error || err.errors || err,
-      });
-    });
+    .catch(err => sendErrorResponse(response, err, responses.matches.create.err));
 });
 
 module.exports = router;

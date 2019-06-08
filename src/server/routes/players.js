@@ -394,7 +394,7 @@ router.post('/', authenticateJwt(), playerCreateValidations, (request, response)
       creator: request.user._id,
     }))
     .then(createdPlayer => {
-      response.json({
+      return response.json({
         success: true,
         message: responses.players.create.ok(name),
         player: {
@@ -432,7 +432,7 @@ router.put('/:id', authenticateJwt(), playerEditValidations, (request, response)
       if (!editedPlayer) {
         return send404Response(response, 'Player could not found');
       }
-      response.json({
+      return response.json({
         success: true,
         message: responses.players.edit.ok(name),
         player: {
