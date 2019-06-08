@@ -86,7 +86,7 @@ class Player extends Component {
     }
   }
 
-  createPlayer() {
+  _createPlayer() {
     const postData = { ...this.state.player };
 
     return fetcher
@@ -112,7 +112,7 @@ class Player extends Component {
       });
   }
 
-  updatePlayer() {
+  _updatePlayer() {
     const { player } = this.state;
     const postData = {
       name: player.name,
@@ -147,9 +147,9 @@ class Player extends Component {
     onSubmit() {
       let submission;
       if (this.state.player._id) {
-        submission = this.updatePlayer();
+        submission = this._updatePlayer();
       } else {
-        submission = this.createPlayer();
+        submission = this._createPlayer();
       }
 
       submission
@@ -175,7 +175,8 @@ class Player extends Component {
             isValid,
             feedback,
           });
-        });
+        })
+        .catch(() => this.setState({ showErrorModal: true }));
     },
 
     onChange(newValues) {
