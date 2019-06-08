@@ -13,6 +13,7 @@ import fetcher from '../lib/fetcher';
 import { bindMethods } from '../lib/utils';
 import { Alert, Toast, ToastBody, ToastHeader } from 'reactstrap';
 import debounce from 'lodash/debounce';
+import ErrorModal from '../components/ErrorModal';
 
 
 class Team extends Component {
@@ -33,6 +34,7 @@ class Team extends Component {
         shortName: null,
       },
       message: null,
+      showErrorModal: false,
       redirected: this.props.location.search.startsWith('?redirected=1'),
     };
     bindMethods(this);
@@ -55,7 +57,7 @@ class Team extends Component {
       fetcher
         .post('teams', postData)
         .then(response => {
-          this.setState(prevState => ({
+          return this.setState(prevState => ({
             ...prevState,
             teams: prevState.teams.concat(response.data.team),
             team: {
@@ -107,8 +109,9 @@ class Team extends Component {
     fetcher
       .get(`teams?search=${keyword}`)
       .then(response => {
-        this.setState({ teams: response.data });
-      });
+    return     this.setState({ teams: response.data });
+      })
+      .catch(() => this.setState({ showErrorModal: true }));
   };
 
   render() {
@@ -150,6 +153,8 @@ class Team extends Component {
             </CenterContent>
           </main>
         </div>
+        <ErrorModal isOpen={this.state.showErrorModal}
+                    close={() => this.setState({ showErrorModal: false })}/>
       </div>
     );
   }

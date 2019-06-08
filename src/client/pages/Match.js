@@ -14,6 +14,7 @@ import fetcher from '../lib/fetcher';
 import { Toast, ToastBody, ToastHeader } from 'reactstrap';
 import { Link, Redirect } from 'react-router-dom';
 import debounce from 'lodash/debounce';
+import ErrorModal from '../components/ErrorModal';
 
 
 class Match extends Component {
@@ -45,6 +46,7 @@ class Match extends Component {
         overs: '',
       },
       message: null,
+      showErrorModal: false,
     };
     bindMethods(this);
   }
@@ -63,7 +65,7 @@ class Match extends Component {
       fetcher
         .post('matches', postData)
         .then((response) => {
-          this.setState(prevState => ({
+          return this.setState(prevState => ({
             ...prevState,
             match: {
               name: '',
@@ -127,32 +129,33 @@ class Match extends Component {
     fetcher
       .get('teams')
       .then(response => {
-        this.setState({
+        return this.setState({
           teams: [{
             _id: null,
             name: 'None',
           }].concat(response.data),
         });
-      });
+      })
+      .catch(() => this.setState({ showErrorModal: true }));
     fetcher
       .get('umpires')
       .then(response => {
-        this.setState({
+        return this.setState({
           umpires: [{
             _id: null,
             name: 'None',
           }].concat(response.data),
         });
-      });
+      })
+      .catch(() => this.setState({ showErrorModal: true }));
     this._loadMatches();
   }
 
   _loadMatches = (keyword = '') => {
     fetcher
       .get(`matches?search=${keyword}`)
-      .then(response => {
-        this.setState({ matches: response.data });
-      });
+      .then(response => this.setState({ matches: response.data }))
+      .catch(() => this.setState({ showErrorModal: true }));
   };
 
   render() {
@@ -165,14 +168,16 @@ class Match extends Component {
     };
     return (
       <div className="container-fluid pl-0">
-        <Toast isOpen={!!message}>
-          <ToastHeader icon="primary" toggle={() => this.setState({ message: null })}>
-            Jhijhi
-          </ToastHeader>
-          <ToastBody>
-            {message}
-          </ToastBody>
-        </Toast>
+        <div className="fixed-top">
+          <Toast isOpen={!!message}>
+            <ToastHeader icon="primary" toggle={() => this.setState({ message: null })}>
+              Jhijhi
+            </ToastHeader>
+            <ToastBody>
+              {message}
+            </ToastBody>
+          </Toast>
+        </div>
         <div className="row">
           <aside className="col-md-3">
             <CenterContent col="col">
@@ -193,6 +198,9 @@ class Match extends Component {
             </CenterContent>
           </main>
         </div>
+
+        <ErrorModal isOpen={this.state.showErrorModal}
+                    close={() => this.setState({ showErrorModal: false })}/>
       </div>
     );
   }

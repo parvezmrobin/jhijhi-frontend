@@ -12,6 +12,7 @@ import fetcher from '../lib/fetcher';
 import { bindMethods } from '../lib/utils';
 import { Alert, Toast, ToastBody, ToastHeader } from 'reactstrap';
 import PlayerSidebar from '../components/PlayerSidebar';
+import ErrorModal from '../components/ErrorModal';
 
 class Player extends Component {
   constructor(props) {
@@ -31,6 +32,7 @@ class Player extends Component {
         jerseyNo: null,
       },
       message: null,
+      showErrorModal: false,
       redirected: this.props.location.search.startsWith('?redirected=1'),
     };
 
@@ -49,11 +51,12 @@ class Player extends Component {
   _loadPlayers = (keyword = '') => {
     fetcher.get(`players?search=${keyword}`)
       .then(response => {
-        this.setState({ players: response.data });
         if (this.props.match.params.id) {
           this._loadPlayer(response.data, this.props.match.params.id);
         }
-      });
+        return this.setState({ players: response.data });
+      })
+      .catch(() => this.setState({ showErrorModal: true }));
   };
 
   componentWillUnmount() {
@@ -89,7 +92,7 @@ class Player extends Component {
     return fetcher
       .post('players', postData)
       .then(response => {
-        this.setState(prevState => ({
+        return this.setState(prevState => ({
           ...prevState,
           players: prevState.players.concat(response.data.player),
           player: {
@@ -119,7 +122,7 @@ class Player extends Component {
     return fetcher
       .put(`players/${player._id}`, postData)
       .then(response => {
-        this.setState(prevState => {
+        return this.setState(prevState => {
           const playerIndex = prevState.players.findIndex(_player => _player._id === player._id);
           if (playerIndex !== -1) {
             prevState.players[playerIndex] = response.data.player;
@@ -184,14 +187,16 @@ class Player extends Component {
     const playerId = this.props.match.params.id;
     return (
       <div className="container-fluid pl-0">
-        <Toast isOpen={!!this.state.message}>
-          <ToastHeader icon="primary" toggle={() => this.setState({ message: null })}>
-            Jhijhi
-          </ToastHeader>
-          <ToastBody>
-            {this.state.message}
-          </ToastBody>
-        </Toast>
+        <div className="fixed-top">
+          <Toast isOpen={!!this.state.message}>
+            <ToastHeader icon="primary" toggle={() => this.setState({ message: null })}>
+              Jhijhi
+            </ToastHeader>
+            <ToastBody>
+              {this.state.message}
+            </ToastBody>
+          </Toast>
+        </div>
 
         <div className="row">
           <PlayerSidebar editable playerId={playerId} players={this.state.players}
@@ -209,6 +214,8 @@ class Player extends Component {
             </CenterContent>
           </main>
         </div>
+        <ErrorModal isOpen={this.state.showErrorModal}
+                    close={() => this.setState({ showErrorModal: false })}/>
       </div>
     );
   }
