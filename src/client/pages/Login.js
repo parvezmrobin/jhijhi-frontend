@@ -5,18 +5,19 @@
  */
 
 
-import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import AuthForm from '../components/auth/AuthForm';
-import * as axios from "axios";
-import {bindMethods} from "../lib/utils";
+import * as axios from 'axios';
+import { bindMethods } from '../lib/utils';
+import ErrorModal from '../components/ErrorModal';
 
 
 class Login extends Component {
 
   handlers = {
     onSubmit() {
-      const postData = {...this.state.values};
+      const postData = { ...this.state.values };
 
       axios
         .post('/api/auth/login', postData)
@@ -29,21 +30,28 @@ class Login extends Component {
           };
           if (response.data.success) {
             if (typeof window.localStorage === 'undefined') {
-              return alert("You need to update your browser in order to use this site.");
+              return alert('You need to update your browser in order to use this site.');
             }
             window.localStorage.setItem('token', response.data.token);
-            window.location.href = "/";
+            if (this.props.location.search.startsWith('?redirect=')) {
+              window.location.href = this.props.location.search.substr(10);
+            } else {
+              window.location.href = '/';
+            }
           } else {
             isValid.username = false;
-            feedback.username = "Wrong username and/or password";
+            feedback.username = 'Wrong username and/or password';
           }
-          this.setState({isValid, feedback});
+          return this.setState({
+            isValid,
+            feedback,
+          });
         })
-        .catch();
+        .catch(() => this.setState({ showErrorModal: true }));
     },
 
     onChange(newValues) {
-      this.setState(prevState => ({values: {...prevState.values, ...newValues}}));
+      this.setState(prevState => ({ values: { ...prevState.values, ...newValues } }));
     },
   };
 
@@ -60,17 +68,21 @@ class Login extends Component {
       feedback: {
         username: null,
       },
+      showErrorModal: false,
     };
     bindMethods(this);
   }
 
   render() {
     return (
-      <AuthForm title="Login" onChange={this.onChange} onSubmit={this.onSubmit} values={this.state}
-                isValid={this.state.isValid} feedback={this.state.feedback}>
+      <AuthForm title="Login" onChange={this.onChange} onSubmit={this.onSubmit}
+                values={this.state.values} isValid={this.state.isValid}
+                feedback={this.state.feedback}>
         <label className="col-form-label float-right">
           Don't have an account? <Link to="/register">Register</Link>
         </label>
+        <ErrorModal isOpen={this.state.showErrorModal}
+                    close={() => this.setState({ showErrorModal: false })}/>
       </AuthForm>
     );
   }
