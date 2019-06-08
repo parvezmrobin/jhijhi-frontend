@@ -53,7 +53,7 @@ const inningsSchema = new Schema({
       isNo: String, // containing the reason of no
     }],
   }],
-});
+}, schemaOptions);
 
 module.exports = new Schema({
   name: String,
