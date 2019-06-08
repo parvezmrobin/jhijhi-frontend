@@ -24,7 +24,7 @@ export default class Loading extends Component {
 
   render() {
     return (
-      <div className="load-container">
+      <div className={`load-container ${this.props.className || ''}`}>
         <h1>
           Loading{this.state.dots}
         </h1>

@@ -18,9 +18,7 @@ function ErrorModal(props) {
       </ModalHeader>
       <ModalBody>
         <blockquote className="blockquote">
-          <p className="mb-0">
-            Ignorance and error are necessary to life, like bread and water.
-          </p>
+          <p>Ignorance and error are necessary to life, like bread and water.</p>
           <footer className="blockquote-footer">
             French novelist <cite title="Source Title">Anatole France</cite>
           </footer>
