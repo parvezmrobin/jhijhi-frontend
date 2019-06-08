@@ -4,68 +4,101 @@
  * Date: Mar 31, 2019
  */
 
-import React from 'react';
+import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import { logout } from '../lib/utils';
+import {
+  Collapse,
+  Nav,
+  Navbar as BaseNavbar,
+  NavbarToggler,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from 'reactstrap';
 
 
-function Navbar(props) {
-  let nav;
-  if (props.isLoggedIn) {
-    nav = (
-      <div className="collapse navbar-collapse" id="navbar">
-        <div className="navbar-nav">
-          <NavLink exact className="nav-item nav-link" to="/">Home</NavLink>
-          <NavLink className="nav-item nav-link" to="/contact">Contact</NavLink>
-        </div>
-        <div className="navbar-nav highlight mx-auto">
-          <NavLink className="nav-item nav-link" to="/player">Player</NavLink>
-          <NavLink className="nav-item nav-link" to="/team">Team</NavLink>
-          <NavLink className="nav-item nav-link" to="/umpire">Umpire</NavLink>
-          <NavLink className="nav-item nav-link" to="/match">Match</NavLink>
-          <NavLink className="nav-item nav-link" to="/history@null">Score</NavLink>
-        </div>
-        <div className="navbar-nav">
-          <div className="nav-item dropdown" id="user">
-            <NavLink className="nav-item nav-link dropdown-toggle" to="#" id="navbarDropdown"
-                     role="button"
-                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              {props.username}
-            </NavLink>
-            <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <NavLink className="dropdown-item" to="password">Change Password</NavLink>
-              <NavLink className="dropdown-item" to="kidding">Manage Account</NavLink>
-              <div className="dropdown-divider"/>
-              <NavLink className="dropdown-item text-warning" onClick={logout}
-                       to="#">Logout</NavLink>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  } else {
-    nav = (
-      <div className="collapse navbar-collapse" id="navbar">
-        <div className="navbar-nav ml-auto">
-          <NavLink className="nav-item nav-link" to="/register">Register</NavLink>
-          <NavLink className="nav-item nav-link" to="/login">Login</NavLink>
-        </div>
-      </div>
+class Navbar extends Component {
+  state = {
+    isOpen: false,
+  };
+
+
+  componentDidMount() {
+    this.setState({ isOpen: false });
+  }
+
+
+  toggle = () => {
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+  };
+
+  collapse = () => {
+    this.setState({ isOpen: false });
+  };
+
+  render() {
+    let nav;
+    if (this.props.isLoggedIn) {
+      nav = (
+        <Collapse navbar isOpen={this.state.isOpen} id="navbar">
+          <Nav navbar>
+            <NavLink onClick={this.collapse} className="nav-item nav-link" to="/">Home</NavLink>
+            <NavLink onClick={this.collapse} className="nav-item nav-link"
+                     to="/contact">Contact</NavLink>
+          </Nav>
+          <Nav navbar className="highlight mx-auto">
+            <NavLink onClick={this.collapse} className="nav-item nav-link"
+                     to="/player">Player</NavLink>
+            <NavLink onClick={this.collapse} className="nav-item nav-link" to="/team">Team</NavLink>
+            <NavLink onClick={this.collapse} className="nav-item nav-link"
+                     to="/umpire">Umpire</NavLink>
+            <NavLink onClick={this.collapse} className="nav-item nav-link"
+                     to="/match">Match</NavLink>
+            <NavLink onClick={this.collapse} className="nav-item nav-link"
+                     to="/history@null">Score</NavLink>
+          </Nav>
+          <Nav navbar>
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret>
+                {this.props.username}
+              </DropdownToggle>
+              <DropdownMenu right>
+                  <NavLink className="dropdown-item" onClick={this.collapse} to="/password">Change Password</NavLink>
+                  <NavLink className="dropdown-item" onClick={this.collapse} to="/kidding">Manage Account</NavLink>
+                <DropdownItem divider />
+                  <NavLink className="dropdown-item text-warning" to="#" onClick={() => {
+                    this.collapse();
+                    logout();
+                  }}>Logout</NavLink>
+              </DropdownMenu>
+            </UncontrolledDropdown>
+          </Nav>
+        </Collapse>
+      );
+    } else {
+      nav = (
+        <Collapse navbar isOpen={this.state.isOpen} id="navbar">
+          <Nav navbar className="ml-auto">
+            <NavLink onClick={this.collapse} className="nav-item nav-link"
+                     to="/register">Register</NavLink>
+            <NavLink onClick={this.collapse} className="nav-item nav-link"
+                     to="/login">Login</NavLink>
+          </Nav>
+        </Collapse>
+      );
+    }
+    return (
+      <BaseNavbar color="light" light expand="md" fixed="top">
+        <NavLink onClick={this.collapse} exact className="navbar-brand" to="/">Jhijhi</NavLink>
+        <NavbarToggler onClick={this.toggle}/>
+
+        {nav}
+
+      </BaseNavbar>
     );
   }
-  return (
-    <nav className="navbar navbar-expand-sm navbar-light bg-light fixed-top">
-      <NavLink exact className="navbar-brand" to="/">Jhijhi</NavLink>
-      <button className="navbar-toggler" type="button" data-toggle="collapse"
-              data-target="#navbar" aria-controls="navbar"
-              aria-expanded="false" aria-label="Toggle navigation">
-        <span className="navbar-toggler-icon"/>
-      </button>
-
-      {nav}
-
-    </nav>
-  );
 }
 
 export default Navbar;
