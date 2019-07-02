@@ -5,13 +5,14 @@
  */
 
 
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import { toTitleCase } from './lib/utils';
+import React, {Component} from 'react';
+import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
+import {toTitleCase} from './lib/utils';
 import fetcher from './lib/fetcher';
 import ErrorBoundary from './ErrorBoundary';
 import './styles/App.scss';
 import 'bootstrap';
+import {logout} from './lib/utils';
 
 const Home = React.lazy(() => import(/* webpackChunkName: "Home" */ './pages/Home'));
 const Navbar = React.lazy(() => import(/* webpackChunkName: "Navbar" */ './components/Navbar'));
@@ -37,13 +38,18 @@ class App extends Component {
 
   componentDidMount() {
     if (fetcher.isLoggedIn) {
-      fetcher.get('auth/user')  // eslint-disable-line promise/catch-or-return
-        .then(response => this.setState({ username: toTitleCase(response.data.username) }));
+      fetcher.get('auth/user')
+        .then(response => this.setState({username: toTitleCase(response.data.username)}))
+        .catch(err => {
+          if (err.response.status === 401) {
+            logout();
+          }
+        });
     }
   }
 
   render() {
-    const { username } = this.state;
+    const {username} = this.state;
     const shouldRedirect = !fetcher.isLoggedIn;
 
     return (

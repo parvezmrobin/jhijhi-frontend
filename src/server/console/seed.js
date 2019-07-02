@@ -17,8 +17,8 @@ const seed = function (fileName, userId) {
     promise = Promise.resolve();
   } else {
     const cursor = Array.isArray(userId)
-      ? Model.find({ creator: { $in: userId } })
-      : Model.find({ creator: userId });
+      ? Model.find({creator: {$in: userId}})
+      : Model.find({creator: userId});
     promise = cursor.exec()
       .then(docs => {
         return Promise.all(docs.map(doc => doc.remove()));
@@ -34,40 +34,39 @@ const seed = function (fileName, userId) {
     .catch(console.error);
 };
 
-try {
-  mongoose
-    .connect(config.db, {
-      useNewUrlParser: true,
-      useFindAndModify: false,
-    })
-    .then(async () => {
-      console.log('Connected to database: \'jhijhi\'');
-      const seeders = ['player', 'team', 'match'];
+mongoose
+  .connect(config.db, {
+    useNewUrlParser: true,
+    useFindAndModify: false,
+  })
+  .then(async () => {
+    console.log(`Connected to database: 'jhijhi'`);
+    const seeders = ['player', 'team', 'match'];
 
-      let userId;
-      const username = process.argv[2];
-      if (username) {
-        const { hashSync } = require('bcrypt');
-        const User = require('../models/user');
-        const user = await User.findOneAndUpdate({ username: username }, { password: hashSync(username, 10) }, {
-          upsert: true,
-          new: true,
-        });
-        userId = user._id;
-      } else {
-        const users = await seed('user');
-        userId = users.map(user => user._id);
-      }
+    let userId;
+    const username = process.argv[2];
+    if (username) {
+      const {hashSync} = require('bcrypt');
+      const User = require('../models/user');
+      const user = await User.findOneAndUpdate({username: username}, {password: hashSync(username, 10)}, {
+        upsert: true,
+        new: true,
+      });
+      userId = user._id;
+    } else {
+      const users = await seed('user');
+      userId = users.map(user => user._id);
+    }
 
-      for (const seeder of seeders) {
-        await seed(seeder, userId);
-      }
+    for (const seeder of seeders) {
+      await seed(seeder, userId);
+    }
 
-      process.exit(0);
-    });
-} catch (e) {
-  console.error(e);
-  process.exit(1);
-}
+    return process.exit(0);
+  })
+  .catch(e => {
+    console.error(e);
+    process.exit(1);
+  });
 
 
