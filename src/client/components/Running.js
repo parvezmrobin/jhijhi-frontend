@@ -163,7 +163,7 @@ export class Running extends Component {
         fetcher
           .put(`matches/${_id}/declare`, { state: nextState })
           .then(response => {
-            this.setState(prevState => {
+            return this.setState(prevState => {
               return {
                 isDeclaring: false,
                 match: {
@@ -174,7 +174,8 @@ export class Running extends Component {
                 batsman2: null,
               };
             });
-          });
+          })
+          .catch(err => console.log(err));
       };
 
       this.setState({ isDeclaring: true }, updateState);
@@ -504,7 +505,7 @@ export class Running extends Component {
 
 
   render() {
-    const { match, overModal, batsman1, batsman2 } = this.state;
+    const { match, overModal, batsman1, batsman2, editModal } = this.state;
 
     if (match.state === 'done') {
       return <Redirect to={`/history@${match._id}`}/>;
@@ -594,8 +595,8 @@ export class Running extends Component {
         battingTeamPlayers={battingTeamPlayers} matchId={match._id}
         onEditClick={this.onOverModalEditClick} onEdit={this.onUpdate}/>
       <ScoreEditModal
-        isOpen={this.state.editModal.show} overNo={this.state.editModal.overNo}
-        bowlNo={this.state.editModal.bowlNo} onInput={this.onUpdate}
+        isOpen={editModal.show} overNo={editModal.overNo} bowlNo={editModal.bowlNo}
+        bowl={editModal.show && innings.overs[editModal.overNo].bowls[editModal.bowlNo]} onInput={this.onUpdate}
         batsmanIndices={[batsman1, batsman2]} batsmen={battingTeamPlayers} matchId={match._id}
         close={() => this.setState({
           editModal: {

@@ -51,14 +51,14 @@ function Bowl(props) {
 
   return (
     <li className={className}>
-      {bowlNo}. <strong>{toTitleCase(batsman.name)}</strong> » {elements} {editButton}
+      {bowlNo}. <strong>{batsman && toTitleCase(batsman.name)}</strong> » {elements} {editButton}
     </li>
   );
 }
 
 Bowl.propTypes = {
   bowlNo: PropTypes.number.isRequired,
-  bowlIndex: PropTypes.number.isRequired,
+  bowlIndex: PropTypes.number,
   active: PropTypes.bool,
   bowl: PropTypes.object.isRequired,
   battingTeam: PropTypes.arrayOf(PropTypes.object).isRequired,
