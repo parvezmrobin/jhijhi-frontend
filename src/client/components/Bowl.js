@@ -18,7 +18,11 @@ function Bowl(props) {
   const className = `list-group-item${active? ' active': ''}`;
   const elements = [<span key="singles" className="mr-1">{singles}</span>];
   if (isWicket) {
-    elements.push(<kbd className="bg-danger mr-1" key="wicket">{toTitleCase(isWicket.kind, ' ')}</kbd>);
+    const outPlayer = Number.isInteger(isWicket.player) ? battingTeam[isWicket.player].name : null;
+    let wicket = <kbd className="bg-danger mr-1" key="wicket">
+      {toTitleCase(isWicket.kind, ' ')}{outPlayer && `(${outPlayer})`}
+    </kbd>;
+    elements.push(wicket);
   } else if (boundary.run) {
     const boundaryElement = <kbd className="bg-info mr-1" key="boundary">
       {boundary.run}{(boundary.kind === 'by') ? '(By)' : (boundary.kind === 'legBy') ? '(Leg By)' : ''}
