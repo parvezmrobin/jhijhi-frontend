@@ -23,8 +23,7 @@ $warningLight: #eb6d1f !default;
 $theme-colors: ('info': $info, 'warning-light': $warningLight, 'blue': $blue) !default;
 $link-color: $info !default;
 
-$modal-dialog-margin: 4rem !default;
-$modal-dialog-margin-y-sm-up: $modal-dialog-margin !default;
+$modal-dialog-margin-y-sm-up: 4rem !default;
 
 $zindex-fixed: 1060 !default;
 
