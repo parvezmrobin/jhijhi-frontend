@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import * as PropTypes from 'prop-types';
-import { CustomInput } from 'reactstrap';
+import {CustomInput} from 'reactstrap';
 
 export default class Score extends Component {
   render() {
-    const { battingTeamName, tossOwner, choice, innings, inningsNo, numberOfOvers, firstInnings } = this.props;
+    const {battingTeamName, tossOwner, choice, innings, inningsNo, numberOfOvers, firstInnings} = this.props;
     const {totalRun, totalWicket} = Score.getTotalScore(innings);
 
-    const { numOvers, numBowls } = Score.getOverCount(innings);
+    const {numOvers, numBowls} = Score.getOverCount(innings);
 
     let inningsText;
     let runRateText = <span>
@@ -17,8 +17,8 @@ export default class Score extends Component {
     if (inningsNo === 1) {
       inningsText = 'Innings 1';
     } else {
-      const { totalRun: targetRun } = Score.getTotalScore(firstInnings);
-      const { over: remainingOvers, bowl: remainingBowls } = Score._subtractOver(numberOfOvers, 0, numOvers, numBowls);
+      const {totalRun: targetRun} = Score.getTotalScore(firstInnings);
+      const {over: remainingOvers, bowl: remainingBowls} = Score._subtractOver(numberOfOvers, 0, numOvers, numBowls);
 
       const remainingRuns = targetRun - totalRun + 1;
       const remainingOverText = `${remainingRuns} in `
@@ -36,31 +36,33 @@ export default class Score extends Component {
       </p>;
     }
 
-    return <>
-      <div className='bg-dark text-success p-2 mt-5 rounded'>
-        <h4 className="mt-3 text-white">{battingTeamName} - {totalRun} / {totalWicket}</h4>
-        <h5>
+    return <div>
+      <div className='container-fluid bg-dark text-success mt-5 rounded'>
+        <div className="p-2">
+          <h4 className="mt-3 text-white">{battingTeamName} - {totalRun} / {totalWicket}</h4>
+          <h5>
           <span className="text-info">
             {numOvers} over{(numOvers > 1) && 's'}
-            {(numBowls || null) && ` ${numBowls} bowl`}{(numBowls > 1) && 's' }
+            {(numBowls || null) && ` ${numBowls} bowl`}{(numBowls > 1) && 's'}
           </span>
-          &nbsp;
-          <small className="font-weight-normal">({numberOfOvers} overs)</small>
-        </h5>
-        <h5 className="font-weight-normal">{inningsText}</h5>
-        <CustomInput type="switch" label="Single Batsman" id="single-batsman"
-                     className="pt-2 pb-2 my-1 text-white"
-                     checked={this.props.singleBatsman}
-                     onChange={e => this.setState({ singleBatsman: e.target.checked })}/>
+            &nbsp;
+            <small className="font-weight-normal">({numberOfOvers} overs)</small>
+          </h5>
+          <h5 className="font-weight-normal">{inningsText}</h5>
+          <CustomInput type="switch" label="Single Batsman" id="single-batsman"
+                       className="pt-2 pb-2 my-1 text-white"
+                       checked={this.props.singleBatsman}
+                       onChange={e => this.setState({singleBatsman: e.target.checked})}/>
+        </div>
       </div>
-      <div className="mt-2 text-white">
+      <div className="container-fluid mt-2 text-white">
         <div className="px-2">{runRateText}</div>
         <p className="px-2">
           <em>{tossOwner}</em> won the toss <br/>
           and chose to <em>{choice}</em>.
         </p>
       </div>
-    </>;
+    </div>;
   }
 
 
