@@ -23,7 +23,8 @@ $warningLight: #eb6d1f !default;
 $theme-colors: ('info': $info, 'warning-light': $warningLight, 'blue': $blue) !default;
 $link-color: $info !default;
 
-$modal-dialog-margin-y-sm-up: 4rem !default;
+$modal-dialog-margin-y: 4rem !default;
+$modal-dialog-margin-y-sm-up: $modal-dialog-margin-y !default;
 
 $zindex-fixed: 1060 !default;
 
@@ -65,6 +66,10 @@ body.home {
 
 aside {
   background-color: #11111a;
+}
+
+.modal-dialog {
+  margin: $modal-dialog-margin-y auto;
 }
 
 .fs-1 {
