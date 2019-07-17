@@ -41,10 +41,10 @@ export default class Score extends Component {
         <div className="p-2">
           <h4 className="mt-3 text-white">{battingTeamName} - {totalRun} / {totalWicket}</h4>
           <h5>
-          <span className="text-info">
-            {numOvers} over{(numOvers > 1) && 's'}
-            {(numBowls || null) && ` ${numBowls} bowl`}{(numBowls > 1) && 's'}
-          </span>
+            <span className="text-info">
+              {numOvers} over{(numOvers > 1) && 's'}
+              {(numBowls || null) && ` ${numBowls} bowl`}{(numBowls > 1) && 's'}
+            </span>
             &nbsp;
             <small className="font-weight-normal">({numberOfOvers} overs)</small>
           </h5>
@@ -56,7 +56,7 @@ export default class Score extends Component {
         </div>
       </div>
       <div className="container-fluid mt-2 text-white">
-        <div className="px-2">{runRateText}</div>
+        <div className="px-2">{Number.isNaN(runRateText) ? 'N/A' : runRateText}</div>
         <p className="px-2">
           <em>{tossOwner}</em> won the toss <br/>
           and chose to <em>{choice}</em>.
