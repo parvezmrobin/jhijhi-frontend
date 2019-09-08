@@ -23,7 +23,8 @@ function Bowl(props) {
       {toTitleCase(isWicket.kind, ' ')}{outPlayer && `(${outPlayer})`}
     </kbd>;
     elements.push(wicket);
-  } else if (boundary.run) {
+  }
+  if (boundary.run) {
     const boundaryElement = <kbd className="bg-info mr-1" key="boundary">
       {boundary.run}{(boundary.kind === 'by') ? '(By)' : (boundary.kind === 'legBy') ? '(Leg By)' : ''}
     </kbd>;

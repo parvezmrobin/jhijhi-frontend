@@ -76,12 +76,16 @@ export default class BatsmanSelectModal extends Component {
 
 
   render() {
-    const { batsman1Index, batsman2Index, batsmanList, singleBatsman, allOutPrompted } = this.props;
+    const { batsman1Index, batsman2Index, batsmanList, singleBatsman, allOutPrompted, onNumberOfBatsmenChange } = this.props;
     const batsman1Exists = Number.isInteger(batsman1Index);
     const batsman2Exists = Number.isInteger(batsman2Index);
     const { errors } = this.state;
 
-    return <Modal isOpen={!allOutPrompted && (!batsman1Exists || (!singleBatsman && !batsman2Exists))}>
+    // if 'allout - play with single player?' is not prompted, and
+    // either batsman1 is not present or (it's not single batsman game and batsman2 is not present)
+    const isModalOpen = !allOutPrompted && (!batsman1Exists || (!singleBatsman && !batsman2Exists));
+
+    return <Modal isOpen={isModalOpen}>
       <ModalHeader className="text-primary">
         Select {!(batsman1Exists || batsman2Exists) ? 'Batsmen' : 'Batsman'}
       </ModalHeader>
@@ -101,8 +105,7 @@ export default class BatsmanSelectModal extends Component {
       </ModalBody>
       <ModalFooter className="justify-content-between">
         <CustomInput type="switch" label="Single Batsman" id="single-batsman-modal"
-                     checked={this.props.singleBatsman}
-                     onChange={this.props.onNumberOfBatsmenChange}/>
+                     checked={singleBatsman} onChange={onNumberOfBatsmenChange}/>
         <Button color="primary" onClick={this.onSubmit}>Select</Button>
       </ModalFooter>
     </Modal>;
