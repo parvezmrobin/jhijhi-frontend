@@ -55,7 +55,7 @@ export default class PreMatch extends Component {
       fetcher
         .put(`matches/${this.props.matchId}/begin`, postData)
         .then(response => {
-          this.props.onMatchBegin(response.data.match, response.data.message);
+          return this.props.onMatchBegin(response.data.match, response.data.message);
         })
         .catch(err => {
           const isValid = {
@@ -148,11 +148,16 @@ export default class PreMatch extends Component {
 
 
   componentDidMount() {
-    fetcher
+    return fetcher
       .get('players')
       .then(response => {
-        this.setState({ players: response.data });
+        return this.setState({ players: response.data });
       });
+  }
+
+
+  componentWillUnmount() {
+    fetcher.cancelAll();
   }
 
 

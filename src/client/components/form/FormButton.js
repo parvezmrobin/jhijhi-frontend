@@ -5,28 +5,28 @@
  */
 
 
-import React, { Component } from 'react';
+import React from 'react';
+import * as PropTypes from 'prop-types';
 
 
-class FormButton extends Component {
-  offsetCol;
-  btnClass;
+function FormButton(props) {
+  const offsetCol = props.offsetCol || 'offset-md-4 offset-lg-3';
+  const btnClass = props.btnClass || 'outline-success';
+  const type = props.type || 'button';
 
-  render() {
-    const offsetCol = this.props.offsetCol || 'offset-md-4 offset-lg-3';
-    const btnClass = this.props.btnClass || 'outline-success';
-    const type = this.props.type || 'button';
-
-    return (
-      <div className="form-group row">
-        <div className={'col ' + offsetCol}>
-          <input type={type} className={'btn btn-' + btnClass} value={this.props.text} onClick={this.props.onClick}/>
-          {this.props.children}
-        </div>
+  return (
+    <div className="form-group row">
+      <div className={'col ' + offsetCol}>
+        <input type={type} className={'btn btn-' + btnClass} value={props.text} onClick={props.onClick}/>
+        {props.children}
       </div>
-    );
-  }
-
+    </div>
+  );
 }
+
+FormButton.propTypes = {
+  offsetCol: PropTypes.string,
+  btnClass: PropTypes.string,
+};
 
 export default FormButton;

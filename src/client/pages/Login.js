@@ -8,19 +8,37 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import AuthForm from '../components/auth/AuthForm';
-import * as axios from 'axios';
+import axios from 'axios';
 import { bindMethods } from '../lib/utils';
 import ErrorModal from '../components/ErrorModal';
 
 
 class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      values: {
+        username: '',
+        password: '',
+      },
+      isValid: {
+        username: null,
+      },
+      feedback: {
+        username: null,
+      },
+      showErrorModal: false,
+    };
+    this.cancelTokenSource = axios.CancelToken.source();
+    bindMethods(this);
+  }
 
   handlers = {
     onSubmit() {
       const postData = { ...this.state.values };
 
       axios
-        .post('/api/auth/login', postData)
+        .post('/api/auth/login', postData, { cancelToken: this.cancelTokenSource.token })
         .then(response => {
           const isValid = {
             username: true,
@@ -55,22 +73,8 @@ class Login extends Component {
     },
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      values: {
-        username: '',
-        password: '',
-      },
-      isValid: {
-        username: null,
-      },
-      feedback: {
-        username: null,
-      },
-      showErrorModal: false,
-    };
-    bindMethods(this);
+  componentWillUnmount() {
+    this.cancelTokenSource.cancel();
   }
 
   render() {

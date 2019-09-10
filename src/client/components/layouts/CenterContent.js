@@ -5,22 +5,19 @@
  */
 
 
-import React, { Component } from 'react';
+import React from 'react';
 
 
-class CenterContent extends Component {
-  render() {
-    const col = this.props.col || 'col';
+function CenterContent(props) {
+  const col = props.col || 'col';
 
-    return (
-      <div className="vh-md-100 d-flex align-items-center justify-content-center">
-        <div className={col}>
-          {this.props.children}
-        </div>
+  return (
+    <div className="vh-md-100 d-flex align-items-center justify-content-center">
+      <div className={col}>
+        {props.children}
       </div>
-    );
-  }
-
+    </div>
+  );
 }
 
 export default CenterContent;

@@ -54,6 +54,7 @@ class PlayerDetails extends PureComponent {
 
   componentWillUnmount() {
     this.unlisten();
+    fetcher.cancelAll();
   }
 
   render() {

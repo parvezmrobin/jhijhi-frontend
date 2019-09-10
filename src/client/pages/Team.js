@@ -114,6 +114,10 @@ class Team extends Component {
       .catch(() => this.setState({ showErrorModal: true }));
   };
 
+  componentWillUnmount() {
+    fetcher.cancelAll();
+  }
+
   render() {
     const message = this.state.message;
     return (

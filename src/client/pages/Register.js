@@ -9,18 +9,40 @@ import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import AuthForm from '../components/auth/AuthForm';
 import {bindMethods} from "../lib/utils";
-import * as axios from "axios";
+import axios from "axios";
 
 
 class Register extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      values: {
+        username: '',
+        password: '',
+        confirm: '',
+      },
+      isValid: {
+        username: null,
+        password: null,
+      },
+      feedback: {
+        username: null,
+        password: null,
+      },
+    };
+    this.cancelTokenSource = axios.CancelToken.source();
+    bindMethods(this);
+  }
+
   handlers = {
     onSubmit() {
       const postData = {...this.state.values};
 
       axios
-        .post('/api/auth/register', postData)
+        .post('/api/auth/register', postData, {cancelToken: this.cancelTokenSource})
         .then(() => {
-          window.location.href = "login";
+          this.props.history.push('/login');
+          return window.location.href = "";
         })
         .catch(err => {
           const isValid = {
@@ -49,24 +71,8 @@ class Register extends Component {
     },
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      values: {
-        username: '',
-        password: '',
-        confirm: '',
-      },
-      isValid: {
-        username: null,
-        password: null,
-      },
-      feedback: {
-        username: null,
-        password: null,
-      },
-    };
-    bindMethods(this);
+  componentWillUnmount() {
+    this.cancelTokenSource.cancel();
   }
 
   render() {

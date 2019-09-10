@@ -13,16 +13,16 @@ import { Link } from 'react-router-dom';
 
 function PlayerForm(props) {
   const operation = props.values._id ? 'Edit' : 'Create';
-  const child = !props.values._id ? null :
-    <label className="col-form-label float-right"><Link to="/player">Create</Link> a player instead</label>;
+  const onSubmit = e => {
+    e.preventDefault();
+    props.onSubmit(e);
+  };
+
   return (
     <Fragment>
       <h2>{operation} Player</h2>
       <hr/>
-      <form onSubmit={e => {
-        e.preventDefault();
-        props.onSubmit(e);
-      }}>
+      <form onSubmit={onSubmit}>
         <FormGroup name="name" onChange={e => props.onChange({ name: e.target.value })}
                    value={props.values.name} isValid={props.isValid.name}
                    feedback={props.feedback.name} autoFocus={true}/>
@@ -30,7 +30,8 @@ function PlayerForm(props) {
                    value={props.values.jerseyNo} isValid={props.isValid.jerseyNo}
                    feedback={props.feedback.jerseyNo}/>
         <FormButton type="submit" text={operation} btnClass="outline-success">
-          {child}
+          {props.values._id &&
+          <label className="col-form-label float-right"><Link to="/player">Create</Link> a player instead</label>}
         </FormButton>
       </form>
     </Fragment>

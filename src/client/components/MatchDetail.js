@@ -28,7 +28,6 @@ export default class MatchDetail extends Component {
     };
   }
 
-
   componentDidMount() {
     this._loadMatchIfNecessary();
   }
@@ -46,13 +45,16 @@ export default class MatchDetail extends Component {
   }
 
   _loadMatch(matchId) {
-    fetcher
+    return fetcher
       .get(`/matches/${matchId}`)
       .then(response => {
-        this.setState({ match: response.data });
+        return this.setState({ match: response.data });
       });
   }
 
+  componentWillUnmount() {
+    fetcher.cancelAll();
+  }
 
   render() {
     const { match, showSecondInnings } = this.state;
@@ -202,9 +204,9 @@ export default class MatchDetail extends Component {
       </div>
       <footer className="py-3 py-sm-0"/>
 
-      <ScoreModal isOpen={this.state.showModal} toggle={() => this.setState({showModal: false})}
-      innings={innings} battingTeamPlayers={battingTeamPlayers} bowlingTeamPlayers={bowlingTeamPlayers}
-      battingTeamName={battingTeamName} bowlingTeamName={bowlingTeamName}/>
+      <ScoreModal isOpen={this.state.showModal} toggle={() => this.setState({ showModal: false })}
+                  innings={innings} battingTeamPlayers={battingTeamPlayers} bowlingTeamPlayers={bowlingTeamPlayers}
+                  battingTeamName={battingTeamName} bowlingTeamName={bowlingTeamName}/>
     </main>;
   }
 

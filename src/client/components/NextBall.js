@@ -24,18 +24,15 @@ class NextBall extends Component {
     this.setState(state => ({ isTooltipOpen: !state.isTooltipOpen }));
   };
 
-
   componentDidMount() {
     this.timerId = setInterval(() => {
       this.setState({ dots: (this.state.dots.length === 3) ? '' : this.state.dots + '.' });
     }, 500);
   }
 
-
   componentWillUnmount() {
     clearInterval(this.timerId);
   }
-
 
   render() {
     const { onCrease, onBowlersEnd, onSwitch } = this.props;

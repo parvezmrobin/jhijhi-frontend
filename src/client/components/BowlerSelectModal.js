@@ -22,7 +22,7 @@ export default class BowlerSelectModal extends Component {
         return this.setState({ error: 'Error while selecting the bowler' });
       }
       const data = { bowledBy: bowlerIndex };
-      fetcher
+      return fetcher
         .post(`matches/${this.props.matchId}/over`, data)
         .then(() => this.props.onSelect(bowlerIndex));
     },
@@ -34,6 +34,11 @@ export default class BowlerSelectModal extends Component {
     const availableBowlers = (!lastBowler) ? bowlers
       : subtract(bowlers, [lastBowler], (b1, b2) => b1._id === b2._id);
     this.setState({ bowler: availableBowlers[0]._id });
+  }
+
+
+  componentWillUnmount() {
+    fetcher.cancelAll();
   }
 
 

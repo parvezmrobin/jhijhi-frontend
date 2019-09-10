@@ -158,6 +158,10 @@ class Match extends Component {
       .catch(() => this.setState({ showErrorModal: true }));
   };
 
+  componentWillUnmount() {
+    fetcher.cancelAll();
+  }
+
   render() {
     const { message, teams } = this.state;
     if (teams && teams.length < 3) {

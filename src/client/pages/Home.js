@@ -33,17 +33,16 @@ class Home extends Component {
   componentDidMount() {
     document.getElementsByTagName('body')[0].classList.add('home');
 
-    fetcher
+    return fetcher
       .get('matches')
       .then(response => {
-        this.setState({
-          matches: response.data,
-        });
+        return this.setState({ matches: response.data });
       });
   }
 
   componentWillUnmount() {
     document.getElementsByTagName('body')[0].classList.remove('home');
+    fetcher.cancelAll();
   }
 
   render() {

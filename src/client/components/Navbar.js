@@ -24,11 +24,9 @@ class Navbar extends Component {
     isOpen: false,
   };
 
-
   componentDidMount() {
     this.setState({ isOpen: false });
   }
-
 
   toggle = () => {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));

@@ -503,6 +503,9 @@ export class Running extends Component {
     }
   }
 
+  componentWillUnmount() {
+    fetcher.cancelAll();
+  }
 
   render() {
     const { match, overModal, batsman1, batsman2, editModal } = this.state;

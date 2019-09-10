@@ -61,6 +61,7 @@ class Player extends Component {
 
   componentWillUnmount() {
     this.unlisten();
+    fetcher.cancelAll();
   }
 
 

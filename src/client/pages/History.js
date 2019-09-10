@@ -16,15 +16,19 @@ class History extends Component {
   }
 
   onFilter = (keyword) => {
-    fetcher
+    return fetcher
       .get(`/matches/done?search=${keyword}`)
       .then(response => this.setState({ matches: response.data }));
   };
 
   componentDidMount() {
-    fetcher
+    return fetcher
       .get('/matches/done')
       .then(response => this.setState({ matches: response.data }));
+  }
+
+  componentWillUnmount() {
+    fetcher.cancelAll();
   }
 
   render() {

@@ -47,7 +47,7 @@ export default class Toss extends Component {
       fetcher
         .put(`matches/${this.props.matchId}/toss`, postData)
         .then(response => {
-          this.props.onToss(response.data.match, response.data.message);
+          return this.props.onToss(response.data.match, response.data.message);
         })
         .catch(err => {
           const isValid = {
@@ -72,9 +72,12 @@ export default class Toss extends Component {
             feedback,
           });
         });
-
     },
   };
+
+  componentWillUnmount() {
+    fetcher.cancelAll();
+  }
 
   render() {
     const {name} = this.props;

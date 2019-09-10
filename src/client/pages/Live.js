@@ -30,18 +30,23 @@ class Live extends Component {
       this.setState(prevState => {
         return { match: { ...prevState.match, ...params } };
       });
-      console.log(params);
     },
   };
 
 
   componentDidMount() {
-    fetcher
+    return fetcher
       .get(`matches/${this.props.match.params.id}`)
       .then(response => {
-        this.setState({ match: response.data });
+        return this.setState({ match: response.data });
       });
   }
+
+
+  componentWillUnmount() {
+    fetcher.cancelAll();
+  }
+
 
   render() {
     const { match } = this.state;

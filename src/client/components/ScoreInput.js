@@ -52,7 +52,7 @@ export default class ScoreInput extends Component {
     request(`matches/${matchId}/${endPoint}`, bowlEvent)
       .then(res => {
         onInput(isNewBowl ? bowlEvent : res.data.bowl, !isNewBowl);
-        shouldResetAfterInput && this.resetInputFields();
+        return shouldResetAfterInput && this.resetInputFields();
       })
       .catch(err => {
         shouldResetAfterInput && this.resetInputFields();
