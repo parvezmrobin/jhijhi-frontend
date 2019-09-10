@@ -2,7 +2,8 @@ const express = require('express');
 const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const {join} = require('path');
+const { join } = require('path');
+const { existsSync } = require('fs');
 const cors = require('cors');
 
 const authRouter = require('./routes/auth');
@@ -24,13 +25,14 @@ require('./db')(app);
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
 app.use(express.static(join(__dirname, '..', '..', 'public')));
 app.use(function (request, response, next) {
-  if (!request.originalUrl.startsWith('/api')) {
-    return response.sendFile(join(__dirname, '..', '..', 'public', 'index.html'));
+  const path = join(__dirname, '..', '..', 'public', 'index.html');
+  if (!request.originalUrl.startsWith('/api') && existsSync(path)) {
+    return response.sendFile(path);
   }
   return next();
 });
