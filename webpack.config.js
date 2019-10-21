@@ -10,8 +10,8 @@ module.exports = {
   entry: ['babel-polyfill', './src/client/index.js'],
   output: {
     path: path.join(__dirname, outputDirectory),
-    filename: '[name].[contentHash].js',
-    chunkFilename: '[name].[contentHash].js',
+    filename: '[name].[hash].js',
+    chunkFilename: '[name].chunk.[hash].js',
   },
   module: {
     rules: [
