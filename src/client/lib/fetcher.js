@@ -16,17 +16,13 @@ const fetcher = {
   },
 };
 
-let cancelTokenSource;
+let cancelTokenSource = axios.CancelToken.source();
 
-const createBaseAxios = () => {
-  cancelTokenSource = axios.CancelToken.source();
-  return axios.create({
-    baseURL: '/api/',
-    headers: { Authorization: `Bearer ${fetcher.token}` },
-    cancelToken: cancelTokenSource.token,
-  });
-};
-let baseAxios = createBaseAxios();
+const baseAxios = axios.create({
+  baseURL: '/api/',
+  headers: {Authorization: `Bearer ${fetcher.token}`},
+  cancelToken: cancelTokenSource.token,
+});
 
 fetcher.get = (url) => baseAxios.get(url);
 fetcher.post = (url, data) => baseAxios.post(url, data);
@@ -34,7 +30,8 @@ fetcher.put = (url, data) => baseAxios.put(url, data);
 fetcher.delete = (url, data) => baseAxios.delete(url, data);
 fetcher.cancelAll = (cancelReason = 'unmount') => {
   cancelTokenSource.cancel(cancelReason);
-  baseAxios = createBaseAxios();
+  cancelTokenSource = axios.CancelToken.source();
+  baseAxios.defaults.cancelToken = cancelTokenSource.token;
 };
 
 export default fetcher;
