@@ -1,16 +1,6 @@
 const express = require('express');
-
-/**
- * Index router
- * @var router
- * @property {Function} get
- * @property {Function} post
- * @property {Function} put
- * @property {Function} delete
- */
 const router = express.Router();
 const passport = require('passport');
-const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
@@ -18,27 +8,25 @@ const responses = require('../responses');
 const { check, validationResult } = require('express-validator/check');
 const { sendErrorResponse } = require('../lib/utils');
 
+const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
+
 const registrationValidations = [
   check('username')
     .trim()
     .exists({ checkFalsy: true }),
-  check('username')
-    .custom(username => {
-      return new Promise(function (resolve, reject) {
-        User.findOne({ username: username })
-          .exec()
-          .then(user => {
-            if (user) {
-              reject('Username already taken.');
-            } else {
-              resolve();
-            }
-          })
-          .catch(reject);
-      });
-    }),
   check('password', 'Password should be at least 4 characters long')
     .isLength({ min: 4 }),
+  check('username')
+    .custom(username => {
+      return User.findOne({ username: username })
+        .exec()
+        .then(user => {
+          if (user) {
+            throw new Error('Username already taken');
+          }
+          return null;
+        });
+    }),
   check('password')
     .custom((password, { req }) => {
       if (password !== req.body.confirm) {
@@ -72,7 +60,7 @@ router.post('/register', registrationValidations, function (request, response) {
       });
     })
     .then(user => {
-      response.json({
+      return response.json({
         success: true,
         message: responses.auth.register.ok,
         user: { _id: user._id },
@@ -83,26 +71,26 @@ router.post('/register', registrationValidations, function (request, response) {
 
 router.post('/login', function (request, response) {
   const { username, password } = request.body;
-
+  let user;
   User
     .findOne({ username })
     .exec()
-    .then(user => {
-      if (!user) {
-        return response.json({ success: false });
+    .then(_user => {
+      if (!_user) {
+        throw new Error('user not found with given username');
       }
-      return bcrypt
-        .compare(password, user.password)
-        .then(matched => {
-          if (matched) {
-            const token = jwt.sign(user._id.toString(), request.app.get('db'));
-            return response.json({
-              success: true,
-              'token': token,
-            });
-          }
-          return response.json({ success: false });
+      user = _user;
+      return bcrypt.compare(password, _user.password);
+    })
+    .then(matched => {
+      if (matched) {
+        const token = jwt.sign(user._id.toString(), request.app.get('db'));
+        return response.json({
+          success: true,
+          'token': token,
         });
+      }
+      throw new Error('password did not match');
     })
     .catch(err => {
       console.error(err);

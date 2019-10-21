@@ -1,14 +1,14 @@
 const express = require('express');
 const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
-const logger = require('morgan');
 const { join } = require('path');
 const { existsSync } = require('fs');
 const cors = require('cors');
+const onFinished = require('on-finished');
 
-const authRouter = require('./routes/auth');
+const logger = require('./logger');
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
 const playersRouter = require('./routes/players');
 const teamsRouter = require('./routes/teams');
 const matchesRouter = require('./routes/matches');
@@ -23,12 +23,32 @@ for (let configKey of Object.keys(config)) {
 
 require('./db')(app);
 
-app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
 app.use(express.static(join(__dirname, '..', '..', 'public')));
+if (app.get('env') === 'development') {
+  app.use(express.static(join(__dirname, '..', '..', 'statics')));
+}
+
+app.use(function (request, response, next) {
+  const ping = Date.now();
+  onFinished(response, (err) => {
+    const pong = Date.now();
+    const elapsed = (pong - ping) / 1000;
+    logger.info(`${(new Date()).toUTCString()} | ${request.method} ${request.originalUrl} ${response.statusCode} ${elapsed.toFixed(2)}s`, request.body, response.body);
+    if (err) {
+      logger.error(err);
+    }
+  });
+  next();
+});
+
+/**
+ * If any page is requested, fall back to index.html
+ * and let react to load the page
+ */
 app.use(function (request, response, next) {
   const path = join(__dirname, '..', '..', 'public', 'index.html');
   if (!request.originalUrl.startsWith('/api') && existsSync(path)) {
@@ -40,9 +60,8 @@ app.use(function (request, response, next) {
 
 require('./authentication')(app);
 
-app.use('/', indexRouter);
+app.use('/api', indexRouter);
 app.use('/api/auth', authRouter);
-app.use('/api/users', usersRouter);
 app.use('/api/players', playersRouter);
 app.use('/api/teams', teamsRouter);
 app.use('/api/matches', matchesRouter);
