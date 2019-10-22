@@ -16,6 +16,13 @@ module.exports = {
     index: {
       err: "Error while retrieving player list",
     },
+    get: {
+      err: 'Player could not found',
+    },
+    stat: {
+      ok: (name) => `Successfully generated stat for player ${name}`,
+      err: "Error while generating stat",
+    },
     create: {
       ok: (name) => `Successfully created player ${name}`,
       err: "Error while creating player",

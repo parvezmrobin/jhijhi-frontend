@@ -1,12 +1,4 @@
 const express = require('express');
-
-/**
- * User router
- * @property {Function} get
- * @property {Function} post
- * @property {Function} put
- * @property {Function} delete
- */
 const router = express.Router();
 const Player = require('../models/player');
 const Match = require('../models/match');
@@ -17,82 +9,61 @@ const { check, validationResult } = require('express-validator/check');
 const ObjectId = require('mongoose/lib/types/objectid');
 const { send404Response } = require('../lib/utils');
 const { namify, sendErrorResponse } = require('../lib/utils');
+const logger = require('../logger');
 
 
+const nameExistsValidation = check('name')
+  .trim()
+  .exists({ checkFalsy: true });
+const jerseyNoInRangeValidation = check('jerseyNo', 'Jersey number should be between 0 to 999')
+  .isInt({
+    min: 0,
+    max: 999,
+  });
 const playerCreateValidations = [
-  check('name')
-    .trim()
-    .exists({ checkFalsy: true }),
-  check('name')
-    .custom((name, { req }) => {
-      return Player
-        .findOne({
-          name: namify(name),
-          creator: req.user._id,
-        })
-        .exec()
-        .then(player => {
-          return player ? Promise.reject('Player Name already taken.') : true;
-        });
-    }),
-  check('jerseyNo', 'Jersey number should be between 0 to 999')
-    .isInt({
-      min: 0,
-      max: 999,
-    }),
-  check('jerseyNo')
-    .custom((jerseyNo, { req }) => {
-      return Player
-        .findOne({
-          jerseyNo: jerseyNo,
-          creator: req.user._id,
-        })
-        .exec()
-        .then(player => {
-          return player ? Promise.reject('This jersey is already taken.') : true;
-        });
-    }),
-];
-const playerEditValidations = [
-  check('name')
-    .trim()
-    .exists({ checkFalsy: true })
-    .custom((name, { req }) => {
-      return Player.findOne({
+  nameExistsValidation,
+  jerseyNoInRangeValidation,
+  check('name', 'Player Name already taken')
+    .custom((name, { req }) => Player
+      .findOne({
         name: namify(name),
         creator: req.user._id,
       })
-        .lean()
-        .exec()
-        .then(player => {
-          if (player && player._id.toString() !== req.params.id) {
-            throw new Error('Player Name already taken.');
-          }
-          return true;
-        });
-    }),
-  check('jerseyNo', 'Jersey number should be between 1 to 999')
-    .isInt({
-      min: 0,
-      max: 999,
-    }),
-  check('jerseyNo')
-    .custom((jerseyNo, { req }) => {
-      return Player
-        .findOne({
-          jerseyNo: jerseyNo,
-          creator: req.user._id,
-        })
-        .lean()
-        .exec()
-        .then(player => {
-          if (player && player._id.toString() !== req.params.id) {
-            throw new Error('This jersey is already taken.');
-          }
-          return true;
-        });
-    }),
+      .exec()
+      .then(player => !player)),
+  check('jerseyNo', 'This jersey is already taken')
+    .custom((jerseyNo, { req }) => Player
+      .findOne({
+        jerseyNo: jerseyNo,
+        creator: req.user._id,
+      })
+      .exec()
+      .then(player => !player)),
 ];
+
+const playerEditValidations = [
+  nameExistsValidation,
+  jerseyNoInRangeValidation,
+  check('name', 'Player Name already taken')
+    .custom((name, { req }) => Player
+      .findOne({
+        name: namify(name),
+        creator: req.user._id,
+      })
+      .lean()
+      .exec()
+      .then(player => !(player && player._id.toString() !== req.params.id))),
+  check('jerseyNo')
+    .custom((jerseyNo, { req }) => Player
+      .findOne({
+        jerseyNo: jerseyNo,
+        creator: req.user._id,
+      })
+      .lean()
+      .exec()
+      .then(player => !(player && player._id.toString() !== req.params.id))),
+];
+
 const playerGetValidations = [
   check('id', 'Must be a valid id')
     .isMongoId(),
@@ -103,18 +74,10 @@ router.get('/', authenticateJwt(), (request, response) => {
   let query;
   if (request.query.search) {
     const regExp = new RegExp(request.query.search, 'i');
-    query = Player.aggregate([
-      { $match: { creator: request.user._id } },
-      { $addFields: { jerseyString: { $toLower: '$jerseyNo' } } },
-      {
-        $match: {
-          $or: [
-            { name: regExp },
-            { jerseyString: regExp },
-          ],
-        },
-      },
-    ])
+    query = Player.aggregate()
+      .match({ creator: request.user._id })
+      .addFields({ jerseyString: { $toLower: '$jerseyNo' } })
+      .match({ $or: [{ name: regExp }, { jerseyString: regExp }] })
       .exec();
   } else {
     query = Player.find({ creator: request.user._id })
@@ -127,16 +90,22 @@ router.get('/', authenticateJwt(), (request, response) => {
     .catch(err => sendErrorResponse(response, err, responses.players.index.err));
 });
 
+/**
+ * Get run, numBowl and strikeRate of a particular innings
+ * @param {Array<Array<{singles, boundary }>>} battingInningses
+ * @returns {run, numBowl, strikeRate}
+ * @private
+ */
 function _getBattingInningsStats(battingInningses) {
-  return battingInningses.map(bowls => {
-    const run = bowls.reduce((run, bowl) => {
+  return battingInningses.map(over => {
+    const run = over.reduce((run, bowl) => {
       run += bowl.singles;
       if (bowl.boundary.kind === 'regular' && Number.isInteger(bowl.boundary.run)) {
         run += bowl.boundary.run;
       }
       return run;
     }, 0);
-    const numBowl = bowls.length;
+    const numBowl = over.length;
     const strikeRate = run / numBowl;
     return {
       run,
@@ -146,51 +115,37 @@ function _getBattingInningsStats(battingInningses) {
   });
 }
 
+/**
+ * Get run, wicket and totalBowl of all inningses
+ * @param {Array<Array<{bowls: {Array}}>>} bowlingInningses
+ * @returns {{ run, wicket, totalBowl }}
+ * @private
+ */
 function _getBowlingInningsStats(bowlingInningses) {
+  logger.info('bowlingInningses.length', bowlingInningses.length);
   return bowlingInningses.map(overs => {
-    const { run, wicket, totalBowl } = overs.reduce(({ run, wicket, totalBowl }, over) => {
-      const { overRun, overWicket } = over.bowls.reduce(({ overRun, overWicket }, bowl) => {
+    let run = 0, wicket = 0, totalBowl = 0;
+    for (const over of overs) {
+      let overRun = 0, overWicket = 0;
+      for (const bowl of over.bowls) {
         // assuming bowling strike rate counts wide and no bowls
         const isWicket = bowl.isWicket && bowl.isWicket.kind
           && (bowl.isWicket.kind.toLowerCase() !== 'run out')
           && (bowl.isWicket.kind.toLowerCase() !== 'run-out');
-        if (isWicket) {
-          overWicket++;
-        }
-        if (bowl.singles) {
-          overRun += bowl.singles;
-        }
-        if (bowl.by) {
-          overRun += bowl.by;
-        }
-        if (bowl.legBy) {
-          overRun += bowl.legBy;
-        }
-        if (bowl.boundary.run) {
-          overRun += bowl.boundary.run;
-        }
-        if (bowl.isWide || bowl.isNo) {
-          overRun++;
-        }
 
-        return {
-          overRun,
-          overWicket,
-        };
-      }, {
-        overRun: 0,
-        overWicket: 0,
-      });
-      return {
-        run: run + overRun,
-        wicket: wicket + overWicket,
-        totalBowl: totalBowl + over.bowls.length,
-      };
-    }, {
-      run: 0,
-      wicket: 0,
-      totalBowl: 0,
-    });
+        isWicket && overWicket++;
+        bowl.singles && (overRun += bowl.singles);
+        bowl.by && (overRun += bowl.by);
+        bowl.legBy && (overRun += bowl.legBy);
+        bowl.boundary.run && (overRun += bowl.boundary.run);
+        (bowl.isWide || bowl.isNo) && overRun++;
+      }
+
+      run += overRun;
+      wicket += overWicket;
+      totalBowl += over.bowls.length;
+    }
+
     return {
       run,
       wicket,
@@ -351,7 +306,7 @@ router.get('/:id', authenticateJwt(), playerGetValidations, (request, response) 
 
       return response.json({
         success: true,
-        message: 'Successfully generated stat',
+        message: responses.players.stat.ok(player.name),
         stat: {
           numMatch,
           bat: {
@@ -375,7 +330,7 @@ router.get('/:id', authenticateJwt(), playerGetValidations, (request, response) 
         player,
       });
     })
-    .catch(err => sendErrorResponse(response, err));
+    .catch(err => sendErrorResponse(response, err, responses.players.create.err));
 });
 
 /* Create a new player */
@@ -430,7 +385,7 @@ router.put('/:id', authenticateJwt(), playerEditValidations, (request, response)
     })
     .then(editedPlayer => {
       if (!editedPlayer) {
-        return send404Response(response, 'Player could not found');
+        return send404Response(response, responses.players.get.err);
       }
       return response.json({
         success: true,

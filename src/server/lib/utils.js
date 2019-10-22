@@ -4,6 +4,9 @@
  * Date: Apr 10, 2019
  */
 
+const logger = require('../logger');
+
+
 /**
  * @param response
  * @param err
@@ -14,8 +17,8 @@
  * @param message
  * @param suppressError
  */
-module.exports.sendErrorResponse = function (response, err, message, suppressError = false) {
-  console.log(err);
+module.exports.sendErrorResponse = function (response, err, message, suppressError = true) {
+  logger.error(err);
 
   response.status(err.statusCode || err.status || 500);
   const errorDescription = {
@@ -29,12 +32,14 @@ module.exports.sendErrorResponse = function (response, err, message, suppressErr
 };
 
 module.exports.send404Response = function (response, message) {
-  response.status(404);
-  response.json({
-    success: false,
-    message: message,
-    err: [message],
-  });
+  logger.error('Error 404: ' + response.req.originalUrl);
+
+  response.status(404)
+    .json({
+      success: false,
+      message: message,
+      err: [message],
+    });
 };
 
 module.exports.nullEmptyValues = function (request, container = 'body') {
