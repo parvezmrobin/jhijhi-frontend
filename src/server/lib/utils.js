@@ -17,10 +17,11 @@ const logger = require('../logger');
  * @param message
  * @param suppressError
  */
-module.exports.sendErrorResponse = function (response, err, message, suppressError = true) {
-  logger.error(err);
+module.exports.sendErrorResponse = function (response, err, message, suppressError = false) {
+  const statusCode = err.statusCode || err.status || 500;
+  logger.error(`Error response ${statusCode}: ${message}`, err);
 
-  response.status(err.statusCode || err.status || 500);
+  response.status(statusCode);
   const errorDescription = {
     success: false,
     message: message,
