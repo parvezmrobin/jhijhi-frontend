@@ -199,6 +199,18 @@ export default class PreMatch extends Component {
     const team2CandidatePlayers = subtract(players, this.state.team1Players, matcher)
       .map(getListItemMapperForTeam(2));
 
+    let team1SelectOptions = players.filter(
+      el => this.state.team1Players.indexOf(el._id) !== -1,
+    );
+    if (!team1SelectOptions.length) {
+      team1SelectOptions = [{_id: "-1", name: "Select checkboxes to select players"}]
+    }
+    let team2SelectOptions = players.filter(
+      el => this.state.team2Players.indexOf(el._id) !== -1,
+    );
+    if (!team2SelectOptions.length) {
+      team2SelectOptions = [{_id: "-1", name: "Select checkboxes to select players"}]
+    }
     return (
       <CenterContent>
         <h2 className="text-center text-white bg-success py-3 rounded">{this.props.name}</h2>
@@ -207,9 +219,7 @@ export default class PreMatch extends Component {
             <h2 className="text-center text-primary">{this.props.team1.name}</h2>
             <hr/>
             <FormGroup label="Captain" type="select"
-                       options={players.filter(
-                         el => this.state.team1Players.indexOf(el._id) !== -1,
-                       )}
+                       options={team1SelectOptions}
                        name="team1-captain" value={this.state.team1Captain}
                        onChange={(e) => this.onChange({ team1Captain: e.target.value })}
                        isValid={this.state.isValid.team1Captain}
@@ -227,9 +237,7 @@ export default class PreMatch extends Component {
             <h2 className="text-center text-primary">{this.props.team2.name}</h2>
             <hr/>
             <FormGroup label="Captain" type="select"
-                       options={players.filter(
-                         el => this.state.team2Players.indexOf(el._id) !== -1,
-                       )}
+                       options={team2SelectOptions}
                        name="team2-captain" value={this.state.team2Captain}
                        onChange={(e) => this.onChange({ team2Captain: e.target.value })}
                        isValid={this.state.isValid.team2Captain}
