@@ -11,21 +11,17 @@ const { sendErrorResponse } = require('../lib/utils');
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 
 const registrationValidations = [
-  check('username')
+  check('username', 'Username should not be empty')
     .trim()
     .exists({ checkFalsy: true }),
   check('password', 'Password should be at least 4 characters long')
     .isLength({ min: 4 }),
-  check('username')
+  check('username', 'Username already taken')
     .custom(username => {
+      console.log('username', username);
       return User.findOne({ username: username })
         .exec()
-        .then(user => {
-          if (user) {
-            throw new Error('Username already taken');
-          }
-          return null;
-        });
+        .then(user => !user);
     }),
   check('password')
     .custom((password, { req }) => {
