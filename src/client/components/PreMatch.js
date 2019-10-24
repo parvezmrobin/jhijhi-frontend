@@ -203,13 +203,13 @@ export default class PreMatch extends Component {
       el => this.state.team1Players.indexOf(el._id) !== -1,
     );
     if (!team1SelectOptions.length) {
-      team1SelectOptions = [{_id: "-1", name: "Select checkboxes to select players"}]
+      team1SelectOptions = [{_id: "-1", name: "Choose players first to select captain"}]
     }
     let team2SelectOptions = players.filter(
       el => this.state.team2Players.indexOf(el._id) !== -1,
     );
     if (!team2SelectOptions.length) {
-      team2SelectOptions = [{_id: "-1", name: "Select checkboxes to select players"}]
+      team2SelectOptions = [{_id: "-1", name: "Choose players first to select captain"}]
     }
     return (
       <CenterContent>
