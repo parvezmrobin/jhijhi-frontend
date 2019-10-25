@@ -243,3 +243,49 @@ th[scope="row"] {
     height: 2.25rem;
   }
 }
+
+
+/* TagControl overrides */
+.form-control.tag {
+  padding: 0;
+}
+
+.tag__control {
+  min-height: 0!important;
+}
+
+.tag__control, .tag__value-container {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.tag__control, .tag__value-container, .tag__menu {
+  border-radius: $border-radius!important;
+}
+
+.tag__control, .tag__value-container, .tag__indicator {
+  padding-top: 0!important;
+  padding-bottom: 0!important;
+}
+
+.tag__indicator-separator {
+  display: none;
+}
+
+.tag__indicator.tag__dropdown-indicator {
+  svg {
+    display: none !important;
+  }
+}
+
+.tag__multi-value {
+  @extend .bg-info;
+}
+
+.tag__multi-value__label {
+  @extend .text-white;
+}
+
+.tag__multi-value__remove:hover {
+  background-color: transparent!important;
+}

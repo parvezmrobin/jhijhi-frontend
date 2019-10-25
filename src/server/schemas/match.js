@@ -115,6 +115,10 @@ module.exports = new Schema({
     type: inningsSchema,
     default: null,
   },
+  tags: {
+    type: [String],
+    default: [],
+  },
   creator: {
     type: Schema.Types.ObjectId,
     ref: 'User',

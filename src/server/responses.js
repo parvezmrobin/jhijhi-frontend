@@ -60,6 +60,9 @@ module.exports = {
     get: {
       err: "Error while retrieving match",
     },
+    tags: {
+      err: "Error while retrieving tags",
+    },
     e404: "Could not find a match with given id",
   },
   umpires: {

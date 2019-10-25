@@ -4,6 +4,4 @@ node_modules
 dist
 public
 *.log
-yarn.lock
-package-lock.json
 _README.md

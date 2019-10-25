@@ -8,6 +8,7 @@
 import React from 'react';
 import InputControl from './control/input';
 import SelectControl from './control/select';
+import TagControl from './control/tag';
 import { toTitleCase } from '../../lib/utils';
 import PropTypes from 'prop-types';
 
@@ -26,9 +27,13 @@ function FormGroup(props) {
     autoFocus: props.autoFocus,
   };
 
-  let control = <InputControl type={type} {...inputProps} value={props.value}/>;
+  let control;
   if (type === 'select') {
     control = <SelectControl {...inputProps} options={props.options} value={props.value}/>;
+  } else if (type === 'tag') {
+    control = <TagControl {...inputProps} options={props.options} value={props.value} />
+  } else {
+    control = <InputControl type={type} {...inputProps} value={props.value}/>;
   }
 
   return (<div className="form-group row">
@@ -52,7 +57,7 @@ FormGroup.propTypes = {
   feedback: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   autoFocus: PropTypes.bool,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.arrayOf(PropTypes.string)]).isRequired,
   options: PropTypes.array,
 };
 

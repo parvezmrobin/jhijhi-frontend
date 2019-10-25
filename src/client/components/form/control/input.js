@@ -9,20 +9,20 @@ import PropTypes from 'prop-types';
 
 
 function InputControl(props) {
-  props = Object.assign({}, props);
+  const p = Object.assign({}, props);
   let className = 'form-control ';
-  if (props.isValid === true) {
+  if (p.isValid === true) {
     className += 'is-valid';
-  } else if (props.isValid === false) {
+  } else if (p.isValid === false) {
     className += 'is-invalid';
   }
-  delete props.isValid;
-  return (
-    <input className={className} {...props}/>
-  );
+  delete p.isValid;
+
+  return <input className={className} {...p}/>;
 }
 
 InputControl.propTypes = {
+  value: PropTypes.string.isRequired,
   isValid: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };

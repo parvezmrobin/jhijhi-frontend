@@ -29,10 +29,12 @@ class Match extends Component {
         umpire2: '',
         umpire3: '',
         overs: '',
+        tags: [],
       },
       teams: null,
       matches: [],
       umpires: [],
+      tags: [],
       isValid: {
         name: null,
         team1: null,
@@ -47,6 +49,7 @@ class Match extends Component {
       },
       message: null,
       showErrorModal: false,
+      searchKeyword: '', // if `searchKeyword` is not empty, then matched tags will be shown
     };
     bindMethods(this);
   }
@@ -75,11 +78,13 @@ class Match extends Component {
               umpire2: '',
               umpire3: '',
               overs: '',
+              tags: [],
             },
             matches: prevState.matches.concat({
               ...prevState.match,
               _id: response.data.match._id,
             }),
+            tags: prevState.tags.concat(prevState.match.tags),
             isValid: {
               name: null,
               team1: null,
@@ -148,13 +153,17 @@ class Match extends Component {
         });
       })
       .catch(() => this.setState({ showErrorModal: true }));
+    fetcher
+      .get('matches/tags')
+      .then(response => this.setState({ tags: response.data }))
+      .catch(() => this.setState({ showErrorModal: true }));
     this._loadMatches();
   }
 
   _loadMatches = (keyword = '') => {
     fetcher
       .get(`matches?search=${keyword}`)
-      .then(response => this.setState({ matches: response.data }))
+      .then(response => this.setState({ matches: response.data, searchKeyword: keyword }))
       .catch(() => this.setState({ showErrorModal: true }));
   };
 
@@ -163,13 +172,22 @@ class Match extends Component {
   }
 
   render() {
-    const { message, teams } = this.state;
+    const { message, teams, searchKeyword } = this.state;
     if (teams && teams.length < 3) {
       return <Redirect to="/team?redirected=1"/>;
     }
+
+    const regExp = new RegExp(searchKeyword, 'i');
     const sidebarItemMapper = (match) => {
-      return <Link className="text-white" to={`live@${match._id}`}>{match.name}</Link>;
+      const tags = searchKeyword && match.tags && match.tags.map(
+        tag => regExp.test(tag) ? tag : <span key={tag} className="text-secondary">{tag}</span>
+      ); // dim tags that are not matched
+      return <Link className="text-white" to={`live@${match._id}`} title={match.tags}>
+        {match.name}
+        {tags && <> ({tags.map((tag, i) => [!!i && ', ', tag])})</>} {/*put a comma before every element but first one*/}
+      </Link>;
     };
+
     return (
       <div className="container-fluid pl-0">
         <div className="fixed-top">
@@ -197,6 +215,7 @@ class Match extends Component {
             <CenterContent col="col-lg-8 col-md-10">
               <MatchForm teams={teams || []} umpires={this.state.umpires}
                          values={this.state.match}
+                         tags={this.state.tags}
                          onChange={this.onChange} onSubmit={this.onSubmit}
                          isValid={this.state.isValid} feedback={this.state.feedback}/>
             </CenterContent>
