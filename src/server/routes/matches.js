@@ -456,14 +456,30 @@ router.get('/done', authenticateJwt(), function (request, response) {
     .find(query)
     .lean()
     .then(matches => response.json(matches))
-    .catch(err => {
-      response.status(err.statusCode || err.status || 500);
-      response.json({
-        success: false,
-        message: responses.matches.index.err,
-        err: err.error || err.errors || err,
-      });
-    });
+    .catch(err => sendErrorResponse(response, err, responses.matches.index.err));
+});
+
+/* GET tags listing. */
+router.get('/tags', authenticateJwt(), (request, response) => {
+  Match.aggregate()
+    .group({
+      "_id": 0,
+      "tags": { "$push": "$tags" },
+    })
+    .project({
+      "tags": {
+        "$reduce": {
+          "input": "$tags",
+          "initialValue": [],
+          "in": { "$setUnion": ["$$value", "$$this"] },
+        },
+      },
+    })
+    .exec()
+    .then(([tags]) => {
+      return response.json(tags.tags);
+    })
+    .catch(err => sendErrorResponse(response, err, responses.matches.tags.err))
 });
 
 router.get('/:id', (request, response) => {
@@ -477,14 +493,7 @@ router.get('/:id', (request, response) => {
     .populate('team2Players')
     .lean()
     .then(match => response.json(match))
-    .catch(err => {
-      response.status(err.statusCode || err.status || 500);
-      response.json({
-        success: false,
-        message: responses.matches.get.err,
-        err: err.error || err.errors || err,
-      });
-    });
+    .catch(err => sendErrorResponse(response, err, responses.matches.get.err));
 });
 
 /* GET matches listing. */
@@ -494,20 +503,14 @@ router.get('/', authenticateJwt(), (request, response) => {
     state: { $ne: 'done' },
   };
   if (request.query.search) {
-    query.name = new RegExp(request.query.search, 'i');
+    const regExp = new RegExp(request.query.search, 'i');
+    query.$or = [{ name: regExp }, { tags: regExp }];
   }
   Match
     .find(query)
     .lean()
     .then(matches => response.json(matches))
-    .catch(err => {
-      response.status(err.statusCode || err.status || 500);
-      response.json({
-        success: false,
-        message: responses.matches.index.err,
-        err: err.error || err.errors || err,
-      });
-    });
+    .catch(err => sendErrorResponse(response, err, responses.matches.index.err));
 });
 
 router.post('/', authenticateJwt(), matchCreateValidations, (request, response) => {
@@ -519,7 +522,7 @@ router.post('/', authenticateJwt(), matchCreateValidations, (request, response) 
     errors: errors.array(),
   });
   const params = nullEmptyValues(request);
-  const { name, team1, team2, umpire1, umpire2, umpire3, overs } = params;
+  const { name, team1, team2, umpire1, umpire2, umpire3, overs, tags } = params;
 
   promise
     .then(() => Match.create({
@@ -530,6 +533,7 @@ router.post('/', authenticateJwt(), matchCreateValidations, (request, response) 
       umpire2,
       umpire3,
       overs,
+      tags,
       creator: request.user._id,
     }))
     .then(createdMatch => {

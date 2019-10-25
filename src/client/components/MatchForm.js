@@ -9,7 +9,6 @@ import React, { Fragment } from 'react';
 import FormGroup from './form/FormGroup';
 import FormButton from './form/FormButton';
 
-
 function MatchForm(props) {
   const onSubmit = (e) => {
     e.preventDefault();
@@ -41,6 +40,9 @@ function MatchForm(props) {
         <FormGroup name="overs" type="number" value={props.values.overs}
                    onChange={(e) => props.onChange({ overs: e.target.value })}
                    isValid={props.isValid.overs} feedback={props.feedback.overs}/>
+        <FormGroup name="tag" type="tag" value={props.values.tags} options={props.tags}
+                   onChange={(e) => props.onChange({ tags: e.target.value })}
+                   isValid={props.isValid.tags} feedback={props.feedback.tags}/>
         <FormButton type="submit" text="Create" btnClass="outline-success">
           {props.children}
         </FormButton>

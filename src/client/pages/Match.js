@@ -29,10 +29,12 @@ class Match extends Component {
         umpire2: '',
         umpire3: '',
         overs: '',
+        tags: [],
       },
       teams: null,
       matches: [],
       umpires: [],
+      tags: [],
       isValid: {
         name: null,
         team1: null,
@@ -75,11 +77,13 @@ class Match extends Component {
               umpire2: '',
               umpire3: '',
               overs: '',
+              tags: [],
             },
             matches: prevState.matches.concat({
               ...prevState.match,
               _id: response.data.match._id,
             }),
+            tags: prevState.tags.concat(prevState.match.tags),
             isValid: {
               name: null,
               team1: null,
@@ -148,6 +152,10 @@ class Match extends Component {
         });
       })
       .catch(() => this.setState({ showErrorModal: true }));
+    fetcher
+      .get('matches/tags')
+      .then(response => this.setState({ tags: response.data }))
+      .catch(() => this.setState({ showErrorModal: true }));
     this._loadMatches();
   }
 
@@ -197,6 +205,7 @@ class Match extends Component {
             <CenterContent col="col-lg-8 col-md-10">
               <MatchForm teams={teams || []} umpires={this.state.umpires}
                          values={this.state.match}
+                         tags={this.state.tags}
                          onChange={this.onChange} onSubmit={this.onSubmit}
                          isValid={this.state.isValid} feedback={this.state.feedback}/>
             </CenterContent>
