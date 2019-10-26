@@ -162,7 +162,7 @@ export default class PreMatch extends Component {
 
 
   render() {
-    let {players} = this.state;
+    let { players } = this.state;
     if (players && players.length < 4) {
       return <Redirect to="/player?redirected=1"/>
     }
@@ -199,18 +199,14 @@ export default class PreMatch extends Component {
     const team2CandidatePlayers = subtract(players, this.state.team1Players, matcher)
       .map(getListItemMapperForTeam(2));
 
-    let team1SelectOptions = players.filter(
-      el => this.state.team1Players.indexOf(el._id) !== -1,
-    );
-    if (!team1SelectOptions.length) {
-      team1SelectOptions = [{_id: "-1", name: "Choose players first to select captain"}]
-    }
-    let team2SelectOptions = players.filter(
-      el => this.state.team2Players.indexOf(el._id) !== -1,
-    );
-    if (!team2SelectOptions.length) {
-      team2SelectOptions = [{_id: "-1", name: "Choose players first to select captain"}]
-    }
+    const team1CaptainForm = PreMatch.makeCaptainForm(1, players, this.state.team1Players, this.state.team1Captain,
+      e => this.onChange({ team1Captain: e.target.value }),
+      this.state.isValid.team1Captain, this.state.feedback.team1Captain);
+
+    const team2CaptainForm = PreMatch.makeCaptainForm(2, players, this.state.team2Players, this.state.team2Captain,
+      e => this.onChange({ team2Captain: e.target.value }),
+      this.state.isValid.team2Captain, this.state.feedback.team2Captain);
+
     return (
       <CenterContent>
         <h2 className="text-center text-white bg-success py-3 rounded">{this.props.name}</h2>
@@ -218,12 +214,7 @@ export default class PreMatch extends Component {
           <div className="col-12 col-sm">
             <h2 className="text-center text-primary">{this.props.team1.name}</h2>
             <hr/>
-            <FormGroup label="Captain" type="select"
-                       options={team1SelectOptions}
-                       name="team1-captain" value={this.state.team1Captain}
-                       onChange={(e) => this.onChange({ team1Captain: e.target.value })}
-                       isValid={this.state.isValid.team1Captain}
-                       feedback={this.state.feedback.team1Captain}/>
+            {team1CaptainForm}
             <div className="form-group row">
               <label className="col-form-label col-lg-3">
                 Choose Players
@@ -236,12 +227,7 @@ export default class PreMatch extends Component {
           <div className="col-12 col-sm">
             <h2 className="text-center text-primary">{this.props.team2.name}</h2>
             <hr/>
-            <FormGroup label="Captain" type="select"
-                       options={team2SelectOptions}
-                       name="team2-captain" value={this.state.team2Captain}
-                       onChange={(e) => this.onChange({ team2Captain: e.target.value })}
-                       isValid={this.state.isValid.team2Captain}
-                       feedback={this.state.feedback.team2Captain}/>
+            {team2CaptainForm}
             <div className="form-group row">
               <label className="col-form-label col-lg-3">
                 Choose Players
@@ -260,6 +246,30 @@ export default class PreMatch extends Component {
     );
   }
 
+  static makeCaptainForm(teamNo, players, playerIds, captain, onChange, isValid, feedback) {
+    const selectOptions = players.filter(
+      el => playerIds.indexOf(el._id) !== -1,
+    );
+    let captainForm;
+    if (selectOptions.length) {
+      captainForm = <FormGroup label="Captain" type="select"
+                               options={selectOptions}
+                               name={`team${teamNo}-captain`} value={captain}
+                               onChange={onChange}
+                               isValid={isValid}
+                               feedback={feedback}/>;
+    } else {
+      captainForm = <FormGroup label="Captain" type="select"
+                               options={[{ _id: "-1", name: "Choose players first to select captain" }]}
+                               disabled
+                               name={`team${teamNo}-captain`} value={captain}
+                               onChange={onChange}
+                               isValid={isValid}
+                               feedback={feedback}/>
+    }
+
+    return captainForm;
+  }
 }
 
 PreMatch.propTypes = {

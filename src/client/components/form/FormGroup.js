@@ -25,6 +25,7 @@ function FormGroup(props) {
     isValid: props.isValid,
     onChange: props.onChange,
     autoFocus: props.autoFocus,
+    disabled: props.disabled,
   };
 
   let control;
@@ -59,6 +60,7 @@ FormGroup.propTypes = {
   autoFocus: PropTypes.bool,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.arrayOf(PropTypes.string)]).isRequired,
   options: PropTypes.array,
+  disabled: PropTypes.bool,
 };
 
 
