@@ -211,7 +211,7 @@ export default class MatchDetail extends Component {
   }
 
   copySharableLink(e) {
-    const url = `${window.location.origin}/public@${this.props.matchId}`;
+    const url = `${window.location.origin}#/public@${this.props.matchId}`;
     const el = document.createElement('textarea');
     el.value = url;
     el.setAttribute('readonly', '');
