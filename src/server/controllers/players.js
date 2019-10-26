@@ -9,7 +9,7 @@ const { check, validationResult } = require('express-validator/check');
 const ObjectId = require('mongoose/lib/types/objectid');
 const { send404Response } = require('../lib/utils');
 const { namify, sendErrorResponse } = require('../lib/utils');
-const logger = require('../logger');
+const logger = require('../lib/logger');
 
 
 const nameExistsValidation = check('name')

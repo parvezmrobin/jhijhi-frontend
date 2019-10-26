@@ -4,7 +4,7 @@
  * Date: Apr 10, 2019
  */
 
-const logger = require('../logger');
+const logger = require('./logger');
 
 
 /**

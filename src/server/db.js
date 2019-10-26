@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const connectMongo = require('connect-mongo');
 const passport = require('passport');
-const logger = require('./logger');
+const logger = require('./lib/logger');
 const MongoStore = connectMongo(session);
 
 module.exports = function (app) {

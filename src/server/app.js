@@ -6,7 +6,7 @@ const { existsSync } = require('fs');
 const cors = require('cors');
 const onFinished = require('on-finished');
 
-const logger = require('./logger');
+const logger = require('./lib/logger');
 require('dotenv').config();
 const indexRouter = require('./controllers/index');
 const authRouter = require('./controllers/auth');
