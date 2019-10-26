@@ -1,12 +1,4 @@
 const express = require('express');
-
-/**
- * User router
- * @property {Function} get
- * @property {Function} post
- * @property {Function} put
- * @property {Function} delete
- */
 const router = express.Router();
 const Team = require('../models/team');
 const responses = require('../responses');
@@ -27,7 +19,7 @@ const teamCreateValidations = [
   check('name')
     .trim()
     .exists({ checkFalsy: true }),
-  check('name')
+  check('name', 'Team Name already taken')
     .custom((name, { req }) => {
       return Team
         .findOne({
@@ -35,17 +27,12 @@ const teamCreateValidations = [
           creator: req.user._id,
         })
         .exec()
-        .then(team => {
-          if (team) {
-            return Promise.reject('Team Name already taken.');
-          }
-          return true;
-        });
+        .then(team => !team);
     }),
   check('shortName', 'Short name should be at least 2 characters')
     .trim()
     .isLength({ min: 2 }),
-  check('shortName')
+  check('shortName', 'This short name is already taken')
     .custom((shortName, { req }) => {
       return Team
         .findOne({
@@ -53,12 +40,7 @@ const teamCreateValidations = [
           creator: req.user._id,
         })
         .exec()
-        .then(team => {
-          if (team) {
-            return Promise.reject('This short name is already taken.');
-          }
-          return true;
-        });
+        .then(team => !team);
     }),
 ];
 

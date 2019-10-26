@@ -1,12 +1,4 @@
 const express = require('express');
-
-/**
- * User router
- * @property {Function} get
- * @property {Function} post
- * @property {Function} put
- * @property {Function} delete
- */
 const router = express.Router();
 const Match = require('../models/match');
 const responses = require('../responses');

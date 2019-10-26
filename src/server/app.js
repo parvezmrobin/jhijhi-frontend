@@ -7,13 +7,13 @@ const cors = require('cors');
 const onFinished = require('on-finished');
 
 const logger = require('./logger');
-const indexRouter = require('./routes/index');
-const authRouter = require('./routes/auth');
-const playersRouter = require('./routes/players');
-const teamsRouter = require('./routes/teams');
-const matchesRouter = require('./routes/matches');
-const umpiresRouter = require('./routes/umpires');
 require('dotenv').config();
+const indexRouter = require('./controllers/index');
+const authRouter = require('./controllers/auth');
+const playersRouter = require('./controllers/players');
+const teamsRouter = require('./controllers/teams');
+const matchesRouter = require('./controllers/matches');
+const umpiresRouter = require('./controllers/umpires');
 
 const app = express();
 
