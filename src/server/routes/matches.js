@@ -477,7 +477,8 @@ router.get('/tags', authenticateJwt(), (request, response) => {
       },
     })
     .exec()
-    .then(([tags]) => {
+    .then((aggregation) => {
+      const tags = aggregation ? aggregation[0] : { tags: [] };
       return response.json(tags.tags);
     })
     .catch(err => sendErrorResponse(response, err, responses.matches.tags.err, request.user))
