@@ -462,6 +462,7 @@ router.get('/done', authenticateJwt(), function (request, response) {
 /* GET tags listing. */
 router.get('/tags', authenticateJwt(), (request, response) => {
   Match.aggregate()
+    .match({ creator: request.user._id })
     .group({
       "_id": 0,
       "tags": { "$push": "$tags" },
