@@ -11,11 +11,10 @@ import {toTitleCase} from './lib/utils';
 import fetcher from './lib/fetcher';
 import ErrorBoundary from './ErrorBoundary';
 import './styles/App.scss';
-import 'bootstrap';
 import {logout} from './lib/utils';
+import Navbar from "./components/Navbar";
 
 const Home = React.lazy(() => import(/* webpackChunkName: "Home" */ './pages/Home'));
-const Navbar = React.lazy(() => import(/* webpackChunkName: "Navbar" */ './components/Navbar'));
 const Register = React.lazy(() => import(/* webpackChunkName: "Register" */ './pages/Register'));
 const Login = React.lazy(() => import(/* webpackChunkName: "Login" */ './pages/Login'));
 const Contact = React.lazy(() => import(/* webpackChunkName: "Contact" */ './pages/Contact'));
