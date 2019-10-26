@@ -9,13 +9,16 @@
 ## Installation
 To install the app in your local machine
 make sure you have `node` and `npm` installed. Then run
-```npm
-npm install
+```bash
+yarn install
 ```
 
-After installation completes, run 
-```npm
-npm run dev
+After installation completes, copy `.env.example` to `.env`. 
+Replace the value of `DB_CONN` inside `.env` with a mongodb connection string.
+ 
+Finally, run 
+```bash
+yarn run dev
 ```
 
 Wait a while. **Bingo!** The app's running in your browser.
@@ -27,8 +30,8 @@ Login and explore.
 ## Seeding
 If you don't want to go through the hassle of inserting bunch of new data
 and just want to explore the app, run
-```npm
-npm run seed <username>
+```bash
+yarn run seed <username>
 ```
 Place your desired `username` in place of `<username>`.
 Your password is same as the `username`.
