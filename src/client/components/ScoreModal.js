@@ -11,7 +11,7 @@ import { Modal, ModalBody, ModalFooter, ModalHeader, Table } from 'reactstrap';
 import { toTitleCase } from '../lib/utils';
 
 function ScoreModal(props) {
-  const { battingCard, bowlingCard, totalRun, totalWicket } = _calculateBattingScores();
+  const { battingCard, bowlingCard, totalRun, totalWicket } = _calculateBattingScores(props);
   const battingRows = battingCard.map(entry => <tr key={entry.name}>
     <th scope="row">{toTitleCase(entry.name)}</th>
     {(entry.bowls || null) && <td>{entry.runs}</td>}
@@ -96,9 +96,9 @@ function ScoreModal(props) {
   );
 }
 
-const   _calculateBattingScores = () => {
-  const bowlingTeamPlayers = this.props.bowlingTeamPlayers;
-  const battingCard = this.props.battingTeamPlayers.map(player => ({
+const _calculateBattingScores = (props) => {
+  const bowlingTeamPlayers = props.bowlingTeamPlayers;
+  const battingCard = props.battingTeamPlayers.map(player => ({
     name: player.name,
     runs: 0,
     bowls: 0,
@@ -108,7 +108,7 @@ const   _calculateBattingScores = () => {
   const bowlingCard = {};
   let totalRun = 0;
   let totalWicket = 0;
-  this.props.innings.overs.forEach(over => {
+  props.innings.overs.forEach(over => {
     const bowlerName = bowlingTeamPlayers[over.bowledBy].name;
     if (!(bowlerName in bowlingCard)) {
       bowlingCard[bowlerName] = {
