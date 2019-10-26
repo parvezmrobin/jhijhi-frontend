@@ -36,7 +36,7 @@ class ErrorBoundary extends Component {
           <span>
           Please&nbsp;
             <Link to="#" className="text-decoration-none"
-                  onClick={window.location.reload}>reload</Link>
+                  onClick={() => window.location.reload()}>reload</Link>
             &nbsp;the page to retry.
           </span>
         </span>
