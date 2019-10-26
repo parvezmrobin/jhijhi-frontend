@@ -6,6 +6,7 @@
 
 const winston = require('winston');
 const { simple, colorize } = winston.format;
+const axios = require('axios');
 
 const logger = winston.createLogger({
   level: 'info',
@@ -32,4 +33,14 @@ if (process.env.NODE_ENV !== 'production') {
   }));
 }
 
+const amplitude = function (event) {
+  return axios
+    .post('https://api.amplitude.com/httpapi', {
+      api_key: process.env.AMPLITUDE_KEY,
+      event,
+    })
+    .catch(err => logger.error('Error Amplitude:', err));
+};
+
 module.exports = logger;
+module.exports.amplitude = amplitude;
