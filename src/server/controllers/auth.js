@@ -80,7 +80,7 @@ router.post('/login', function (request, response) {
     })
     .then(matched => {
       if (matched) {
-        const token = jwt.sign(user._id.toString(), request.app.get('db'));
+        const token = jwt.sign(user._id.toString(), process.env.DB_CONN);
         return response.json({
           success: true,
           'token': token,
