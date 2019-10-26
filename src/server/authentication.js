@@ -19,7 +19,7 @@ module.exports = function (app) {
 
   const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: app.get('db'),
+    secretOrKey: process.env.DB_CONN,
   };
 
   passport.use('jwt', new JwtStrategy(options, function (jwtPayload, done) {

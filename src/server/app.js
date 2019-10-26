@@ -13,13 +13,9 @@ const playersRouter = require('./routes/players');
 const teamsRouter = require('./routes/teams');
 const matchesRouter = require('./routes/matches');
 const umpiresRouter = require('./routes/umpires');
-const config = require('./config');
+require('dotenv').config();
 
 const app = express();
-
-for (let configKey of Object.keys(config)) {
-  app.set(configKey, config[configKey]);
-}
 
 require('./db')(app);
 

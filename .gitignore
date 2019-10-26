@@ -4,4 +4,5 @@ node_modules
 dist
 public
 *.log
+.env
 _README.md
