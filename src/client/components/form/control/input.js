@@ -22,7 +22,7 @@ function InputControl(props) {
 }
 
 InputControl.propTypes = {
-  value: PropTypes.string.isRequired,
+  value: PropTypes.string,
   isValid: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
