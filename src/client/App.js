@@ -73,6 +73,7 @@ class App extends Component {
                   <Route path="/player@:id" component={Player}/>
                   <Route path="/player" component={Player}/>
                   <Route path="/team" exact component={Team}/>
+                  <Route path="/umpire@:id" component={Umpire}/>
                   <Route path="/umpire" component={Umpire}/>
                   <Route path="/match" component={Match}/>
                   <Route path="/live@:id" component={Live}/>

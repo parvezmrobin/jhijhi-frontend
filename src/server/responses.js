@@ -73,5 +73,9 @@ module.exports = {
       ok: (name) => `Successfully created umpire ${name}`,
       err: "Error while creating umpire",
     },
+    edit: {
+      ok: (name) => `Successfully edited umpire ${name}`,
+      err: "Error while editing umpire",
+    },
   },
 };
