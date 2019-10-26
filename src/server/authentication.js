@@ -23,8 +23,11 @@ module.exports = function (app) {
   };
 
   passport.use('jwt', new JwtStrategy(options, function (jwtPayload, done) {
+    /* eslint-disable promise/no-callback-in-promise */
     User
       .findById(jwtPayload)
+      .select('username')
+      .lean()
       .then(user => {
         if (user) {
           return done(null, user);

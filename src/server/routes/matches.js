@@ -186,7 +186,7 @@ router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, res
         },
       });
     })
-    .catch(err => sendErrorResponse(response, err, responses.matches.begin.err));
+    .catch(err => sendErrorResponse(response, err, responses.matches.begin.err, request.user));
 });
 
 router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, response) => {
@@ -231,7 +231,7 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
         },
       });
     })
-    .catch(err => sendErrorResponse(response, err, responses.matches.toss.err));
+    .catch(err => sendErrorResponse(response, err, responses.matches.toss.err, request.user));
 });
 
 router.put('/:id/declare', authenticateJwt(), (request, response) => {
@@ -273,7 +273,7 @@ router.put('/:id/declare', authenticateJwt(), (request, response) => {
       return Promise.all([updateState, match.save()]);
     })
     .then(([updateState]) => response.json(updateState))
-    .catch(err => sendErrorResponse(response, err, responses.matches.get.err));
+    .catch(err => sendErrorResponse(response, err, responses.matches.get.err, request.user));
 });
 
 router.post('/:id/bowl', authenticateJwt(), (request, response) => {
@@ -300,7 +300,7 @@ router.post('/:id/bowl', authenticateJwt(), (request, response) => {
     .then(() => {
       return response.json({ success: true });
     })
-    .catch(err => sendErrorResponse(response, err, 'Error while saving bowl'));
+    .catch(err => sendErrorResponse(response, err, 'Error while saving bowl', request.user));
 });
 
 router.put('/:id/bowl', authenticateJwt(), (request, response) => {
@@ -314,7 +314,7 @@ router.put('/:id/bowl', authenticateJwt(), (request, response) => {
     .lean()
     .exec()
     .then(match => _updateBowlAndSend(match, bowl, response, overNo, bowlNo))
-    .catch((err) => sendErrorResponse(response, err, 'Error while updating bowl'));
+    .catch((err) => sendErrorResponse(response, err, 'Error while updating bowl', request.user));
 });
 
 const _updateBowlAndSend = (match, bowl, response, overNo, bowlNo) => {
@@ -378,7 +378,7 @@ router.put('/:id/by', authenticateJwt(), (request, response) => {
       };
       return _updateBowlAndSend(match, bowl, response, overNo, bowlNo);
     })
-    .catch((err) => sendErrorResponse(response, err, 'Error while updating bowl'));
+    .catch((err) => sendErrorResponse(response, err, 'Error while updating bowl', request.user));
 });
 
 router.put('/:id/uncertain-out', uncertainOutValidations, authenticateJwt(), (request, response) => {
@@ -408,7 +408,7 @@ router.put('/:id/uncertain-out', uncertainOutValidations, authenticateJwt(), (re
       };
       return _updateBowlAndSend(match, bowl, response, overNo, bowlNo);
     })
-    .catch(err => sendErrorResponse(response, err, 'Error while adding out'));
+    .catch(err => sendErrorResponse(response, err, 'Error while adding out', request.user));
 });
 
 router.post('/:id/over', authenticateJwt(), (request, response) => {
@@ -441,7 +441,7 @@ router.post('/:id/over', authenticateJwt(), (request, response) => {
         success: true,
       });
     })
-    .catch((err) => sendErrorResponse(response, err, 'Error while saving over'));
+    .catch((err) => sendErrorResponse(response, err, 'Error while saving over', request.user));
 });
 
 router.get('/done', authenticateJwt(), function (request, response) {
@@ -456,7 +456,7 @@ router.get('/done', authenticateJwt(), function (request, response) {
     .find(query)
     .lean()
     .then(matches => response.json(matches))
-    .catch(err => sendErrorResponse(response, err, responses.matches.index.err));
+    .catch(err => sendErrorResponse(response, err, responses.matches.index.err, request.user));
 });
 
 /* GET tags listing. */
@@ -479,7 +479,7 @@ router.get('/tags', authenticateJwt(), (request, response) => {
     .then(([tags]) => {
       return response.json(tags.tags);
     })
-    .catch(err => sendErrorResponse(response, err, responses.matches.tags.err))
+    .catch(err => sendErrorResponse(response, err, responses.matches.tags.err, request.user))
 });
 
 router.get('/:id', (request, response) => {
@@ -493,7 +493,7 @@ router.get('/:id', (request, response) => {
     .populate('team2Players')
     .lean()
     .then(match => response.json(match))
-    .catch(err => sendErrorResponse(response, err, responses.matches.get.err));
+    .catch(err => sendErrorResponse(response, err, responses.matches.get.err, request.user));
 });
 
 /* GET matches listing. */
@@ -510,7 +510,7 @@ router.get('/', authenticateJwt(), (request, response) => {
     .find(query)
     .lean()
     .then(matches => response.json(matches))
-    .catch(err => sendErrorResponse(response, err, responses.matches.index.err));
+    .catch(err => sendErrorResponse(response, err, responses.matches.index.err, request.user));
 });
 
 router.post('/', authenticateJwt(), matchCreateValidations, (request, response) => {
@@ -543,7 +543,7 @@ router.post('/', authenticateJwt(), matchCreateValidations, (request, response) 
         match: { _id: createdMatch._id },
       });
     })
-    .catch(err => sendErrorResponse(response, err, responses.matches.create.err));
+    .catch(err => sendErrorResponse(response, err, responses.matches.create.err, request.user));
 });
 
 module.exports = router;

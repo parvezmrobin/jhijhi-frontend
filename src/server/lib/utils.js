@@ -15,20 +15,24 @@ const logger = require('../logger');
  * @param [err.error]
  * @param [err.errors]
  * @param message
- * @param suppressError
+ * @param [user=null]
  */
-module.exports.sendErrorResponse = function (response, err, message, suppressError = false) {
+module.exports.sendErrorResponse = function (response, err, message, user = null) {
   const statusCode = err.statusCode || err.status || 500;
-  logger.error(`Error response ${statusCode}: ${message}`, err);
 
   response.status(statusCode);
   const errorDescription = {
     success: false,
     message: message,
   };
-  if (!suppressError) {
+
+  if (statusCode === 400) { // it is a validation error and should be sent with response payload
+    logger.warn(`Error response ${statusCode}: ${message}`, {err, user});
     errorDescription.err = err.error || err.errors || err;
+  } else {
+    logger.error(`Error response ${statusCode}: ${message}`, {err, user});
   }
+
   response.json(errorDescription);
 };
 
