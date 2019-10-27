@@ -3,9 +3,11 @@ const router = express.Router();
 const Team = require('../models/team');
 const responses = require('../responses');
 const passport = require('passport');
-const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 const { check, validationResult } = require('express-validator/check');
 const { namify, sendErrorResponse } = require('../lib/utils');
+
+/** @type {RequestHandler} */
+const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 
 
 function _getShortName(shortName) {

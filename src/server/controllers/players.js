@@ -4,15 +4,15 @@ const Player = require('../models/player');
 const Match = require('../models/match');
 const responses = require('../responses');
 const passport = require('passport');
-const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 const { check, validationResult } = require('express-validator/check');
 const ObjectId = require('mongoose/lib/types/objectid');
 const { send404Response } = require('../lib/utils');
 const { namify, sendErrorResponse } = require('../lib/utils');
-const logger = require('../lib/logger');
 
+/** @type {RequestHandler} */
+const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 
-const nameExistsValidation = check('name')
+const nameExistsValidation = check('name', 'Name should not be empty')
   .trim()
   .exists({ checkFalsy: true });
 const jerseyNoInRangeValidation = check('jerseyNo', 'Jersey number should be between 0 to 999')
@@ -92,12 +92,13 @@ router.get('/', authenticateJwt(), (request, response) => {
 
 /**
  * Get run, numBowl and strikeRate of a particular innings
- * @param {Array<Array<{singles, boundary }>>} battingInningses
+ * @typedef {Array<{singles, boundary}>} Over
+ * @param {Array<Over>} battingInnings
  * @returns {run, numBowl, strikeRate}
  * @private
  */
-function _getBattingInningsStats(battingInningses) {
-  return battingInningses.map(over => {
+function _getBattingInningsStats(battingInnings) {
+  return battingInnings.map(over => {
     const run = over.reduce((run, bowl) => {
       run += bowl.singles;
       if (bowl.boundary.kind === 'regular' && Number.isInteger(bowl.boundary.run)) {
@@ -117,15 +118,16 @@ function _getBattingInningsStats(battingInningses) {
 
 /**
  * Get run, wicket and totalBowl of all inningses
- * @param {Array<Array<{bowls: {Array}}>>} bowlingInningses
+ * @typedef {{bowls: {Array}}} Over
+ * @typedef {Array<Over>} Innings
+ * @param {Array<Innings>} bowlingInningses
  * @returns {{ run, wicket, totalBowl }}
  * @private
  */
 function _getBowlingInningsStats(bowlingInningses) {
-  logger.info('bowlingInningses.length', bowlingInningses.length);
-  return bowlingInningses.map(overs => {
+  return bowlingInningses.map(innings => {
     let run = 0, wicket = 0, totalBowl = 0;
-    for (const over of overs) {
+    for (const over of innings) {
       let overRun = 0, overWicket = 0;
       for (const bowl of over.bowls) {
         // assuming bowling strike rate counts wide and no bowls

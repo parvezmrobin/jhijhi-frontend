@@ -56,6 +56,11 @@ app.use(function (request, response, next) {
 
 require('./authentication')(app);
 
+/**
+ * @namespace Request
+ * @property {User} user
+ */
+
 app.use('/api', indexRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/players', playersRouter);

@@ -6,6 +6,8 @@ const passport = require('passport');
 const { check, validationResult } = require('express-validator/check');
 const ObjectId = require('mongoose/lib/types/objectid');
 const { namify, sendErrorResponse, send404Response } = require('../lib/utils');
+
+/** @type {RequestHandler} */
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', {session: false});
 
 const nameExistsValidation = check('name')

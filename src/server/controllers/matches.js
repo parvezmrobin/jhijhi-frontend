@@ -3,10 +3,12 @@ const router = express.Router();
 const Match = require('../models/match');
 const responses = require('../responses');
 const passport = require('passport');
-const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 const { check, validationResult } = require('express-validator/check');
 const { sendErrorResponse, send404Response, nullEmptyValues } = require('../lib/utils');
 const { Error400, Error404 } = require('../lib/errors');
+
+/** @type {RequestHandler} */
+const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 
 
 const matchCreateValidations = [

@@ -8,6 +8,7 @@ const responses = require('../responses');
 const { check, validationResult } = require('express-validator/check');
 const { sendErrorResponse } = require('../lib/utils');
 
+/** @type {RequestHandler} */
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 
 const registrationValidations = [
