@@ -8,12 +8,11 @@
 import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
 import UmpireForm from "../components/UmpireForm";
-import { bindMethods } from "../lib/utils";
+import { bindMethods, formatValidationFeedback } from "../lib/utils";
 import fetcher from "../lib/fetcher";
-import { Toast, ToastBody, ToastHeader } from "reactstrap";
 import ErrorModal from "../components/ErrorModal";
 import UmpireSidebar from "../components/UmpireSidebar";
-
+import Notification from "../components/Notification";
 
 class Umpire extends Component {
   constructor(props) {
@@ -133,16 +132,7 @@ class Umpire extends Component {
 
       submission
         .catch(err => {
-          const isValid = { name: true };
-          const feedback = { name: null };
-          for (const error of err.response.data.err) {
-            if (isValid[error.param]) {
-              isValid[error.param] = false;
-            }
-            if (!feedback[error.param]) {
-              feedback[error.param] = error.msg;
-            }
-          }
+          const { isValid, feedback } = formatValidationFeedback(err);
 
           this.setState({
             isValid,
@@ -161,16 +151,7 @@ class Umpire extends Component {
     const umpireId = this.props.match.params.id;
     return (
       <div className="container-fluid pl-0">
-        <div className="fixed-top">
-          <Toast isOpen={!!this.state.message}>
-            <ToastHeader icon="primary" toggle={() => this.setState({ message: null })}>
-              Jhijhi
-            </ToastHeader>
-            <ToastBody>
-              {this.state.message}
-            </ToastBody>
-          </Toast>
-        </div>
+        <Notification message={this.state.message} toggle={() => this.setState({ message: null })}/>
 
         <div className="row">
           <UmpireSidebar editable umpireId={umpireId} umpires={this.state.umpires}
@@ -183,8 +164,7 @@ class Umpire extends Component {
             </CenterContent>
           </main>
         </div>
-        <ErrorModal isOpen={this.state.showErrorModal}
-                    close={() => this.setState({ showErrorModal: false })}/>
+        <ErrorModal isOpen={this.state.showErrorModal} close={() => this.setState({ showErrorModal: false })}/>
       </div>
     );
   }

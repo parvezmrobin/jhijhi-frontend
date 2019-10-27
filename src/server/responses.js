@@ -11,6 +11,16 @@ module.exports = {
       ok: "Successfully registered as a new user.",
       err: "Error while registering as a new user.",
     },
+    login: {
+      user: 'user not found with given username',
+      password: 'password did not match',
+      err: 'Error while logging in',
+    },
+    password: {
+      ok: 'Successfully updated password',
+      err: 'Error while updating password',
+      mismatch: 'Password did not match',
+    },
   },
   players: {
     index: {

@@ -14,6 +14,8 @@ const logger = require('./logger');
  * @param [err.status]
  * @param [err.error]
  * @param [err.errors]
+ * @param [err.jhijhi] if `err.jhijhi` is true, `err.message` is sent to user instead of `message`
+ * @param [err.message]
  * @param message
  * @param [user=null]
  */
@@ -23,7 +25,7 @@ module.exports.sendErrorResponse = function (response, err, message, user = null
   response.status(statusCode);
   const errorDescription = {
     success: false,
-    message: message,
+    message: err.jhijhi ? err.message : message,
   };
 
   if (statusCode === 400) { // it is a validation error and should be sent with response payload

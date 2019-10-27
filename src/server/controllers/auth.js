@@ -7,31 +7,44 @@ const bcrypt = require('bcrypt');
 const responses = require('../responses');
 const { check, validationResult } = require('express-validator/check');
 const { sendErrorResponse } = require('../lib/utils');
+const logger = require('../lib/logger');
 
 /** @type {RequestHandler} */
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 
-const registrationValidations = [
-  check('username', 'Username should not be empty')
-    .trim()
-    .exists({ checkFalsy: true }),
-  check('password', 'Password should be at least 4 characters long')
-    .isLength({ min: 4 }),
-  check('username', 'Username already taken')
-    .custom(username => {
-      console.log('username', username);
-      return User.findOne({ username: username })
-        .exec()
-        .then(user => !user);
-    }),
-  check('password')
+const saltRounds = 10;
+
+function getConfirmPasswordCheck(passwordField) {
+  return check(passwordField)
     .custom((password, { req }) => {
       if (password !== req.body.confirm) {
         // trow error if passwords do not match
         throw new Error('Password and confirm password don\'t match');
       }
       return password;
+    });
+}
+
+const getPasswordLengthCheck = (passwordField) => check(passwordField, 'Password should be at least 4 characters long')
+  .isLength({ min: 4 });
+
+const registrationValidations = [
+  check('username', 'Username should not be empty')
+    .trim()
+    .exists({ checkFalsy: true }),
+  getPasswordLengthCheck('password'),
+  check('username', 'Username already taken')
+    .custom(username => {
+      return User.findOne({ username: username })
+        .exec()
+        .then(user => !user);
     }),
+  getConfirmPasswordCheck('password'),
+];
+
+const updatePasswordValidations = [
+  getPasswordLengthCheck('new'),
+  getConfirmPasswordCheck('new'),
 ];
 
 
@@ -46,7 +59,6 @@ router.post('/register', registrationValidations, function (request, response) {
     errors: errors.array(),
   });
   const { username, password } = request.body;
-  const saltRounds = 10;
 
   promise
     .then(() => bcrypt.hash(password, saltRounds))
@@ -74,7 +86,8 @@ router.post('/login', function (request, response) {
     .exec()
     .then(_user => {
       if (!_user) {
-        throw new Error('user not found with given username');
+        const err = {message: responses.auth.login.user, jhijhi: true};
+        throw err;
       }
       user = _user;
       return bcrypt.compare(password, _user.password);
@@ -87,12 +100,41 @@ router.post('/login', function (request, response) {
           'token': token,
         });
       }
-      throw new Error('password did not match');
+      const err = {message: responses.auth.login.password, jhijhi: true};
+      throw err;
     })
     .catch(err => {
-      console.error(err);
+      const data = {err, user: request.user};
+      err.jhijhi ? logger.warn('Failed login attempt', data) : logger.error('Error while login', data);
       response.json({ success: false });
     });
+});
+
+router.put('/password', authenticateJwt(), updatePasswordValidations, function (request, response) {
+  const errors = validationResult(request);
+  const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({
+    status: 400,
+    errors: errors.array(),
+  });
+  const { current: password, new: newPassword } = request.body;
+  const { username } = request.user;
+
+  promise.then(() => User.findOne({ username }).exec())
+    .then(user => bcrypt.compare(password, user.password))
+    .then(matched => {
+      if (!matched) {
+        // simulating `express-validator` error style
+        const err = { status: 400, errors: [{ param: "current", msg: responses.auth.password.mismatch }] };
+        throw err;
+      }
+      return bcrypt.hash(newPassword, saltRounds);
+    })
+    .then(hashedPassword => User.updateOne({ username }, { password: hashedPassword }).exec())
+    .then(() => response.json({
+      success: true,
+      message: responses.auth.password.ok,
+    }))
+    .catch(err => sendErrorResponse(response, err, responses.auth.password.err, request.user));
 });
 
 module.exports = router;

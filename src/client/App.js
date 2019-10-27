@@ -25,7 +25,7 @@ const Umpire = React.lazy(() => import(/* webpackChunkName: "Umpire" */ './pages
 const Match = React.lazy(() => import(/* webpackChunkName: "Match" */ './pages/Match'));
 const Live = React.lazy(() => import(/* webpackChunkName: "Live" */ './pages/Live'));
 const History = React.lazy(() => import(/* webpackChunkName: "History" */ './pages/History'));
-const Kidding = React.lazy(() => import(/* webpackChunkName: "Kidding" */ './pages/Kidding'));
+const Kidding = React.lazy(() => import(/* webpackChunkName: "ChangePassword" */ './pages/Kidding'));
 const Password = React.lazy(() => import(/* webpackChunkName: "Password" */ './pages/Password'));
 const Public = React.lazy(() => import(/* webpackChunkName: "Public" */ './pages/Public'));
 

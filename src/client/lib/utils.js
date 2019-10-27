@@ -84,6 +84,20 @@ export function ordinal(number) {
   return 'th';
 }
 
+export const formatValidationFeedback = err => {
+  const isValid = {};
+  const feedback = {};
+  for (const error of err.response.data.err) {
+    if (isValid[error.param] === undefined) {
+      isValid[error.param] = false;
+    }
+    if (!feedback[error.param]) {
+      feedback[error.param] = error.msg;
+    }
+  }
+  return { isValid, feedback };
+};
+
 export function logout() {
   window.localStorage.removeItem('token');
   window.location.pathname = 'login';
