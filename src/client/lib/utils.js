@@ -100,5 +100,6 @@ export const formatValidationFeedback = err => {
 
 export function logout() {
   window.localStorage.removeItem('token');
-  window.location.pathname = 'login';
+  window.location.hash = 'login';
+  window.location.reload();
 }

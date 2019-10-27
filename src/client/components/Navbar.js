@@ -66,7 +66,7 @@ class Navbar extends Component {
                   <NavLink className="dropdown-item" onClick={this.collapse} to="/password">Change Password</NavLink>
                   <NavLink className="dropdown-item" onClick={this.collapse} to="/kidding">Manage Account</NavLink>
                 <DropdownItem divider />
-                  <NavLink className="dropdown-item text-warning" to="#" onClick={() => {
+                  <NavLink className="dropdown-item bg-warning text-white" to="#" onClick={() => {
                     this.collapse();
                     logout();
                   }}>Logout</NavLink>
