@@ -63,13 +63,14 @@ export default class ChangePassword extends Component {
           <h2>Change Password</h2>
           <hr/>
           <form onSubmit={this.onSubmit}>
-            <FormGroup name="current-password" onChange={e => this.onChange({ current: e.target.value })}
+            <FormGroup name="current-password" type="password"
+                       onChange={e => this.onChange({ current: e.target.value })}
                        value={values.current} isValid={isValid.current}
                        feedback={feedback.current} autoFocus={true}/>
-            <FormGroup name="new-password" onChange={e => this.onChange({ new: e.target.value })}
+            <FormGroup name="new-password" type="password" onChange={e => this.onChange({ new: e.target.value })}
                        value={values.new} isValid={isValid.new}
                        feedback={feedback.new}/>
-            <FormGroup name="confirm" onChange={e => this.onChange({ confirm: e.target.value })}
+            <FormGroup name="confirm" type="password" onChange={e => this.onChange({ confirm: e.target.value })}
                        value={values.confirm}/>
             <FormButton type="submit" text="Change" btnClass="outline-success"/>
           </form>
