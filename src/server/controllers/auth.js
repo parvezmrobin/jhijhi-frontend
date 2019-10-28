@@ -95,6 +95,7 @@ router.post('/login', function (request, response) {
     .then(matched => {
       if (matched) {
         const token = jwt.sign(user._id.toString(), process.env.DB_CONN);
+        logger.amplitude('AUTH.LOGIN', user._id, {username: user.username});
         return response.json({
           success: true,
           'token': token,

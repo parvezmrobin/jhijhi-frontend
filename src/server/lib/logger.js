@@ -33,13 +33,14 @@ if (process.env.NODE_ENV !== 'production') {
   }));
 }
 
-const amplitude = function (event) {
+const amplitude = function (eventName, userId, data, time) {
+  time = time || +new Date();
   return axios
-    .post('https://api.amplitude.com/httpapi', {
+    .post('https://api.amplitude.com/2/httpapi', {
       api_key: process.env.AMPLITUDE_KEY,
-      event,
+      events: [{event_type: eventName, user_id: userId, event_properties: data, time}],
     })
-    .catch(err => logger.error('Error Amplitude:', err));
+    .catch(err => logger.error('Error Amplitude:', {err: err.response.data}));
 };
 
 module.exports = logger;
