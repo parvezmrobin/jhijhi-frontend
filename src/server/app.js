@@ -14,6 +14,7 @@ const playersRouter = require('./controllers/players');
 const teamsRouter = require('./controllers/teams');
 const matchesRouter = require('./controllers/matches');
 const umpiresRouter = require('./controllers/umpires');
+const authentication = require('./authentication');
 
 const app = express();
 
@@ -54,7 +55,7 @@ app.use(function (request, response, next) {
 });
 
 
-require('./authentication')(app);
+app.use(authentication());
 
 /**
  * @namespace Request

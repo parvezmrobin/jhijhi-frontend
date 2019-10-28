@@ -17,7 +17,7 @@ module.exports = function (app) {
   return mongoose
     .connect(process.env.DB_CONN, { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true })
     .then(() => {
-      console.log("Connected to database: 'jhijhi'");
+      logger.info(`Connected to database: '${mongoose.connection.db.databaseName}'`);
 
       app.use(session({
         secret: process.env.DB_CONN, // using db url as the secret key :P :P :P

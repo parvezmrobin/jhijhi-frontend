@@ -14,9 +14,7 @@ const User = require('./models/user');
 const passport = require('passport');
 
 
-module.exports = function (app) {
-  app.use(passport.initialize({}));
-
+module.exports = function () {
   const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.DB_CONN,
@@ -36,4 +34,7 @@ module.exports = function (app) {
       })
       .catch(done);
   }));
+
+  const passportMiddleware = passport.initialize({});
+  return passportMiddleware;
 };
