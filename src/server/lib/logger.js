@@ -34,7 +34,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const amplitude = function (eventName, userId, data, time) {
-  time = time || +new Date();
+  time = Number(time || new Date());
   return axios
     .post('https://api.amplitude.com/2/httpapi', {
       api_key: process.env.AMPLITUDE_KEY,
