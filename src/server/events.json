@@ -1,0 +1,7 @@
+{
+  "Auth": {
+    "Register": "AUTH.REGISTER",
+    "Login": "AUTH.LOGIN",
+    "Password": "AUTH.PASSWORD_UPDATE"
+  }
+}

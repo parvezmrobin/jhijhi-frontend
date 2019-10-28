@@ -7,7 +7,8 @@ const bcrypt = require('bcrypt');
 const responses = require('../responses');
 const { check, validationResult } = require('express-validator/check');
 const { sendErrorResponse } = require('../lib/utils');
-const logger = require('../lib/logger');
+const Logger = require('../lib/logger');
+const Events = require('../events');
 
 /** @type {RequestHandler} */
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
@@ -69,6 +70,7 @@ router.post('/register', registrationValidations, function (request, response) {
       });
     })
     .then(user => {
+      Logger.amplitude(Events.Auth.Register, user._id, {username: user.username});
       return response.json({
         success: true,
         message: responses.auth.register.ok,
@@ -95,7 +97,7 @@ router.post('/login', function (request, response) {
     .then(matched => {
       if (matched) {
         const token = jwt.sign(user._id.toString(), process.env.DB_CONN);
-        logger.amplitude('AUTH.LOGIN', user._id, {username: user.username});
+        Logger.amplitude(Events.Auth.Login, user._id, {username: user.username});
         return response.json({
           success: true,
           'token': token,
@@ -106,7 +108,7 @@ router.post('/login', function (request, response) {
     })
     .catch(err => {
       const data = {err, user: request.user};
-      err.jhijhi ? logger.warn('Failed login attempt', data) : logger.error('Error while login', data);
+      err.jhijhi ? Logger.warn('Failed login attempt', data) : Logger.error('Error while login', data);
       response.json({ success: false });
     });
 });
@@ -120,8 +122,12 @@ router.put('/password', authenticateJwt(), updatePasswordValidations, function (
   const { current: password, new: newPassword } = request.body;
   const { username } = request.user;
 
+  let user;
   promise.then(() => User.findOne({ username }).exec())
-    .then(user => bcrypt.compare(password, user.password))
+    .then(_user => {
+      user = _user;
+      return bcrypt.compare(password, _user.password);
+    })
     .then(matched => {
       if (!matched) {
         // simulating `express-validator` error style
@@ -131,10 +137,13 @@ router.put('/password', authenticateJwt(), updatePasswordValidations, function (
       return bcrypt.hash(newPassword, saltRounds);
     })
     .then(hashedPassword => User.updateOne({ username }, { password: hashedPassword }).exec())
-    .then(() => response.json({
-      success: true,
-      message: responses.auth.password.ok,
-    }))
+    .then(() => {
+      Logger.amplitude(Events.Auth.Password, user._id, {username: user.username});
+      return response.json({
+        success: true,
+        message: responses.auth.password.ok,
+      });
+    })
     .catch(err => sendErrorResponse(response, err, responses.auth.password.err, request.user));
 });
 
