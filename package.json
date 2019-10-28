@@ -19,14 +19,14 @@
   "main": "src/server/bin/www",
   "engines": {
     "node": "10.x",
-    "npm": "6.x"
+    "yarn": "1.x"
   },
   "scripts": {
     "build": "webpack --mode production",
-    "start": "npm run build && node src/server/bin/www",
+    "start": "yarn run build && node src/server/bin/www",
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
     "server": "nodemon src/server/bin/www",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "concurrently \"yarn run server\" \"yarn run client\"",
     "test": "mocha --timeout 20000 src/server/test",
     "seed": "node src/server/console/seed.js",
     "del": "node src/server/console/del.js",
@@ -47,7 +47,7 @@
     "axios": "^0.18.0",
     "babel-loader": "^8.0.0",
     "babel-polyfill": "^6.26.0",
-    "bcrypt": "^3.0.5",
+    "bcrypt": "3.0.5",
     "bootstrap": "^4.3.1",
     "clean-webpack-plugin": "^1.0.0",
     "concurrently": "^4.0.0",
@@ -92,7 +92,8 @@
   },
   "devDependencies": {
     "@types/connect-mongo": "^0.0.44",
-    "@types/express": "^4.17.1",
+    "@types/express": "^4.16.3",
+    "@types/passport": "^0.4.0",
     "babel-eslint": "^9.0.0",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
