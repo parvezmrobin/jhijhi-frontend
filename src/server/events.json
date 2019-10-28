@@ -3,5 +3,13 @@
     "Register": "AUTH.REGISTER",
     "Login": "AUTH.LOGIN",
     "Password": "AUTH.PASSWORD_UPDATE"
+  },
+  "Match": {
+    "Begin": "MATCH.BEGIN",
+    "Bowl": {
+      "Create": "MATCH.BOWL.CREATE",
+      "Edit": "MATCH.BOWL.EDIT"
+    },
+    "Over": "MATCH.OVER"
   }
 }

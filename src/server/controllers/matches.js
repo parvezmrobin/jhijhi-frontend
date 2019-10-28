@@ -6,6 +6,10 @@ const passport = require('passport');
 const { check, validationResult } = require('express-validator/check');
 const { sendErrorResponse, send404Response, nullEmptyValues } = require('../lib/utils');
 const { Error400, Error404 } = require('../lib/errors');
+const Logger = require('../lib/logger');
+const Events = require('../events');
+const pick = require('lodash/pick');
+
 
 /** @type {RequestHandler} */
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
@@ -168,6 +172,15 @@ router.put('/:id/begin', authenticateJwt(), matchBeginValidations, (request, res
         .execPopulate();
     })
     .then((match) => {
+      Logger.amplitude(Events.Match.Begin, request.user._id, {
+        match_id: match._id,
+        team1Captain,
+        team2Captain,
+        team1Players,
+        team2Players,
+        state,
+      });
+
       return response.json({
         success: true,
         message: responses.matches.begin.ok,
@@ -214,6 +227,10 @@ router.put('/:id/toss', authenticateJwt(), matchTossValidations, (request, respo
       return match.save();
     })
     .then((match) => {
+      const amplitudeEvent = pick(match.toObject(), ['team1WonToss', 'team1BatFirst', 'state']);
+      Object.assign(amplitudeEvent, { won, choice, state });
+      Logger.amplitude(Events.Match.Begin, request.user._id, amplitudeEvent);
+
       return response.json({
         success: true,
         message: responses.matches.toss.ok,
@@ -232,16 +249,18 @@ router.put('/:id/declare', authenticateJwt(), (request, response) => {
   const id = request.params.id;
   const { state: nextState } = nullEmptyValues(request);
 
+  let match;
   Match
     .findOne({
       _id: id,
       creator: request.user._id,
     })
     .exec()
-    .then(match => {
-      if (!match) {
+    .then(_match => {
+      if (!_match) {
         throw new Error404(responses.matches.e404);
       }
+      match = _match;
       if (nextState && ['done', 'innings2'].indexOf(nextState) === -1) {
         throw new Error400(`Next state must be either 'done' or 'innings1'`);
       } else if (['innings1', 'innings2'].indexOf(match.state) === -1) {
@@ -266,32 +285,49 @@ router.put('/:id/declare', authenticateJwt(), (request, response) => {
       updateState.state = match.state;
       return Promise.all([updateState, match.save()]);
     })
-    .then(([updateState]) => response.json(updateState))
+    .then(([updateState]) => {
+      const amplitudeEvent = Object.assign({match_id: match._id}, updateState);
+      Logger.amplitude(Events.Match.Begin, request.user._id, amplitudeEvent);
+
+      return response.json(updateState);
+    })
     .catch(err => sendErrorResponse(response, err, responses.matches.get.err, request.user));
 });
 
 router.post('/:id/bowl', authenticateJwt(), (request, response) => {
   const bowl = nullEmptyValues(request);
   const id = request.params.id;
+
+  let match;
   Match
     .findOne({
       _id: id,
       creator: request.user._id,
     })
-    .then(match => {
+    .then(_match => {
+      match = _match;
       let updateQuery;
       if (match.state === 'innings1') {
         updateQuery = { $push: { [`innings1.overs.${match.innings1.overs.length - 1}.bowls`]: bowl } };
       } else if (match.state === 'innings2') {
         updateQuery = { $push: { [`innings2.overs.${match.innings2.overs.length - 1}.bowls`]: bowl } };
       } else {
-        return response.status(400)
-          .json({ success: false });
+        const error = {status: 400, message: `Cannot add bowl in state ${match.state}`};
+        throw error;
       }
       return match.update(updateQuery)
         .exec();
     })
     .then(() => {
+      const innings = match[match.state];
+      const amplitudeEvent = {
+        match_id: match._id,
+        overIndex: innings.overs.length - 1,
+        bowlIndex: innings.overs[innings.overs.length - 1].bowls.length,
+      };
+      Object.assign(amplitudeEvent, bowl);
+      Logger.amplitude(Events.Match.Bowl.Create, request.user._id, amplitudeEvent);
+
       return response.json({ success: true });
     })
     .catch(err => sendErrorResponse(response, err, 'Error while saving bowl', request.user));
@@ -346,6 +382,15 @@ const _updateBowlAndSend = (match, bowl, response, overNo, bowlNo) => {
   return Match.findByIdAndUpdate(match._id, updateQuery)
     .exec()
     .then(() => {
+      const innings = match[match.state];
+      const amplitudeEvent = {
+        match_id: match._id,
+        overIndex: innings.overs.length - 1,
+        bowlIndex: innings.overs[innings.overs.length - 1].bowls.length,
+      };
+      Object.assign(amplitudeEvent, bowl);
+      Logger.amplitude(Events.Match.Bowl.Create, response.req.user._id, amplitudeEvent);
+
       return response.json({
         success: true,
         bowl,
@@ -409,12 +454,15 @@ router.post('/:id/over', authenticateJwt(), (request, response) => {
   const over = nullEmptyValues(request);
   over.bowls = [];
   const id = request.params.id;
+
+  let match;
   Match
     .findOne({
       _id: id,
       creator: request.user._id,
     })
-    .then(match => {
+    .then(_match => {
+      match = _match;
       let updateQuery;
       if (match.state === 'innings1') {
         updateQuery = { $push: { [`innings1.overs`]: over } };
@@ -431,9 +479,14 @@ router.post('/:id/over', authenticateJwt(), (request, response) => {
         .exec();
     })
     .then(() => {
-      return response.json({
-        success: true,
-      });
+      const innings = match[match.state];
+      const amplitudeEvent = {
+        match_id: match._id,
+        overIndex: innings.overs.length,
+      };
+      Logger.amplitude(Events.Match.Over, response.req.user._id, amplitudeEvent);
+
+      return response.json({success: true});
     })
     .catch((err) => sendErrorResponse(response, err, 'Error while saving over', request.user));
 });
@@ -509,6 +562,9 @@ router.get('/', authenticateJwt(), (request, response) => {
     .catch(err => sendErrorResponse(response, err, responses.matches.index.err, request.user));
 });
 
+/**
+ * Create a new match
+ */
 router.post('/', authenticateJwt(), matchCreateValidations, (request, response) => {
   const errors = validationResult(request);
   console.log(errors.array());
@@ -533,6 +589,8 @@ router.post('/', authenticateJwt(), matchCreateValidations, (request, response) 
       creator: request.user._id,
     }))
     .then(createdMatch => {
+      Logger.amplitude(Events.Match.Bowl.Create, response.req.user._id, createdMatch);
+
       return response.json({
         success: true,
         message: responses.matches.create.ok(name),
