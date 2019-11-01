@@ -3,21 +3,24 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-
 const outputDirectory = 'public';
+const outputPath = path.join(__dirname, outputDirectory);
 
 module.exports = {
-  entry: ['babel-polyfill', './src/client/index.js'],
+  entry: {
+    main: ['babel-polyfill', './src/client/index.js'],
+    serviceWorker: './src/client/serviceWorker.js',
+  },
   output: {
-    path: path.join(__dirname, outputDirectory),
-    filename: '[name].[hash].js',
+    path: outputPath,
+    filename: (file) => file.chunk.name === 'serviceWorker' ? '[name].js' : '[name].[hash].js',
     chunkFilename: '[name].chunk.[hash].js',
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
+        exclude:[ /node_modules/],
         use: {
           loader: 'babel-loader',
         },
