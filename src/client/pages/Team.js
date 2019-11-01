@@ -11,9 +11,10 @@ import SidebarList from '../components/SidebarList';
 import TeamForm from '../components/TeamForm';
 import fetcher from '../lib/fetcher';
 import { bindMethods } from '../lib/utils';
-import { Alert, Toast, ToastBody, ToastHeader } from 'reactstrap';
+import { Alert } from 'reactstrap';
 import debounce from 'lodash/debounce';
 import ErrorModal from '../components/ErrorModal';
+import Notification from "../components/Notification";
 
 
 class Team extends Component {
@@ -123,14 +124,7 @@ class Team extends Component {
     return (
       <div className="container-fluid px-0">
 
-        <Toast isOpen={!!message}>
-          <ToastHeader icon="primary" toggle={() => this.setState({ message: null })}>
-            Jhijhi
-          </ToastHeader>
-          <ToastBody>
-            {message}
-          </ToastBody>
-        </Toast>
+        <Notification message={message} toggle={() => this.setState({ message: null })}/>
 
         <div className="row">
           <aside className="col-md-3">

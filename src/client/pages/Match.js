@@ -11,10 +11,10 @@ import SidebarList from '../components/SidebarList';
 import MatchForm from '../components/MatchForm';
 import { bindMethods } from '../lib/utils';
 import fetcher from '../lib/fetcher';
-import { Toast, ToastBody, ToastHeader } from 'reactstrap';
 import { Link, Redirect } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 import ErrorModal from '../components/ErrorModal';
+import Notification from "../components/Notification";
 
 
 class Match extends Component {
@@ -190,16 +190,8 @@ class Match extends Component {
 
     return (
       <div className="container-fluid pl-0">
-        <div className="fixed-top">
-          <Toast isOpen={!!message}>
-            <ToastHeader icon="primary" toggle={() => this.setState({ message: null })}>
-              Jhijhi
-            </ToastHeader>
-            <ToastBody>
-              {message}
-            </ToastBody>
-          </Toast>
-        </div>
+        <Notification message={message} toggle={() => this.setState({ message: null })}/>
+
         <div className="row">
           <aside className="col-md-3">
             <CenterContent col="col">

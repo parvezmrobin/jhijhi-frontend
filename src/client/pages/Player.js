@@ -10,9 +10,10 @@ import CenterContent from '../components/layouts/CenterContent';
 import PlayerForm from '../components/PlayerForm';
 import fetcher from '../lib/fetcher';
 import { bindMethods } from '../lib/utils';
-import { Alert, Toast, ToastBody, ToastHeader } from 'reactstrap';
+import { Alert } from 'reactstrap';
 import PlayerSidebar from '../components/PlayerSidebar';
 import ErrorModal from '../components/ErrorModal';
+import Notification from "../components/Notification";
 
 class Player extends Component {
   constructor(props) {
@@ -188,17 +189,8 @@ class Player extends Component {
   render() {
     const playerId = this.props.match.params.id;
     return (
-      <div className="container-fluid pl-0">
-        <div className="fixed-top">
-          <Toast isOpen={!!this.state.message}>
-            <ToastHeader icon="primary" toggle={() => this.setState({ message: null })}>
-              Jhijhi
-            </ToastHeader>
-            <ToastBody>
-              {this.state.message}
-            </ToastBody>
-          </Toast>
-        </div>
+      <div className="container-fluid px-0">
+        <Notification message={this.state.message} toggle={() => this.setState({ message: null })}/>
 
         <div className="row">
           <PlayerSidebar editable playerId={playerId} players={this.state.players}
