@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
 import MatchForm from '../components/MatchForm';
-import { bindMethods } from '../lib/utils';
+import { bindMethods, formatValidationFeedback } from '../lib/utils';
 import fetcher from '../lib/fetcher';
 import { Link, Redirect } from 'react-router-dom';
 import debounce from 'lodash/debounce';
@@ -101,26 +101,7 @@ class Match extends Component {
           }));
         })
         .catch(err => {
-          const isValid = {
-            name: true,
-            team1: true,
-            team2: true,
-            overs: true,
-          };
-          const feedback = {
-            name: null,
-            team1: null,
-            team2: null,
-            overs: null,
-          };
-          for (const error of err.response.data.err) {
-            if (isValid[error.param]) {
-              isValid[error.param] = false;
-            }
-            if (!feedback[error.param]) {
-              feedback[error.param] = error.msg;
-            }
-          }
+          const { isValid, feedback } = formatValidationFeedback(err);
 
           this.setState({
             isValid,

@@ -10,7 +10,7 @@ import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
 import TeamForm from '../components/TeamForm';
 import fetcher from '../lib/fetcher';
-import { bindMethods } from '../lib/utils';
+import { bindMethods, formatValidationFeedback } from '../lib/utils';
 import { Alert } from 'reactstrap';
 import debounce from 'lodash/debounce';
 import ErrorModal from '../components/ErrorModal';
@@ -77,22 +77,7 @@ class Team extends Component {
           }));
         })
         .catch(err => {
-          const isValid = {
-            name: true,
-            shortName: true,
-          };
-          const feedback = {
-            name: null,
-            shortName: null,
-          };
-          for (const error of err.response.data.err) {
-            if (isValid[error.param]) {
-              isValid[error.param] = false;
-            }
-            if (!feedback[error.param]) {
-              feedback[error.param] = error.msg;
-            }
-          }
+          const { isValid, feedback } = formatValidationFeedback(err);
 
           this.setState({
             isValid,

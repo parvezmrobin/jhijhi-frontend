@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
 import PlayerForm from '../components/PlayerForm';
 import fetcher from '../lib/fetcher';
-import { bindMethods } from '../lib/utils';
+import { bindMethods, formatValidationFeedback } from '../lib/utils';
 import { Alert } from 'reactstrap';
 import PlayerSidebar from '../components/PlayerSidebar';
 import ErrorModal from '../components/ErrorModal';
@@ -156,22 +156,7 @@ class Player extends Component {
 
       submission
         .catch(err => {
-          const isValid = {
-            name: true,
-            jerseyNo: true,
-          };
-          const feedback = {
-            name: null,
-            jerseyNo: null,
-          };
-          for (const error of err.response.data.err) {
-            if (isValid[error.param]) {
-              isValid[error.param] = false;
-            }
-            if (!feedback[error.param]) {
-              feedback[error.param] = error.msg;
-            }
-          }
+          const { isValid, feedback } = formatValidationFeedback(err);
 
           this.setState({
             isValid,
