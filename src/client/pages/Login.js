@@ -38,7 +38,7 @@ class Login extends Component {
       const postData = { ...this.state.values };
 
       axios
-        .post('/api/auth/login', postData, { cancelToken: this.cancelTokenSource.token })
+        .post(`${process.env.SERVER_URL}/api/auth/login`, postData, { cancelToken: this.cancelTokenSource.token })
         .then(response => {
           const isValid = {
             username: true,
