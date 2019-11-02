@@ -66,6 +66,10 @@ module.exports = {
       ok: (name) => `Successfully created match ${name}`,
       err: "Error while creating match",
     },
+    edit: {
+      ok: (name) => `Successfully edited match ${name}`,
+      err: "Error while editing match",
+    },
     begin: {
       ok: `Successfully started match`,
       err: "Error while starting match",

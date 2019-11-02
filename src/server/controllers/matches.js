@@ -9,17 +9,34 @@ const { Error400, Error404 } = require('../lib/errors');
 const Logger = require('../lib/logger');
 const Events = require('../events');
 const pick = require('lodash/pick');
+const isMongoId = require('validator/lib/isMongoId');
+const ObjectId = require('mongoose/lib/types/objectid');
 
 
 /** @type {RequestHandler} */
 const authenticateJwt = passport.authenticate.bind(passport, 'jwt', { session: false });
 
 
+const nameExistsValidation = check('name', 'A match name is required')
+  .trim()
+  .exists({ checkFalsy: true });
+const team1ExistsValidation = check('team1', 'Select a team')
+  .isMongoId();
+const team2ExistsValidation = check('team2', 'Select a team')
+  .isMongoId();
+const minimumOverValidation = check('overs', 'Overs must be greater than 0')
+  .isInt({ min: 1 });
+const genOptionalExistsValidation = field => check(field).custom(umpire => umpire ? isMongoId(umpire) : true);
+
 const matchCreateValidations = [
-  check('name', 'A unique match name is required')
-    .trim()
-    .exists({ checkFalsy: true }),
-  check('name')
+  nameExistsValidation,
+  team1ExistsValidation,
+  team2ExistsValidation,
+  genOptionalExistsValidation('umpire1'),
+  genOptionalExistsValidation('umpire2'),
+  genOptionalExistsValidation('umpire3'),
+  minimumOverValidation,
+  check('name', 'Match Name already taken')
     .custom((name, { req }) => {
       return Match
         .findOne({
@@ -27,26 +44,32 @@ const matchCreateValidations = [
           name: name,
         })
         .exec()
-        .then(match => {
-          if (match) {
-            throw new Error('Match Name already taken.');
-          }
-          return true;
-        });
+        .then(match => !match);
     }),
-  check('team1', 'Select a team')
-    .isMongoId(),
-  check('team2', 'Select a team')
-    .isMongoId(),
-  check('team1')
-    .custom((team1, { req }) => {
-      if (team1 === req.body.team2) {
-        throw new Error('Team 1 and Team 2 should be different.');
-      }
-      return true;
+  check('team1', 'Team 1 and Team 2 should be different.')
+    .custom((team1, { req }) => team1 !== req.body.team2),
+];
+
+const matchEditValidations = [
+  nameExistsValidation,
+  team1ExistsValidation,
+  team2ExistsValidation,
+  genOptionalExistsValidation('umpire1'),
+  genOptionalExistsValidation('umpire2'),
+  genOptionalExistsValidation('umpire3'),
+  minimumOverValidation,
+  check('name', 'Match Name already taken')
+    .custom((name, { req }) => {
+      return Match
+        .findOne({
+          creator: req.user._id,
+          name: name,
+        })
+        .exec()
+        .then(match => !(match && match._id.toString() !== req.params.id));
     }),
-  check('overs', 'Overs must be greater than 0')
-    .isInt({ min: 1 }),
+  check('team1', 'Team 1 and Team 2 should be different.')
+    .custom((team1, { req }) => team1 !== req.body.team2),
 ];
 
 const matchBeginValidations = [
@@ -450,6 +473,44 @@ router.put('/:id/uncertain-out', uncertainOutValidations, authenticateJwt(), (re
     .catch(err => sendErrorResponse(response, err, 'Error while adding out', request.user));
 });
 
+router.put('/:id', authenticateJwt(), matchEditValidations, (request, response) => {
+  const errors = validationResult(request);
+  const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({
+    status: 400,
+    errors: errors.array(),
+  });
+  const { name, team1, team2, umpire1, umpire2, umpire3, overs, tags } = request.body;
+
+  promise
+    .then(() => {
+      return Match
+        .findOneAndUpdate({
+          _id: ObjectId(request.params.id),
+          creator: request.user._id,
+        }, {
+          name,
+          team1,
+          team2,
+          umpire1,
+          umpire2,
+          umpire3,
+          overs,
+          tags,
+        }, { new: true });
+    })
+    .then(updatedMatch => {
+      if (!updatedMatch) {
+        return send404Response(response, responses.matches.get.err);
+      }
+      return response.json({
+        success: true,
+        message: responses.matches.edit.ok(name),
+        match: pick(updatedMatch, ['_id', 'name', 'team1', 'team2', 'umpire1', 'umpire2', 'umpire3', 'overs', 'tags']),
+      });
+    })
+    .catch(err => sendErrorResponse(response, err, responses.matches.edit.err, request.user));
+});
+
 router.post('/:id/over', authenticateJwt(), (request, response) => {
   const over = nullEmptyValues(request);
   over.bowls = [];
@@ -577,7 +638,6 @@ router.get('/', authenticateJwt(), (request, response) => {
  */
 router.post('/', authenticateJwt(), matchCreateValidations, (request, response) => {
   const errors = validationResult(request);
-  console.log(errors.array());
 
   const promise = errors.isEmpty() ? Promise.resolve() : Promise.reject({
     status: 400,
