@@ -46,9 +46,16 @@ module.exports = {
     index: {
       err: "Error while retrieving team list",
     },
+    get: {
+      err: 'Player could not found',
+    },
     create: {
       ok: (name) => `Successfully created team ${name}`,
       err: "Error while creating team",
+    },
+    edit: {
+      ok: (name) => `Successfully edited team ${name}`,
+      err: "Error while editing team",
     },
   },
   matches: {

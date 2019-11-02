@@ -10,6 +10,7 @@ import CenterContent from '../components/layouts/CenterContent';
 import TeamForm from '../components/TeamForm';
 import fetcher from '../lib/fetcher';
 import { bindMethods, formatValidationFeedback } from '../lib/utils';
+import cloneDeep from 'lodash/cloneDeep';
 import { Alert } from 'reactstrap';
 import ErrorModal from '../components/ErrorModal';
 import Notification from "../components/Notification";
@@ -20,25 +21,33 @@ class Team extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      team: {
-        name: '',
-        shortName: '',
-      },
+      ...cloneDeep(Team.initialValues),
       teams: [],
-      isValid: {
-        name: null,
-        shortName: null,
-      },
-      feedback: {
-        name: null,
-        shortName: null,
-      },
       message: null,
       showErrorModal: false,
       redirected: this.props.location.search.startsWith('?redirected=1'),
     };
     bindMethods(this);
   }
+
+  static initialValidationFeedback = {
+    isValid: {
+      name: null,
+      shortName: null,
+    },
+    feedback: {
+      name: null,
+      shortName: null,
+    },
+  };
+
+  static initialValues = {
+    team: {
+      name: '',
+      shortName: '',
+    },
+    ...cloneDeep(Team.initialValidationFeedback),
+  };
 
   handlers = {
     /**
@@ -109,13 +118,15 @@ class Team extends Component {
     if (teams.length && teamId) {
       this._loadTeam(teams, teamId);
     } else {
-      this.setState({ team: { name: '', shortName: '' } });
+      this.setState(cloneDeep(Team.initialValues));
     }
   }
 
   _loadTeam(teams, teamId) {
     const team = teams.find(_team => _team._id === teamId);
-    team && this.setState({ team: team });
+    team && this.setState({
+      team: team, ...cloneDeep(Team.initialValidationFeedback),
+    });
   }
 
   _createTeam() {
@@ -127,19 +138,8 @@ class Team extends Component {
         return this.setState(prevState => ({
           ...prevState,
           teams: prevState.teams.concat(response.data.team),
-          team: {
-            name: '',
-            shortName: '',
-          },
           message: response.data.message,
-          isValid: {
-            name: null,
-            shortName: null,
-          },
-          feedback: {
-            name: null,
-            shortName: null,
-          },
+          ...cloneDeep(Team.initialValues),
         }));
       });
   }
