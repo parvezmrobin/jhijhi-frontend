@@ -37,8 +37,8 @@ class Umpire extends Component {
 
   componentDidMount() {
     this.unlisten = this.props.history.listen((location) => {
-      const umpires = location.pathname.substr(8);
-      this._loadUmpireIfNecessary(umpires);
+      const umpireId = location.pathname.substr(8);
+      this._loadUmpireIfNecessary(umpireId);
     });
 
     this._loadUmpires();
