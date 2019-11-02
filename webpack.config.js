@@ -49,7 +49,6 @@ module.exports = {
     open: true,
     historyApiFallback: true,
     proxy: {
-      '/api': 'http://localhost:8080',
       '/manifest.json': 'http://localhost:8080',
       '/favicon.png': 'http://localhost:8080',
       '/frustrated.gif': 'http://localhost:8080',
