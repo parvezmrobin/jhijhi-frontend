@@ -150,13 +150,13 @@ class Umpire extends Component {
   render() {
     const umpireId = this.props.match.params.id;
     return (
-      <div className="container-fluid pl-0">
+      <div className="container-fluid px-0">
         <Notification message={this.state.message} toggle={() => this.setState({ message: null })}/>
 
         <div className="row">
           <UmpireSidebar editable umpireId={umpireId} umpires={this.state.umpires}
                          onFilter={this._loadUmpires}/>
-          <main className="col">
+          <main className="col pt-3 pt-sm-0">
             <CenterContent col="col-lg-8 col-md-10">
               <UmpireForm values={this.state.umpire} onChange={this.onChange}
                           onSubmit={this.onSubmit}

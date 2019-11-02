@@ -215,14 +215,14 @@ class Match extends Component {
     const matchId = this.props.match.params.id;
 
     return (
-      <div className="container-fluid pl-0">
+      <div className="container-fluid px-0">
         <Notification message={message} toggle={() => this.setState({ message: null })}/>
 
         <div className="row">
           <MatchSidebar editable searchKeyword={searchKeyword} matchId={matchId} matches={matches}
                         onFilter={this._loadMatches}/>
 
-          <main className="col">
+          <main className="col pt-3 pt-sm-0">
             <CenterContent col="col-lg-8 col-md-10">
               <MatchForm teams={teams || []} umpires={umpires} values={match} tags={tags}
                          onChange={this.onChange} onSubmit={this.onSubmit}

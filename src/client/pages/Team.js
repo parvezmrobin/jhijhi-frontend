@@ -183,7 +183,7 @@ class Team extends Component {
 
         <div className="row">
           <TeamSidebar editable teamId={teamId} teams={this.state.teams} onFilter={this._loadTeams}/>
-          <main className="col">
+          <main className="col pt-3 pt-sm-0">
             <CenterContent col="col-lg-8 col-md-10">
               {this.state.redirected && <Alert color="primary">
                 <p className="lead mb-0">You need at least 2 teams to create a match.</p>

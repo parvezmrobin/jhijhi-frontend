@@ -180,7 +180,7 @@ class Player extends Component {
         <div className="row">
           <PlayerSidebar editable playerId={playerId} players={this.state.players}
                          onFilter={this._loadPlayers}/>
-          <main className="col">
+          <main className="col pt-3 pt-sm-0">
             <CenterContent col="col-lg-8 col-md-10">
               {this.state.redirected && <Alert color="primary">
                 <p className="lead mb-0">
