@@ -2,7 +2,9 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
 
+require('dotenv').config();
 const outputDirectory = 'public';
 const outputPath = path.join(__dirname, outputDirectory);
 
@@ -54,6 +56,9 @@ module.exports = {
     },
   },
   plugins: [
+    new webpack.DefinePlugin({
+        'process.env.SERVER_URL': `'${process.env.SERVER_URL}'`,
+    }),
     new MiniCssExtractPlugin({filename: '[name].[contentHash].css'}),
     new CleanWebpackPlugin([outputDirectory]),
     new HtmlWebpackPlugin({

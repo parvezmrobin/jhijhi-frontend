@@ -39,7 +39,7 @@ class Register extends Component {
       const postData = {...this.state.values};
 
       axios
-        .post('/api/auth/register', postData, {cancelToken: this.cancelTokenSource.token})
+        .post(`${process.env.SERVER_URL}/api/auth/register`, postData, {cancelToken: this.cancelTokenSource.token})
         .then(() => {
           this.props.history.push('/login');
           return window.location.href = "";
