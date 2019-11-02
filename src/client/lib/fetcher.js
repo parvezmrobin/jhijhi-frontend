@@ -19,7 +19,7 @@ const fetcher = {
 let cancelTokenSource = axios.CancelToken.source();
 
 const baseAxios = axios.create({
-  baseURL: '/api/',
+  baseURL: `${process.env.SERVER_URL}/api/`,
   headers: {Authorization: `Bearer ${fetcher.token}`},
   cancelToken: cancelTokenSource.token,
 });
