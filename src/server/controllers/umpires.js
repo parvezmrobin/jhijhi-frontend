@@ -39,7 +39,7 @@ const umpireEditValidations = [
 ];
 
 
-/* GET teams listing. */
+/* GET umpires listing. */
 router.get('/', authenticateJwt(), (request, response) => {
   let query = { creator: request.user._id };
   if (request.query.search) {
@@ -78,7 +78,7 @@ router.post('/', authenticateJwt(), umpireCreateValidations, (request, response)
         },
       });
     })
-    .catch(err => sendErrorResponse(response, err, responses.umpires.create.err));
+    .catch(err => sendErrorResponse(response, err, responses.umpires.create.err, request.user));
 });
 
 /* Edit an existing umpire */
@@ -111,11 +111,10 @@ router.put('/:id', authenticateJwt(), umpireEditValidations, (request, response)
         umpire: {
           _id: updatedUmpire._id,
           name: updatedUmpire.name,
-          jerseyNo: updatedUmpire.jerseyNo,
         },
       });
     })
-    .catch(err => sendErrorResponse(response, err, responses.umpires.edit.err));
+    .catch(err => sendErrorResponse(response, err, responses.umpires.edit.err, request.user));
 });
 
 module.exports = router;
