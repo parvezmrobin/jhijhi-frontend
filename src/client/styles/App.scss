@@ -272,10 +272,12 @@ th[scope="row"] {
   display: none;
 }
 
+.tag__indicator.tag__clear-indicator {
+  padding-right: 0!important;
+}
+
 .tag__indicator.tag__dropdown-indicator {
-  svg {
-    display: none !important;
-  }
+  display: none !important;
 }
 
 .tag__multi-value {

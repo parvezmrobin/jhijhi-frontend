@@ -541,6 +541,11 @@ router.get('/:id', (request, response) => {
     .populate('team1Players')
     .populate('team2Players')
     .lean()
+    .exec()
+    .then(match => {
+      match.tags = match.tags || []; // put a default value if `tags` field is absent
+      return match;
+    })
     .then(match => response.json(match))
     .catch(err => sendErrorResponse(response, err, responses.matches.get.err, request.user));
 });
@@ -558,6 +563,11 @@ router.get('/', authenticateJwt(), (request, response) => {
   Match
     .find(query)
     .lean()
+    .exec()
+    .then(matches => {
+      matches.forEach(match => match.tags = match.tags || []); // put a default value if `tags` field is absent
+      return matches;
+    })
     .then(matches => response.json(matches))
     .catch(err => sendErrorResponse(response, err, responses.matches.index.err, request.user));
 });

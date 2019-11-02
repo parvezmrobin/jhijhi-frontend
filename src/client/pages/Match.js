@@ -7,46 +7,54 @@
 
 import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
-import SidebarList from '../components/SidebarList';
 import MatchForm from '../components/MatchForm';
 import { bindMethods, formatValidationFeedback } from '../lib/utils';
+import cloneDeep from "lodash/cloneDeep";
 import fetcher from '../lib/fetcher';
-import { Link, Redirect } from 'react-router-dom';
-import debounce from 'lodash/debounce';
+import { Redirect } from 'react-router-dom';
 import ErrorModal from '../components/ErrorModal';
 import Notification from "../components/Notification";
+import MatchSidebar from "../components/MatchSidebar";
 
 
 class Match extends Component {
+  static initialValidationFeedback = {
+    isValid: {
+      name: null,
+      team1: null,
+      team2: null,
+      overs: null,
+    },
+    feedback: {
+      name: null,
+      team1: null,
+      team2: null,
+      overs: '',
+    },
+  };
+
+  static initialValues = {
+    match: {
+      name: '',
+      team1: '',
+      team2: '',
+      umpire1: '',
+      umpire2: '',
+      umpire3: '',
+      overs: '',
+      tags: [],
+    },
+    ...cloneDeep(Match.initialValidationFeedback),
+  };
+
   constructor(props) {
     super(props);
     this.state = {
-      match: {
-        name: '',
-        team1: '',
-        team2: '',
-        umpire1: '',
-        umpire2: '',
-        umpire3: '',
-        overs: '',
-        tags: [],
-      },
-      teams: null,
+      ...cloneDeep(Match.initialValues),
+      teams: null, // indicates that `teams` are not loaded yet
       matches: [],
       umpires: [],
       tags: [],
-      isValid: {
-        name: null,
-        team1: null,
-        team2: null,
-        overs: null,
-      },
-      feedback: {
-        name: null,
-        team1: null,
-        team2: null,
-        overs: '',
-      },
       message: null,
       showErrorModal: false,
       searchKeyword: '', // if `searchKeyword` is not empty, then matched tags will be shown
@@ -55,51 +63,15 @@ class Match extends Component {
   }
 
   handlers = {
-    onChange(action) {
+    onChange(newValues) {
       this.setState(prevState => {
-        return { match: { ...prevState.match, ...action } };
+        return { match: { ...prevState.match, ...newValues } };
       });
     },
 
     onSubmit() {
-      // clone necessary data from `this.state`
-      const postData = { ...this.state.match };
-
-      fetcher
-        .post('matches', postData)
-        .then((response) => {
-          return this.setState(prevState => ({
-            ...prevState,
-            match: {
-              name: '',
-              team1: '',
-              team2: '',
-              umpire1: '',
-              umpire2: '',
-              umpire3: '',
-              overs: '',
-              tags: [],
-            },
-            matches: prevState.matches.concat({
-              ...prevState.match,
-              _id: response.data.match._id,
-            }),
-            tags: prevState.tags.concat(prevState.match.tags),
-            isValid: {
-              name: null,
-              team1: null,
-              team2: null,
-              overs: null,
-            },
-            feedback: {
-              name: null,
-              team1: null,
-              team2: null,
-              overs: null,
-            },
-            message: response.data.message,
-          }));
-        })
+      const submission = this.state.match._id ? this._updateMatch() : this._createMatch();
+      submission
         .catch(err => {
           const { isValid, feedback } = formatValidationFeedback(err);
 
@@ -107,11 +79,27 @@ class Match extends Component {
             isValid,
             feedback,
           });
-        });
+        })
+        .catch(this.onError);
+    },
+
+    onError(_) {
+      this.setState({ showErrorModal: true });
     },
   };
 
   componentDidMount() {
+    this.unlisten = this.props.history.listen((location) => {
+      const matchId = location.pathname.substr('/match@'.length);
+      this._loadMatchIfNecessary(matchId);
+    });
+
+    this._loadMatches();
+
+    this._loadAuxiliaryLists();
+  }
+
+  _loadAuxiliaryLists() {
     fetcher
       .get('teams')
       .then(response => {
@@ -122,7 +110,7 @@ class Match extends Component {
           }].concat(response.data),
         });
       })
-      .catch(() => this.setState({ showErrorModal: true }));
+      .catch(this.onError);
     fetcher
       .get('umpires')
       .then(response => {
@@ -133,70 +121,117 @@ class Match extends Component {
           }].concat(response.data),
         });
       })
-      .catch(() => this.setState({ showErrorModal: true }));
+      .catch(this.onError);
     fetcher
       .get('matches/tags')
       .then(response => this.setState({ tags: response.data }))
-      .catch(() => this.setState({ showErrorModal: true }));
-    this._loadMatches();
+      .catch(this.onError);
   }
 
   _loadMatches = (keyword = '') => {
     fetcher
       .get(`matches?search=${keyword}`)
-      .then(response => this.setState({ matches: response.data, searchKeyword: keyword }))
-      .catch(() => this.setState({ showErrorModal: true }));
+      .then(response => {
+        if (this.props.match.params.id) {
+          this._loadMatch(response.data, this.props.match.params.id);
+        }
+        return this.setState({ matches: response.data, searchKeyword: keyword });
+      })
+      .catch(this.onError);
   };
 
   componentWillUnmount() {
+    this.unlisten(); // unlisten to route change events
     fetcher.cancelAll();
   }
 
+  /**
+   * Called when route is changed.
+   * Loads `match` state if `matchId` is truthy for editing purpose.
+   * @param matchId
+   * @private
+   */
+  _loadMatchIfNecessary(matchId) {
+    const matches = this.state.matches;
+    if (matches.length && matchId) {
+      this._loadMatch(matches, matchId);
+    } else {
+      this.setState(cloneDeep(Match.initialValues));
+    }
+  }
+
+  _loadMatch(matches, matchId) {
+    const match = matches.find(_match => _match._id === matchId);
+    match && this.setState({ match, ...cloneDeep(Match.initialValidationFeedback) });
+  }
+
+  _createMatch() {
+    const postData = { ...this.state.match };
+
+    return fetcher
+      .post('matches', postData)
+      .then((response) => {
+        return this.setState(prevState => ({
+          ...prevState,
+          ...cloneDeep(Match.initialValues),
+          matches: prevState.matches.concat({
+            ...prevState.match,
+            _id: response.data.match._id,
+          }),
+          tags: prevState.tags.concat(prevState.match.tags),
+          message: response.data.message,
+        }));
+      });
+  }
+
+  _updateMatch() {
+    const { match } = this.state;
+    const postData = { ...match };
+
+    return fetcher
+      .put(`matches/${match._id}`, postData)
+      .then(response => {
+        return this.setState(prevState => {
+          const matchIndex = prevState.matches.findIndex(_match => _match._id === match._id);
+          if (matchIndex !== -1) {
+            prevState.matches[matchIndex] = response.data.match;
+          }
+
+          return {
+            ...prevState,
+            ...cloneDeep(Match.initialValidationFeedback),
+            message: response.data.message,
+          };
+        });
+      });
+  }
+
   render() {
-    const { message, teams, searchKeyword } = this.state;
-    if (teams && teams.length < 3) {
+    const { message, teams, searchKeyword, matches, match, tags, showErrorModal, umpires, isValid, feedback } = this.state;
+    if (teams && teams.length < 2) { // if `teams` are loaded but has less than 2 teams
       return <Redirect to="/team?redirected=1"/>;
     }
 
-    const regExp = new RegExp(searchKeyword, 'i');
-    const sidebarItemMapper = (match) => {
-      const tags = searchKeyword && match.tags && match.tags.map(
-        tag => regExp.test(tag) ? tag : <span key={tag} className="text-secondary">{tag}</span>
-      ); // dim tags that are not matched
-      return <Link className="text-white" to={`live@${match._id}`} title={match.tags}>
-        {match.name}
-        {tags && <> ({tags.map((tag, i) => [!!i && ', ', tag])})</>} {/*put a comma before every element but first one*/}
-      </Link>;
-    };
+    const matchId = this.props.match.params.id;
 
     return (
       <div className="container-fluid pl-0">
         <Notification message={message} toggle={() => this.setState({ message: null })}/>
 
         <div className="row">
-          <aside className="col-md-3">
-            <CenterContent col="col">
-              <SidebarList
-                title="Upcoming Matches"
-                itemClass="text-white"
-                itemMapper={sidebarItemMapper}
-                list={this.state.matches}
-                onFilter={debounce(this._loadMatches, 1000)}/>
-            </CenterContent>
-          </aside>
+          <MatchSidebar editable searchKeyword={searchKeyword} matchId={matchId} matches={matches}
+                        onFilter={this._loadMatches}/>
+
           <main className="col">
             <CenterContent col="col-lg-8 col-md-10">
-              <MatchForm teams={teams || []} umpires={this.state.umpires}
-                         values={this.state.match}
-                         tags={this.state.tags}
+              <MatchForm teams={teams || []} umpires={umpires} values={match} tags={tags}
                          onChange={this.onChange} onSubmit={this.onSubmit}
-                         isValid={this.state.isValid} feedback={this.state.feedback}/>
+                         isValid={isValid} feedback={feedback}/>
             </CenterContent>
           </main>
         </div>
 
-        <ErrorModal isOpen={this.state.showErrorModal}
-                    close={() => this.setState({ showErrorModal: false })}/>
+        <ErrorModal isOpen={showErrorModal} close={() => this.setState({ showErrorModal: false })}/>
       </div>
     );
   }

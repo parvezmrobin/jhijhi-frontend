@@ -8,15 +8,17 @@
 import React, { Fragment } from 'react';
 import FormGroup from './form/FormGroup';
 import FormButton from './form/FormButton';
+import { Link } from "react-router-dom";
 
 function MatchForm(props) {
+  const operation = props.values._id ? 'Edit' : 'Create';
   const onSubmit = (e) => {
     e.preventDefault();
     props.onSubmit(e);
   };
   return (
     <Fragment>
-      <h2>Create Match</h2>
+      <h2>{operation} Match</h2>
       <hr/>
       <form onSubmit={onSubmit}>
         <FormGroup name="name" value={props.values.name} autoFocus
@@ -43,8 +45,9 @@ function MatchForm(props) {
         <FormGroup name="tag" type="tag" value={props.values.tags} options={props.tags}
                    onChange={(e) => props.onChange({ tags: e.target.value })}
                    isValid={props.isValid.tags} feedback={props.feedback.tags}/>
-        <FormButton type="submit" text="Create" btnClass="outline-success">
-          {props.children}
+        <FormButton type="submit" text={operation} btnClass="outline-success">
+          {props.values._id &&
+          <label className="col-form-label float-right"><Link to="/match">Create</Link> a match instead</label>}
         </FormButton>
       </form>
     </Fragment>

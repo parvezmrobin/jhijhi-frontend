@@ -85,6 +85,10 @@ export function ordinal(number) {
 }
 
 export const formatValidationFeedback = err => {
+  if (err.response.status !== 400) {
+    throw err;
+  }
+
   const isValid = {};
   const feedback = {};
   for (const error of err.response.data.err) {
