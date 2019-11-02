@@ -27,6 +27,12 @@ const team2ExistsValidation = check('team2', 'Select a team')
 const minimumOverValidation = check('overs', 'Overs must be greater than 0')
   .isInt({ min: 1 });
 const genOptionalExistsValidation = field => check(field).custom(umpire => umpire ? isMongoId(umpire) : true);
+const getMatchByName = (name, creatorId) => Match
+  .findOne({
+    creator: creatorId,
+    name: new RegExp(name, 'i'),
+  })
+  .exec();
 
 const matchCreateValidations = [
   nameExistsValidation,
@@ -38,12 +44,7 @@ const matchCreateValidations = [
   minimumOverValidation,
   check('name', 'Match Name already taken')
     .custom((name, { req }) => {
-      return Match
-        .findOne({
-          creator: req.user._id,
-          name: name,
-        })
-        .exec()
+      return getMatchByName(name, req.user._id)
         .then(match => !match);
     }),
   check('team1', 'Team 1 and Team 2 should be different.')
@@ -60,12 +61,7 @@ const matchEditValidations = [
   minimumOverValidation,
   check('name', 'Match Name already taken')
     .custom((name, { req }) => {
-      return Match
-        .findOne({
-          creator: req.user._id,
-          name: name,
-        })
-        .exec()
+      return getMatchByName(name, req.user._id)
         .then(match => !(match && match._id.toString() !== req.params.id));
     }),
   check('team1', 'Team 1 and Team 2 should be different.')
