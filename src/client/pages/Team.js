@@ -7,14 +7,13 @@
 
 import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
-import SidebarList from '../components/SidebarList';
 import TeamForm from '../components/TeamForm';
 import fetcher from '../lib/fetcher';
 import { bindMethods, formatValidationFeedback } from '../lib/utils';
 import { Alert } from 'reactstrap';
-import debounce from 'lodash/debounce';
 import ErrorModal from '../components/ErrorModal';
 import Notification from "../components/Notification";
+import TeamSidebar from "../components/TeamSidebar";
 
 
 class Team extends Component {
@@ -44,28 +43,122 @@ class Team extends Component {
   handlers = {
     /**
      * change event handler
-     * @param action
+     * @param newValues
      */
-    onChange(action) {
+    onChange(newValues) {
       this.setState(prevState => {
-        return { team: { ...prevState.team, ...action } };
+        return { team: { ...prevState.team, ...newValues } };
       });
     },
 
     onSubmit() {
-      const postData = { ...this.state.team };
+      let submission;
+      if (this.state.team._id) {
+        submission = this._updateTeam();
+      } else {
+        submission = this._createTeam();
+      }
 
-      fetcher
-        .post('teams', postData)
-        .then(response => {
-          return this.setState(prevState => ({
+      submission
+        .catch(err => {
+          const { isValid, feedback } = formatValidationFeedback(err);
+
+          this.setState({
+            isValid,
+            feedback,
+          });
+        })
+        .catch(() => this.setState({ showErrorModal: true }));
+    },
+  };
+
+  componentDidMount() {
+    this.unlisten = this.props.history.listen((location) => {
+      const teamId = location.pathname.substr("/team@".length);
+      this._loadTeamIfNecessary(teamId);
+    });
+
+    this._loadTeams();
+  }
+
+  _loadTeams = (keyword = '') => {
+    fetcher
+      .get(`teams?search=${keyword}`)
+      .then(response => {
+        if (this.props.match.params.id) {
+          this._loadTeam(response.data, this.props.match.params.id);
+        }
+        return this.setState({ teams: response.data });
+      })
+      .catch(() => this.setState({ showErrorModal: true }));
+  };
+
+  componentWillUnmount() {
+    this.unlisten(); // unlisten to route change events
+    fetcher.cancelAll();
+  }
+
+  /**
+   * Called when route is changed.
+   * Loads `team` state if `teamId` is truthy for editing purpose.
+   * @param teamId
+   * @private
+   */
+  _loadTeamIfNecessary(teamId) {
+    const teams = this.state.teams;
+    if (teams.length && teamId) {
+      this._loadTeam(teams, teamId);
+    } else {
+      this.setState({ team: { name: '', shortName: '' } });
+    }
+  }
+
+  _loadTeam(teams, teamId) {
+    const team = teams.find(_team => _team._id === teamId);
+    team && this.setState({ team: team });
+  }
+
+  _createTeam() {
+    const postData = { ...this.state.team };
+
+    return fetcher
+      .post('teams', postData)
+      .then(response => {
+        return this.setState(prevState => ({
+          ...prevState,
+          teams: prevState.teams.concat(response.data.team),
+          team: {
+            name: '',
+            shortName: '',
+          },
+          message: response.data.message,
+          isValid: {
+            name: null,
+            shortName: null,
+          },
+          feedback: {
+            name: null,
+            shortName: null,
+          },
+        }));
+      });
+  }
+
+  _updateTeam() {
+    const { team } = this.state;
+    const postData = { ...team };
+
+    return fetcher
+      .put(`teams/${team._id}`, postData)
+      .then(response => {
+        return this.setState(prevState => {
+          const teamIndex = prevState.teams.findIndex(_team => _team._id === team._id);
+          if (teamIndex !== -1) {
+            prevState.teams[teamIndex] = response.data.team;
+          }
+
+          return {
             ...prevState,
-            teams: prevState.teams.concat(response.data.team),
-            team: {
-              name: '',
-              shortName: '',
-            },
-            message: response.data.message,
             isValid: {
               name: null,
               shortName: null,
@@ -74,61 +167,28 @@ class Team extends Component {
               name: null,
               shortName: null,
             },
-          }));
-        })
-        .catch(err => {
-          const { isValid, feedback } = formatValidationFeedback(err);
-
-          this.setState({
-            isValid,
-            feedback,
-          });
+            message: response.data.message,
+          };
         });
-    },
-  };
-
-  componentDidMount() {
-    this._loadTeams();
-  }
-
-  _loadTeams = (keyword = '') => {
-    fetcher
-      .get(`teams?search=${keyword}`)
-      .then(response => {
-    return     this.setState({ teams: response.data });
-      })
-      .catch(() => this.setState({ showErrorModal: true }));
-  };
-
-  componentWillUnmount() {
-    fetcher.cancelAll();
+      });
   }
 
   render() {
     const message = this.state.message;
+    const teamId = this.props.match.params.id;
     return (
       <div className="container-fluid px-0">
 
         <Notification message={message} toggle={() => this.setState({ message: null })}/>
 
         <div className="row">
-          <aside className="col-md-3">
-            <CenterContent col="col">
-              <SidebarList
-                title="Existing Teams"
-                itemClass="text-white"
-                itemMapper={(team) => `${team.name} (${team.shortName})`}
-                list={this.state.teams}
-                onFilter={debounce(this._loadTeams, 1000)}/>
-            </CenterContent>
-          </aside>
+          <TeamSidebar editable teamId={teamId} teams={this.state.teams} onFilter={this._loadTeams}/>
           <main className="col">
             <CenterContent col="col-lg-8 col-md-10">
               {this.state.redirected && <Alert color="primary">
-                <p className="lead mb-0">
-                  You need at least 2 teams to create a match.
-                </p>
+                <p className="lead mb-0">You need at least 2 teams to create a match.</p>
               </Alert>}
+
               <TeamForm players={this.state.players} onChange={this.onChange}
                         onSubmit={this.onSubmit}
                         team={this.state.team}
@@ -136,8 +196,9 @@ class Team extends Component {
             </CenterContent>
           </main>
         </div>
-        <ErrorModal isOpen={this.state.showErrorModal}
-                    close={() => this.setState({ showErrorModal: false })}/>
+
+        <ErrorModal isOpen={this.state.showErrorModal} close={() => this.setState({ showErrorModal: false })}/>
+
       </div>
     );
   }

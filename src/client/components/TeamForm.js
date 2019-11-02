@@ -8,6 +8,7 @@
 import React, { Fragment } from 'react';
 import FormGroup from './form/FormGroup';
 import FormButton from './form/FormButton';
+import { Link } from "react-router-dom";
 
 
 function TeamForm(props) {
@@ -30,7 +31,10 @@ function TeamForm(props) {
                    isValid={props.isValid.shortName}
                    feedback={props.feedback.shortName}/>
 
-        <FormButton type="submit" text="Create" btnClass="outline-success"/>
+        <FormButton type="submit" text="Create" btnClass="outline-success">
+          {props.team._id &&
+          <label className="col-form-label float-right"><Link to="/team">Create</Link> a team instead</label>}
+        </FormButton>
       </form>
     </Fragment>
   );
