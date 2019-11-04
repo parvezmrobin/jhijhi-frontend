@@ -40,7 +40,7 @@ const amplitude = function (eventName, userId, data, time) {
       api_key: process.env.AMPLITUDE_KEY,
       events: [{event_type: eventName, user_id: userId, event_properties: data, time}],
     })
-    .catch(err => logger.error('Error Amplitude:', {err: err.response.data}));
+    .catch(err => logger.error('Error Amplitude:', {err: err.response && err.response.data}));
 };
 
 module.exports = logger;
