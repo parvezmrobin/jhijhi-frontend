@@ -3,8 +3,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
-
+const CopyPlugin = require('copy-webpack-plugin');
 require('dotenv').config();
+
 const outputDirectory = 'public';
 const outputPath = path.join(__dirname, outputDirectory);
 
@@ -47,7 +48,6 @@ module.exports = {
   devServer: {
     port: 3000,
     open: true,
-    historyApiFallback: true,
     proxy: {
       '/manifest.json': process.env.SERVER_URL,
       '/favicon.png': process.env.SERVER_URL,
@@ -64,5 +64,8 @@ module.exports = {
       template: './statics/template.html',
       favicon: './statics/favicon.ico',
     }),
+    new CopyPlugin([
+      { from: './statics', to: '.' },
+    ]),
   ],
 };

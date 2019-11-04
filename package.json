@@ -6,6 +6,7 @@
     "email": "parvezmrobin@gmail.com",
     "url": "https://parvezmrobin.com"
   },
+  "homepage": "https://jhijhi.netlify.com",
   "license": "ISC",
   "scripts": {
     "build": "webpack --mode production",
@@ -22,6 +23,7 @@
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.3.1",
     "clean-webpack-plugin": "^1.0.0",
+    "copy-webpack-plugin": "^5.0.4",
     "css-loader": "^2.0.0",
     "dotenv": "^8.2.0",
     "feather-icons": "^4.21.0",
