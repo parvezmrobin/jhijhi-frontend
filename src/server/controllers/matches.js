@@ -582,7 +582,7 @@ router.get('/tags', authenticateJwt(), (request, response) => {
     })
     .exec()
     .then((aggregation) => {
-      const tags = aggregation ? aggregation[0] : { tags: [] };
+      const tags = !(aggregation && aggregation.length) ? { tags: [] } : aggregation[0];
       return response.json(tags.tags);
     })
     .catch(err => sendErrorResponse(response, err, responses.matches.tags.err, request.user))
