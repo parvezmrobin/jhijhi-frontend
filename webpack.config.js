@@ -10,8 +10,8 @@ const outputPath = path.join(__dirname, outputDirectory);
 
 module.exports = {
   entry: {
-    main: ['babel-polyfill', './src/client/index.js'],
-    serviceWorker: './src/client/serviceWorker.js',
+    main: ['babel-polyfill', './src/index.js'],
+    serviceWorker: './src/serviceWorker.js',
   },
   output: {
     path: outputPath,
@@ -49,9 +49,9 @@ module.exports = {
     open: true,
     historyApiFallback: true,
     proxy: {
-      '/manifest.json': 'http://localhost:8080',
-      '/favicon.png': 'http://localhost:8080',
-      '/frustrated.gif': 'http://localhost:8080',
+      '/manifest.json': process.env.SERVER_URL,
+      '/favicon.png': process.env.SERVER_URL,
+      '/frustrated.gif': process.env.SERVER_URL,
     },
   },
   plugins: [

@@ -1,8 +1,5 @@
 .idea
 .vscode
-node_modules
-dist
-public
-*.log
 .env
-_README.md
+public
+node_modules
