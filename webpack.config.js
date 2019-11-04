@@ -49,9 +49,9 @@ module.exports = {
     port: 3000,
     open: true,
     proxy: {
-      '/manifest.json': process.env.SERVER_URL,
-      '/favicon.png': process.env.SERVER_URL,
-      '/frustrated.gif': process.env.SERVER_URL,
+      '/manifest.json': 'https://jhijhi.netlify.com',
+      '/favicon.png': 'https://jhijhi.netlify.com',
+      '/frustrated.gif': 'https://jhijhi.netlify.com',
     },
   },
   plugins: [
