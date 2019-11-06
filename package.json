@@ -8,6 +8,10 @@
   },
   "homepage": "https://jhijhi.netlify.com",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/parvezmrobin/jhijhi-fontend.git"
+  },
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack-dev-server --mode development --devtool inline-source-map --hot"
