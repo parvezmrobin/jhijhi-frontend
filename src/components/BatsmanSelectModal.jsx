@@ -85,7 +85,9 @@ export default class BatsmanSelectModal extends Component {
     // either batsman1 is not present or (it's not single batsman game and batsman2 is not present)
     const isModalOpen = !allOutPrompted && (!batsman1Exists || (!singleBatsman && !batsman2Exists));
 
-    return <Modal isOpen={isModalOpen}>
+    // although if `isModalOpen` is false, modal will not be shown but a backdrop will
+    // thus if `isModalOpen` is false, render nothing at all
+    return isModalOpen && <Modal isOpen={isModalOpen}>
       <ModalHeader className="text-primary">
         Select {!(batsman1Exists || batsman2Exists) ? 'Batsmen' : 'Batsman'}
       </ModalHeader>
