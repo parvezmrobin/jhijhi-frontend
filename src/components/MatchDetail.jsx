@@ -103,8 +103,11 @@ export default class MatchDetail extends Component {
       choice = match.team1BatFirst ? 'bowl' : 'bat';
       tossWinningTeamName = match.team2.name;
     }
-    const { totalRun: innings1score, totalWicket: innings1wicket } = Score.getTotalScore(match.innings1);
-    const { totalRun: innings2score, totalWicket: innings2wicket } = Score.getTotalScore(match.innings2);
+
+    const innings1 = match.innings1 || { overs: [] }; // fallback if innings1 is undefined
+    const innings2 = match.innings2 || { overs: [] }; // fallback if innings2 is undefined
+    const { totalRun: innings1score, totalWicket: innings1wicket } = Score.getTotalScore(innings1);
+    const { totalRun: innings2score, totalWicket: innings2wicket } = Score.getTotalScore(innings2);
 
     if (innings1score > innings2score) {
       winningTeam = match.team1BatFirst ? match.team1.name : match.team2.name;
@@ -149,12 +152,12 @@ export default class MatchDetail extends Component {
       innings1TeamName = match.team2.name;
     }
 
-    const { numOvers: numOfOvers1, numBowls: numOfBowls1 } = Score.getOverCount(match.innings1);
-    const { numOvers: numOfOvers2, numBowls: numOfBowls2 } = Score.getOverCount(match.innings2);
+    const { numOvers: numOfOvers1, numBowls: numOfBowls1 } = Score.getOverCount(innings1);
+    const { numOvers: numOfOvers2, numBowls: numOfBowls2 } = Score.getOverCount(innings2);
 
     const overIndex = this.state.overIndex || 0;
-    const innings = showSecondInnings ? match.innings2 : match.innings1;
-    const bowlerName = bowlingTeamPlayers[innings.overs[overIndex].bowledBy].name;
+    const innings = showSecondInnings ? innings2 : innings1;
+    const bowlerName = bowlingTeamPlayers[innings.overs[overIndex]?.bowledBy]?.name;
 
     return <main className="col bg-success min-vh-100 pt-5">
       <h2 className="text-success bg-dark-trans pt-2 pb-3 mt-3 rounded text-center">
@@ -213,9 +216,9 @@ export default class MatchDetail extends Component {
                  onOverClick={(index) => this.setState({ overIndex: index })}/>
         </div>
         <div className="pt-1 col-sm">
-          <CurrentOver bowls={innings.overs[overIndex].bowls}
+          {innings.overs[overIndex]?.bowls && <CurrentOver bowls={innings.overs[overIndex].bowls}
                        title={`${toTitleCase(bowlerName)} bowled (Over ${overIndex + 1})`}
-                       battingTeam={battingTeamPlayers}/>
+                       battingTeam={battingTeamPlayers}/>}
         </div>
 
       </div>
