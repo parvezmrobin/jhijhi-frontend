@@ -12,7 +12,7 @@ import Score from './Score';
 import {Button, CustomInput, Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap';
 import Overs from './Overs';
 import CurrentOver from './CurrentOver';
-import {toTitleCase} from '../lib/utils';
+import {copySharableLink, toTitleCase} from '../lib/utils';
 import * as PropTypes from 'prop-types';
 import {Redirect} from 'react-router-dom';
 import ScoreModal from './ScoreModal';
@@ -56,6 +56,13 @@ export default class MatchDetail extends Component {
   componentWillUnmount() {
     fetcher.cancelAll();
   }
+
+  _copySharableLinkAndShowConfirmation = e => {
+    copySharableLink(this.props.matchId);
+    const button = e.target;
+    button.innerHTML = 'Copied';
+    setTimeout(() => button.innerHTML = 'Copy Sharable Link', 500);
+  };
 
   render() {
     const { match, showSecondInnings, forceWatching } = this.state;
@@ -192,8 +199,9 @@ export default class MatchDetail extends Component {
                 </button>
               </div>
               <div className="col-12 col-md col-lg-12 pt-1 pt-md-0 pt-lg-1">
-                <button onClick={(e) => this.copySharableLink(e)}
-                        className="btn btn-outline-primary text-white btn-block">
+                <button
+                  onClick={this._copySharableLinkAndShowConfirmation}
+                  className="btn btn-outline-primary text-white btn-block">
                   Copy Sharable Link
                 </button>
               </div>
@@ -217,22 +225,6 @@ export default class MatchDetail extends Component {
                   innings={innings} battingTeamPlayers={battingTeamPlayers} bowlingTeamPlayers={bowlingTeamPlayers}
                   battingTeamName={battingTeamName} bowlingTeamName={bowlingTeamName}/>
     </main>;
-  }
-
-  copySharableLink(e) {
-    const url = `${window.location.origin}#/public@${this.props.matchId}`;
-    const el = document.createElement('textarea');
-    el.value = url;
-    el.setAttribute('readonly', '');
-    el.style.display = null;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-
-    const button = e.target;
-    button.innerHTML = 'Copied';
-    setTimeout(() => button.innerHTML = 'Copy Sharable Link', 500);
   }
 }
 

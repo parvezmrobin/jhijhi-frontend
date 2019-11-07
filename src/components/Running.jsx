@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { bindMethods, optional, toTitleCase } from '../lib/utils';
+import {bindMethods, copySharableLink, optional, toTitleCase} from '../lib/utils';
 import fetcher from '../lib/fetcher';
 
 import CurrentOver from './CurrentOver';
@@ -38,6 +38,13 @@ export class Running extends Component {
   }
 
   handlers = {
+    copySharableLinkAndShowConfirmation (e) {
+      copySharableLink(this.props.match._id);
+      const button = e.target;
+      button.innerHTML = 'Copied';
+      setTimeout(() => button.innerHTML = 'Copy Sharable Link', 500);
+    },
+
     openOverModal(i) {
       this.setState({
         overModal: {
@@ -563,6 +570,12 @@ export class Running extends Component {
                    singleBatsman={this.state.singleBatsman}
                    choice={tossOwnerChoice} innings={innings} inningsNo={inningsNo}
                    firstInnings={innings1} matchId={match._id} onWinning={this.onDeclare}/>
+
+            <button
+              onClick={this.copySharableLinkAndShowConfirmation}
+              className="btn btn-outline-primary text-white btn-block">
+              Copy Sharable Link
+            </button>
           </div>
           <div className="col-md-4">
             <CurrentOver overNo={overs.length - 1} bowls={lastOver.bowls} bowler={bowler}

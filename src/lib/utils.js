@@ -102,6 +102,22 @@ export const formatValidationFeedback = err => {
   return { isValid, feedback };
 };
 
+/**
+ * Copy sharable link of a match to clipboard
+ * @param matchId
+ */
+export function copySharableLink(matchId) {
+  const url = `${window.location.origin}#/public@${matchId}`;
+  const el = document.createElement('textarea');
+  el.value = url;
+  el.setAttribute('readonly', '');
+  el.style.display = null;
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+}
+
 export function logout() {
   window.localStorage.removeItem('token');
   window.location.hash = 'login';
