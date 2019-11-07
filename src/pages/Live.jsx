@@ -12,6 +12,7 @@ import { bindMethods } from '../lib/utils';
 import Toss from '../components/Toss';
 import { Running } from '../components/Running';
 import { Redirect } from 'react-router-dom';
+import ErrorModal from "../components/ErrorModal";
 
 class Live extends Component {
   constructor(props) {
@@ -20,6 +21,7 @@ class Live extends Component {
       match: {
         state: 'loading',
       },
+      showErrorModal: false,
     };
 
     bindMethods(this);
@@ -39,7 +41,8 @@ class Live extends Component {
       .get(`matches/${this.props.match.params.id}`)
       .then(response => {
         return this.setState({ match: response.data });
-      });
+      })
+      .catch(() => this.setState({showErrorModal: true}));
   }
 
 
@@ -64,6 +67,8 @@ class Live extends Component {
         <Running match={match}/>}
 
         {(match.state === 'done') && <Redirect to={`/history@${match._id}`}/>}
+
+        <ErrorModal isOpen={this.state.showErrorModal} close={() => this.setState({ showErrorModal: false })}/>
       </div>
     );
   }

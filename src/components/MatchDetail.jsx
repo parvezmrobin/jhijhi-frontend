@@ -16,6 +16,7 @@ import {copySharableLink, toTitleCase} from '../lib/utils';
 import * as PropTypes from 'prop-types';
 import {Redirect} from 'react-router-dom';
 import ScoreModal from './ScoreModal';
+import ErrorModal from "./ErrorModal";
 
 export default class MatchDetail extends Component {
   constructor(props) {
@@ -26,6 +27,7 @@ export default class MatchDetail extends Component {
       showSecondInnings: false,
       showModal: false,
       forceWatching: null,
+      showErrorModal: false,
     };
   }
 
@@ -33,7 +35,7 @@ export default class MatchDetail extends Component {
     this._loadMatchIfNecessary();
   }
 
-  componentDidUpdate() {
+  componentWillReceiveProps () {
     this._loadMatchIfNecessary();
   }
 
@@ -50,7 +52,8 @@ export default class MatchDetail extends Component {
       .get(`/matches/${matchId}`)
       .then(response => {
         return this.setState({ match: response.data });
-      });
+      })
+      .catch(() => this.setState({showErrorModal: true}));
   }
 
   componentWillUnmount() {
@@ -64,7 +67,7 @@ export default class MatchDetail extends Component {
     setTimeout(() => button.innerHTML = 'Copy Sharable Link', 500);
   };
 
-  render() {
+  getUI() {
     const { match, showSecondInnings, forceWatching } = this.state;
     const { matchId, isPrivate } = this.props;
 
@@ -227,8 +230,18 @@ export default class MatchDetail extends Component {
       <ScoreModal isOpen={this.state.showModal} toggle={() => this.setState({ showModal: false })}
                   innings={innings} battingTeamPlayers={battingTeamPlayers} bowlingTeamPlayers={bowlingTeamPlayers}
                   battingTeamName={battingTeamName} bowlingTeamName={bowlingTeamName}/>
+
     </main>;
   }
+
+  render() {
+    return <>
+      {this.getUI()}
+
+      <ErrorModal isOpen={this.state.showErrorModal} close={() => this.setState({ showErrorModal: false })}/>
+    </>;
+  }
+
 }
 
 MatchDetail.propTypes = {

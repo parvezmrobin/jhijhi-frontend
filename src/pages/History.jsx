@@ -5,6 +5,7 @@ import debounce from 'lodash/debounce';
 import CenterContent from '../components/layouts/CenterContent';
 import SidebarList from '../components/SidebarList';
 import MatchDetail from '../components/MatchDetail';
+import ErrorModal from "../components/ErrorModal";
 
 
 class History extends Component {
@@ -12,19 +13,22 @@ class History extends Component {
     super(props);
     this.state = {
       matches: null,
+      showErrorModal: false,
     };
   }
 
   onFilter = (keyword) => {
     return fetcher
       .get(`/matches/done?search=${keyword}`)
-      .then(response => this.setState({ matches: response.data }));
+      .then(response => this.setState({ matches: response.data }))
+      .catch(() => this.setState({showErrorModal: true}));
   };
 
   componentDidMount() {
     return fetcher
       .get('/matches/done')
-      .then(response => this.setState({ matches: response.data }));
+      .then(response => this.setState({ matches: response.data }))
+      .catch(() => this.setState({showErrorModal: true}));
   }
 
   componentWillUnmount() {
@@ -60,6 +64,7 @@ class History extends Component {
       <div className="row">
         {sidebar}
         <MatchDetail matchId={matchId} isPrivate/>
+        <ErrorModal isOpen={this.state.showErrorModal} close={() => this.setState({ showErrorModal: false })}/>
       </div>
     );
   }
