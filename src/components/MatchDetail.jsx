@@ -75,11 +75,11 @@ export default class MatchDetail extends Component {
       </p></CenterContent></div>;
       return <div className="col">{loading}</div>;
     }
-    if (match.state !== 'done' && forceWatching === false) {
+    if (forceWatching === false) {
       return <Redirect to={`/live@${matchId}`} push/>;
     }
 
-    if (isPrivate && forceWatching !== true) {
+    if (isPrivate && match.state !== 'done' && forceWatching === null) {
       return <ForceWatchingModal
         isOpen={forceWatching !== true}
         close={() => this.setState({forceWatching: true})}
