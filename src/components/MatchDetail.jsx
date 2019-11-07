@@ -5,16 +5,16 @@
  */
 
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import fetcher from '../lib/fetcher';
 import CenterContent from './layouts/CenterContent';
 import Score from './Score';
-import { CustomInput } from 'reactstrap';
+import {Button, CustomInput, Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap';
 import Overs from './Overs';
 import CurrentOver from './CurrentOver';
-import { toTitleCase } from '../lib/utils';
+import {toTitleCase} from '../lib/utils';
 import * as PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 import ScoreModal from './ScoreModal';
 
 export default class MatchDetail extends Component {
@@ -25,6 +25,7 @@ export default class MatchDetail extends Component {
       overIndex: null,
       showSecondInnings: false,
       showModal: false,
+      forceWatching: null,
     };
   }
 
@@ -57,8 +58,8 @@ export default class MatchDetail extends Component {
   }
 
   render() {
-    const { match, showSecondInnings } = this.state;
-    const { matchId } = this.props;
+    const { match, showSecondInnings, forceWatching } = this.state;
+    const { matchId, isPrivate } = this.props;
 
     if (match === null) {
       const text = (matchId === 'null') ? 'Select a Match' : 'Loading...';
@@ -67,9 +68,17 @@ export default class MatchDetail extends Component {
       </p></CenterContent></div>;
       return <div className="col">{loading}</div>;
     }
-    if (match.state !== 'done') {
-      return <Redirect to={`/live@${this.props.match.params.id}`}/>;
+    if (match.state !== 'done' && forceWatching === false) {
+      return <Redirect to={`/live@${matchId}`} push/>;
     }
+
+    if (isPrivate && forceWatching !== true) {
+      return <ForceWatchingModal
+        isOpen={forceWatching !== true}
+        close={() => this.setState({forceWatching: true})}
+        move={() => this.setState({forceWatching: false})}/>
+    }
+
     let winningTeam,
       type,
       bowlingTeamPlayers,
@@ -228,5 +237,27 @@ export default class MatchDetail extends Component {
 }
 
 MatchDetail.propTypes = {
-  matchId: PropTypes.string,
+  matchId: PropTypes.string.isRequired,
+  isPrivate: PropTypes.bool,
+};
+
+function ForceWatchingModal(props) {
+  return <Modal isOpen={props.isOpen}>
+    <ModalHeader className="text-primary border-0">
+      Are You On The Right Page?
+    </ModalHeader>
+    <ModalBody>
+      This match is still running. Are you sure you want to watch score rather than entering score?
+    </ModalBody>
+    <ModalFooter>
+      <Button color="secondary" onClick={props.close}>Yes, Keep Me Here</Button>
+      <Button color="primary" onClick={props.move}>Bring Me To Scoring</Button>
+    </ModalFooter>
+  </Modal>;
+}
+
+ForceWatchingModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  close: PropTypes.func.isRequired,
+  move: PropTypes.func.isRequired,
 };

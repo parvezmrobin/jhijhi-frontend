@@ -59,7 +59,7 @@ class History extends Component {
     return (
       <div className="row">
         {sidebar}
-        <MatchDetail matchId={matchId}/>
+        <MatchDetail matchId={matchId} isPrivate/>
       </div>
     );
   }
