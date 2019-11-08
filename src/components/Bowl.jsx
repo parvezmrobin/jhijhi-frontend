@@ -36,7 +36,7 @@ function Bowl(props) {
   if (by) {
     elements.push(<kbd className="bg-secondary mr-1" key="by">By {by}</kbd>);
   }
-  if (!isWicket && (isWide || isNo)) {
+  if (isWide || isNo) {
     elements.push(<kbd className="bg-warning-light mr-1" key="wide">
       {isWide ? 'Wide' : 'No'}
     </kbd>)
