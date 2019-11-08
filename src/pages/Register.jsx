@@ -8,7 +8,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import AuthForm from '../components/auth/AuthForm';
-import {bindMethods} from "../lib/utils";
+import { bindMethods, formatValidationFeedback } from "../lib/utils";
 import axios from "axios";
 
 
@@ -45,22 +45,7 @@ class Register extends Component {
           return window.location.href = "";
         })
         .catch(err => {
-          const isValid = {
-            username: true,
-            password: true,
-          };
-          const feedback = {
-            username: null,
-            password: null,
-          };
-          for (const error of err.response.data.err) {
-            if (isValid[error.param]) {
-              isValid[error.param] = false;
-            }
-            if (!feedback[error.param]) {
-              feedback[error.param] = error.msg;
-            }
-          }
+          const {isValid, feedback} = formatValidationFeedback(err);
 
           this.setState({isValid, feedback});
         });
