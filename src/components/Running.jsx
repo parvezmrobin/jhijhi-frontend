@@ -13,6 +13,7 @@ import BowlerSelectModal from './modal/BowlerSelectModal';
 import { Redirect } from 'react-router-dom';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Spinner } from 'reactstrap';
 import ScoreEditModal from './modal/ScoreEditModal';
+import ErrorModal from "./modal/ErrorModal";
 
 export class Running extends Component {
   constructor(props) {
@@ -32,6 +33,7 @@ export class Running extends Component {
         bowlNo: -1,
       },
       showSingleBatsmanModal: false,
+      showErrorModal: false,
     };
 
     bindMethods(this);
@@ -182,7 +184,7 @@ export class Running extends Component {
               };
             });
           })
-          .catch(err => console.log(err));
+          .catch(() => this.setState({showErrorModal: true}));
       };
 
       this.setState({ isDeclaring: true }, updateState);
@@ -650,6 +652,9 @@ export class Running extends Component {
           </div>
         </ModalBody>
       </Modal>
+
+      <ErrorModal isOpen={this.state.showErrorModal} close={() => this.setState({ showErrorModal: false })}/>
+
     </div>;
   }
 }
