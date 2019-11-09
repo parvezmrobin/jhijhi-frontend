@@ -6,7 +6,7 @@
 
 
 import React from 'react';
-import ScoreInput from './ScoreInput';
+import ScoreInputV2 from "./ScoreInputV2";
 import * as PropTypes from 'prop-types';
 
 function ScoreCreate(props) {
@@ -15,8 +15,9 @@ function ScoreCreate(props) {
     injectBowlEvent: el => el,
     defaultHttpVerb: 'post',
     shouldResetAfterInput: true,
+    actionText: 'Insert',
   };
-  return <ScoreInput {...propsToBePassed}/>;
+  return <ScoreInputV2 {...propsToBePassed}/>;
 }
 
 ScoreCreate.propTypes = {

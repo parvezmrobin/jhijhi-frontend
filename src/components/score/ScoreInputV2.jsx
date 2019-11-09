@@ -1,0 +1,306 @@
+/**
+ * Parvez M Robin
+ * this@parvezmrobin.com
+ * Date: Nov 09, 2019
+ */
+
+import React, { Component } from 'react';
+import CheckBoxControl from '../form/control/checkbox';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import SelectControl from '../form/control/select';
+import * as PropTypes from 'prop-types';
+import { bindMethods } from '../../lib/utils';
+import fetcher from '../../lib/fetcher';
+import FormGroup from '../form/FormGroup';
+
+export default class ScoreInputV2 extends Component {
+  static RUN_OUT = 'Run out';
+  static OBSTRUCTING_THE_FIELD = 'Obstructing the field';
+  static UNCERTAIN_WICKETS = [ScoreInputV2.RUN_OUT, ScoreInputV2.OBSTRUCTING_THE_FIELD];
+  static WICKET_TYPES = [
+    'Wicket',
+    'Bowled',
+    'Caught',
+    'Leg before wicket',
+    ScoreInputV2.RUN_OUT,
+    'Stumped',
+    'Hit the ball twice',
+    'Hit wicket',
+    ScoreInputV2.OBSTRUCTING_THE_FIELD,
+    // 'Timed out', // Timed out takes place even before playing a bowl, hence needed to handle exceptionally
+    'Retired',
+  ];
+  static NO_BOWL_TYPES = [
+    'No Bowl',
+    'Front foot',
+    'Above head height',
+    'High full toss',
+    'Change of action',
+    'Fielding restrictions',
+    'Back foot',
+    'Throwing',
+    'Underarm',
+    'Double bounce',
+  ];
+  static BOUNDARY_TYPES = [
+    'Boundary',
+    'Four',
+    'Six',
+    'Four (By)',
+    'Six (By)',
+    'Four (Leg By)',
+    'Six (Leg By)',
+  ];
+
+  static INITIAL_STATE = {
+    by: 'By',
+    legBy: 'Leg By',
+    isWide: false,
+    isNo: 'No Bowl',
+    singles: 'Singles',
+    wicket: 'Wicket',
+    boundary: 'Boundary',
+    batsman: '', // selected batsman on uncertain outs
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...ScoreInputV2.INITIAL_STATE,
+      errorMessage: null,
+    };
+
+    bindMethods(this);
+  }
+
+  _makeServerRequest(bowlEvent, isUpdate = false) {
+    const { matchId, onInput, defaultHttpVerb, injectBowlEvent, shouldResetAfterInput } = this.props;
+    bowlEvent = injectBowlEvent(bowlEvent, isUpdate);
+    const request = !isUpdate ? fetcher[defaultHttpVerb.toLowerCase()] : fetcher.put;
+    request(`matches/${matchId}/bowl/v2`, bowlEvent)
+      .then(res => {
+        onInput(isUpdate ? res.data.bowl : bowlEvent, isUpdate);
+        return shouldResetAfterInput && this.resetInputFields();
+      })
+      .catch(err => this.setState({ errorMessage: err.response.data.err[0].msg }));
+  }
+
+  resetInputFields() {
+    this.setState(ScoreInputV2.INITIAL_STATE);
+  }
+
+  handlers = {
+    onStateUpdate(update) {
+      this.setState(update);
+    },
+
+    onBatsmanSelectModalClose() {
+      this.setState({
+        wicket: 'Wicket',
+        batsman: '',
+      })
+    },
+
+    /*
+     BowlSchema = {
+       playedBy: Number,
+       isWicket: {
+         kind: String,
+         player: Number, // for uncertain outs like run-out where player other than `playedBy` can be out
+       },
+       singles: Number,
+       by: Number,
+       legBy: Number,
+       boundary: {
+         run: Number,
+         kind: {
+           type: String,
+           enum: ['regular', 'by', 'legBy'],
+           default: 'regular',
+         },
+       },
+       isWide: Boolean,
+       isNo: String, // containing the reason of no
+     }
+    */
+
+    onScore() {
+      const { by, legBy, isWide, isNo, boundary, singles, wicket, batsman } = this.state;
+
+      const bowlEvent = {
+        playedBy: this._getIndexOfBatsman(this.props.batsmen[0]._id), // by default, the on-crease batsman is out
+        singles,
+        by,
+        legBy,
+        isWide,
+        isNo,
+      };
+
+      if (wicket !== ScoreInputV2.WICKET_TYPES[0]) {
+        bowlEvent.isWicket = {
+          kind: wicket,
+        };
+
+        if (ScoreInputV2.UNCERTAIN_WICKETS.includes(wicket)) {
+          bowlEvent.isWicket.player = this._getIndexOfBatsman(batsman);
+        }
+      }
+
+      if (boundary !== ScoreInputV2.BOUNDARY_TYPES[0]) {
+        const run = boundary.startsWith('Four') ? 4 : 6;
+        const kind = boundary.endsWith('(Leg By)') ? 'legBy'
+          : boundary.endsWith('(By)') ? 'by' : 'regular';
+        bowlEvent.boundary = { run, kind };
+      }
+      this._makeServerRequest(bowlEvent);
+    },
+  };
+
+  _getIndexOfBatsman(batsmanId) {
+    let selectedBatsmanIndex;
+    const [{ _id: batsman1Id }, { _id: batsman2Id }] = this.props.batsmen;
+    if (batsman1Id === batsmanId) {
+      selectedBatsmanIndex = this.props.batsmanIndices[0];
+    } else if (batsman2Id === batsmanId) {
+      selectedBatsmanIndex = this.props.batsmanIndices[1];
+    } else {
+      throw new Error(`Invalid batsman selected for run out: ${this.state.batsman}`);
+    }
+    return selectedBatsmanIndex;
+  }
+
+  static wicketOptions = ScoreInputV2.WICKET_TYPES.map(wicket => ({
+    _id: wicket,
+    name: wicket,
+  }));
+
+  static boundaryOptions = ScoreInputV2.BOUNDARY_TYPES.map(boundary => ({
+    _id: boundary,
+    name: boundary,
+  }));
+
+  static singleOptions = ['Singles', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((el) => ({
+    _id: el,
+    name: el,
+  }));
+
+  static byOptions = ['By', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((el) => ({
+    _id: el,
+    name: el,
+  }));
+
+  static legByOptions = ScoreInputV2.byOptions.map((option, i) => {
+    return i === 0 ? ({ _id: 'Leg By', name: 'Leg By' }) : { ...option };
+  });
+
+  static noBowlOptions = ScoreInputV2.NO_BOWL_TYPES.map(type => ({
+    _id: type,
+    name: type,
+  }));
+
+  render() {
+    const { by, legBy, isWide, isNo, boundary, singles, wicket, batsman, errorMessage } = this.state;
+    const { batsmen, actionText } = this.props;
+    // prevent error while any of the batsmen changed to null
+    batsmen[0] = batsmen[0] || { _id: null };
+    batsmen[1] = batsmen[1] || { _id: null };
+
+    return (
+      <section className="score-input v2 rounded">
+
+        <div className="col-12 col-md-3 col-lg-auto">
+          <label className="sr-only" htmlFor="by"/>
+          <SelectControl value={by} name="by" className="form-control"
+                         options={ScoreInputV2.byOptions}
+                         onChange={e => this.onStateUpdate({ by: Number(e.target.value) })}/>
+        </div>
+
+        <div className="col-12 col-md-3 col-lg-auto">
+          <label className="sr-only" htmlFor="legBy"/>
+          <SelectControl value={legBy} name="legBy" className="form-control"
+                         options={ScoreInputV2.legByOptions}
+                         onChange={e => this.onStateUpdate({ legBy: Number(e.target.value) })}/>
+        </div>
+
+        <div className="col-12 col-md-4 col-lg-auto">
+          <label className="sr-only" htmlFor="isNo"/>
+          <SelectControl value={isNo} name="isNo" className="form-control"
+                         options={ScoreInputV2.noBowlOptions}
+                         onChange={e => this.onStateUpdate({ isNo: e.target.value })}/>
+        </div>
+
+        <div className="col-12 col-md-2 col-lg-auto">
+          <CheckBoxControl value={isWide} name="wide"
+                           onChange={e => this.onStateUpdate({ isWide: e.target.checked })}>
+            Wide
+          </CheckBoxControl>
+        </div>
+
+        <div className="col-12 py-1">
+          <hr className="border-primary my-2 mb-md-1"/>
+        </div>
+
+        <div className="col-12 col-md-3 col-lg-auto">
+          <label className="sr-only" htmlFor="singles"/>
+          <SelectControl value={singles} name="singles" className="form-control"
+                         options={ScoreInputV2.singleOptions}
+                         onChange={e => this.onStateUpdate({ singles: Number(e.target.value) })}/>
+        </div>
+
+        <div className="col-12 col-md-3 col-lg-auto">
+          <label className="sr-only" htmlFor="boundary"/>
+          <SelectControl value={boundary} name="boundary" className="form-control"
+                         options={ScoreInputV2.boundaryOptions}
+                         onChange={e => this.onStateUpdate({ boundary: e.target.value })}/>
+        </div>
+
+        <div className="col-12 col-md-4 col-lg-auto">
+          <label className="sr-only" htmlFor="wicket"/>
+          <SelectControl value={wicket} name="wicket" className="form-control text-danger"
+                         options={ScoreInputV2.wicketOptions}
+                         onChange={e => this.onStateUpdate({ wicket: e.target.value })}/>
+        </div>
+
+        <div className="col-12 col-md-2 col-lg-auto">
+          <button type="button" className="btn btn-outline-info" onClick={this.onScore}>{actionText}</button>
+        </div>
+
+        {/*Show modal if `wicket` is of uncertain type and batsman is not selected*/}
+        <Modal isOpen={ScoreInputV2.UNCERTAIN_WICKETS.includes(wicket) && !!batsman}>
+          <ModalHeader className="text-primary" toggle={this.onBatsmanSelectModalClose}>
+            Which batsman is out?
+          </ModalHeader>
+          <ModalBody>
+            <FormGroup type="select" name="batsman" value={batsman}
+                       onChange={e => this.setState({ batsman: e.target.value })}
+                       options={batsmen}/>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={this.onBatsmanSelectModalClose}>Select</Button>
+          </ModalFooter>
+        </Modal>
+
+        {/* Error Modal */}
+        <Modal isOpen={!!errorMessage}>
+          <ModalHeader className="text-danger" toggle={() => this.setState({ errorMessage: null })}>
+            Error!
+          </ModalHeader>
+          <ModalBody className="text-danger">
+            {errorMessage}
+          </ModalBody>
+        </Modal>
+      </section>
+    );
+  }
+}
+
+ScoreInputV2.propTypes = {
+  batsmen: PropTypes.arrayOf(PropTypes.object).isRequired,
+  batsmanIndices: PropTypes.arrayOf(PropTypes.number).isRequired,
+  matchId: PropTypes.string.isRequired,
+  onInput: PropTypes.func.isRequired,
+  defaultHttpVerb: PropTypes.oneOf(['post', 'put']).isRequired,
+  injectBowlEvent: PropTypes.func.isRequired,  // to support injecting over and bowl number while editing
+  shouldResetAfterInput: PropTypes.bool.isRequired,
+  actionText: PropTypes.string.isRequired,
+};

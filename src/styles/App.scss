@@ -23,6 +23,12 @@ $warningLight: #eb6d1f !default;
 $theme-colors: ('info': $info, 'warning-light': $warningLight, 'blue': $blue) !default;
 $link-color: $info !default;
 
+$spacer: 1rem !default;
+$spacers: (
+  6: ($spacer * 6),
+  7: ($spacer * 12),
+) !default;
+
 $modal-dialog-margin-y: 4rem !default;
 $modal-dialog-margin-y-sm-up: $modal-dialog-margin-y !default;
 
@@ -153,12 +159,16 @@ section.score-input {
   @extend .col-12;
   @extend .d-flex;
   @extend .flex-wrap;
-  @extend .pl-3;
   @extend .pt-1;
   @extend .pb-2;
   @extend .align-items-center;
   @extend .bg-dark;
   @extend .text-white;
+  
+  &.v2{
+    @extend .px-xl-7;
+    @extend .px-md-6;
+  }
 }
 
 @include media-breakpoint-up(lg) {
@@ -251,7 +261,7 @@ th[scope="row"] {
 }
 
 .tag__control {
-  min-height: 0!important;
+  min-height: 0 !important;
 }
 
 .tag__control, .tag__value-container {
@@ -260,12 +270,12 @@ th[scope="row"] {
 }
 
 .tag__control, .tag__value-container, .tag__menu {
-  border-radius: $border-radius!important;
+  border-radius: $border-radius !important;
 }
 
 .tag__control, .tag__value-container, .tag__indicator {
-  padding-top: 0!important;
-  padding-bottom: 0!important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .tag__indicator-separator {
@@ -273,7 +283,7 @@ th[scope="row"] {
 }
 
 .tag__indicator.tag__clear-indicator {
-  padding-right: 0!important;
+  padding-right: 0 !important;
 }
 
 .tag__indicator.tag__dropdown-indicator {
@@ -289,5 +299,5 @@ th[scope="row"] {
 }
 
 .tag__multi-value__remove:hover {
-  background-color: transparent!important;
+  background-color: transparent !important;
 }
