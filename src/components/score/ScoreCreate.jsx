@@ -9,7 +9,7 @@ import React from 'react';
 import ScoreInput from './ScoreInput';
 import * as PropTypes from 'prop-types';
 
-function ScoreInsert(props) {
+function ScoreCreate(props) {
   const propsToBePassed = {
     ...props,
     injectBowlEvent: el => el,
@@ -19,11 +19,11 @@ function ScoreInsert(props) {
   return <ScoreInput {...propsToBePassed}/>;
 }
 
-ScoreInsert.propTypes = {
+ScoreCreate.propTypes = {
   batsmen: PropTypes.arrayOf(PropTypes.object).isRequired,
   batsmanIndices: PropTypes.arrayOf(PropTypes.number).isRequired,
   matchId: PropTypes.string.isRequired,
   onInput: PropTypes.func.isRequired,
 };
 
-export default ScoreInsert;
+export default ScoreCreate;

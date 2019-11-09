@@ -4,7 +4,7 @@ import fetcher from '../lib/fetcher';
 
 import CurrentOver from './over/CurrentOver';
 import Overs from './over/Overs';
-import ScoreInsert from './score/ScoreInsert';
+import ScoreCreate from './score/ScoreCreate';
 import Score from './score/Score';
 import BatsmanSelectModal from './modal/BatsmanSelectModal';
 import OverModal from './modal/OverModal';
@@ -559,7 +559,7 @@ export class Running extends Component {
             </h2>
           </header>
           <hr/>
-          <ScoreInsert batsmen={[battingTeamPlayers[batsman1], battingTeamPlayers[batsman2]]}
+          <ScoreCreate batsmen={[battingTeamPlayers[batsman1], battingTeamPlayers[batsman2]]}
                        batsmanIndices={[batsman1, batsman2]} matchId={match._id}
                        onInput={(bowl, isUpdate = false) => this.onInput({
                          type: 'bowl',
