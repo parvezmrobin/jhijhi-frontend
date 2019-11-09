@@ -117,7 +117,7 @@ export default class Score extends Component {
         if (bowl.legBy) {
           totalRun += bowl.legBy;
         }
-        if (bowl.boundary.run) {
+        if (bowl.boundary?.run) {
           totalRun += bowl.boundary.run;
         }
         if (bowl.isWide || bowl.isNo) {

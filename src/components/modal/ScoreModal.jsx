@@ -139,7 +139,7 @@ const _calculateBattingScores = (props) => {
         battingCard[bowl.playedBy].runs += bowl.singles;
         bowlingCard[bowlerName].run += bowl.singles;
       }
-      if (bowl.boundary.run) {
+      if (bowl.boundary?.run) {
         if (bowl.boundary.kind === 'regular') {
           battingCard[bowl.playedBy].runs += bowl.boundary.run;
         }

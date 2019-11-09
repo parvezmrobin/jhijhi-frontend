@@ -74,10 +74,10 @@ export default class ScoreInputV2 extends Component {
   }
 
   _makeServerRequest(bowlEvent, isUpdate = false) {
-    const { matchId, onInput, defaultHttpVerb, injectBowlEvent, shouldResetAfterInput } = this.props;
+    const { matchId, onInput, injectBowlEvent, shouldResetAfterInput } = this.props;
     bowlEvent = injectBowlEvent(bowlEvent, isUpdate);
-    const request = !isUpdate ? fetcher[defaultHttpVerb.toLowerCase()] : fetcher.put;
-    request(`matches/${matchId}/bowl/v2`, bowlEvent)
+    const [request, endPoint] = !isUpdate ? [fetcher.post, 'bowl'] : [fetcher.put, 'bowl/v2'];
+    request(`matches/${matchId}/${endPoint}`, bowlEvent)
       .then(res => {
         onInput(isUpdate ? res.data.bowl : bowlEvent, isUpdate);
         return shouldResetAfterInput && this.resetInputFields();
@@ -129,11 +129,11 @@ export default class ScoreInputV2 extends Component {
 
       const bowlEvent = {
         playedBy: this._getIndexOfBatsman(this.props.batsmen[0]._id), // by default, the on-crease batsman is out
-        singles,
-        by,
-        legBy,
+        singles: singles === 'Singles' ? 0 : singles,
+        by: by === 'By' ? 0 : by,
+        legBy: legBy === 'Leg By' ? 0 : legBy,
         isWide,
-        isNo,
+        isNo: isNo === ScoreInputV2.NO_BOWL_TYPES[0] ? null : isNo,
       };
 
       if (wicket !== ScoreInputV2.WICKET_TYPES[0]) {
@@ -299,7 +299,6 @@ ScoreInputV2.propTypes = {
   batsmanIndices: PropTypes.arrayOf(PropTypes.number).isRequired,
   matchId: PropTypes.string.isRequired,
   onInput: PropTypes.func.isRequired,
-  defaultHttpVerb: PropTypes.oneOf(['post', 'put']).isRequired,
   injectBowlEvent: PropTypes.func.isRequired,  // to support injecting over and bowl number while editing
   shouldResetAfterInput: PropTypes.bool.isRequired,
   actionText: PropTypes.string.isRequired,

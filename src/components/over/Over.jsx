@@ -13,7 +13,7 @@ function Over(props) {
   const { overNo, over, bowlerName, onOverClick, active } = props;
   const className = `list-group-item ${active ? 'active' : ''}`;
   const badges = props.over.bowls.filter(bowl => bowl.isWicket || optional(bowl.boundary).run)
-    .map(bowl => bowl.isWicket ? 'W' : bowl.boundary.run)
+    .map(bowl => bowl.isWicket ? 'W' : bowl.boundary?.run)
     .map(
       (event, i) => (
         <span key={i} className={`bowl-event ${(event === 'W') ? 'wicket' : 'boundary'}`}>
@@ -39,8 +39,8 @@ Over.getRuns = (over) => {
     if (bowl.legBy) {
       runs += bowl.legBy;
     }
-    if (bowl.boundary.run) {
-      runs += bowl.boundary.run;
+    if (bowl.boundary?.run) {
+      runs += bowl.boundary?.run;
     }
     if (bowl.isWide || bowl.isNo) {
       runs++;

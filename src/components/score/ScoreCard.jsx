@@ -24,7 +24,7 @@ function _genSidebarPlayerMapper(innings, battingTeamPlayers) {
 
       if (bowl.singles) {
         sidebarContent[batsmanName].run += bowl.singles;
-      } else if (bowl.boundary.run && bowl.boundary.kind === 'regular') {
+      } else if (bowl.boundary?.run && bowl.boundary?.kind === 'regular') {
         sidebarContent[batsmanName].run += bowl.boundary.run;
       }
       if (bowl.isWicket) {

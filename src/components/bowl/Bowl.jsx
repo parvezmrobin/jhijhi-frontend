@@ -24,7 +24,7 @@ function Bowl(props) {
     </kbd>;
     elements.push(wicket);
   }
-  if (boundary.run) {
+  if (boundary?.run) {
     const boundaryElement = <kbd className="bg-info mr-1" key="boundary">
       {boundary.run}{(boundary.kind === 'by') ? '(By)' : (boundary.kind === 'legBy') ? '(Leg By)' : ''}
     </kbd>;
