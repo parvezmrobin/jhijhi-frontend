@@ -59,7 +59,7 @@ export default class OverModal extends Component {
           battingTeam={battingTeamPlayers} activeIndex={bowlIndex}/>}
         {showEdit &&
         <ScoreEdit overNo={overIndex} bowlNo={bowlIndex} matchId={matchId}
-                   batsmen={battingTeamPlayers} batsmanIndices={batsmanIndices} onInput={onEdit}/>}
+                   battingTeamPlayers={battingTeamPlayers} batsmanIndices={batsmanIndices} onInput={onEdit}/>}
       </ModalBody>
       <ModalFooter className="border-0">
         <Button color="secondary" onClick={this.close}>Close</Button>

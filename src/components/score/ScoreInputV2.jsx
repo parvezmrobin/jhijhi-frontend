@@ -78,8 +78,8 @@ export default class ScoreInputV2 extends Component {
   _makeServerRequest(bowlEvent, isUpdate = false) {
     const { matchId, onInput, injectBowlEvent, shouldResetAfterInput } = this.props;
     bowlEvent = injectBowlEvent(bowlEvent, isUpdate);
-    const [request, endPoint] = !isUpdate ? [fetcher.post, 'bowl'] : [fetcher.put, 'bowl/v2'];
-    request(`matches/${matchId}/${endPoint}`, bowlEvent)
+    const request = fetcher[this.props.httpVerb];
+    request(`matches/${matchId}/bowl`, bowlEvent)
       .then(res => {
         onInput(isUpdate ? res.data.bowl : bowlEvent, isUpdate);
         return shouldResetAfterInput && this.resetInputFields();
@@ -293,4 +293,5 @@ ScoreInputV2.propTypes = {
   injectBowlEvent: PropTypes.func.isRequired,  // to support injecting over and bowl number while editing
   shouldResetAfterInput: PropTypes.bool.isRequired,
   actionText: PropTypes.string.isRequired,
+  httpVerb: PropTypes.string.isRequired,
 };

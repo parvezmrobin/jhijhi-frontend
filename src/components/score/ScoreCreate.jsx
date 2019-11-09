@@ -6,8 +6,8 @@
 
 
 import React from 'react';
-import ScoreInputV2 from "./ScoreInputV2";
 import * as PropTypes from 'prop-types';
+import ScoreInputV2 from './ScoreInputV2';
 
 function ScoreCreate(props) {
   const propsToBePassed = {
@@ -16,6 +16,7 @@ function ScoreCreate(props) {
     defaultHttpVerb: 'post',
     shouldResetAfterInput: true,
     actionText: 'Insert',
+    httpVerb: 'post',
   };
   return <ScoreInputV2 {...propsToBePassed}/>;
 }

@@ -17,18 +17,18 @@ function ScoreEditModal(props) {
 
   return (
     <Modal isOpen={isOpen} size="xl" toggle={close} contentClassName="bg-dark">
-      <ModalHeader className="border-0 text-white ml-3" tag="h4" toggle={close}>
+      <ModalHeader className="border-0 text-white ml-3 pl-xl-7 pl-lg-6" tag="h4" toggle={close}>
         {overNo + 1}<sup>{ordinal(overNo + 1)}</sup> Over, Bowl {bowlNo + 1}
       </ModalHeader>
       <ModalBody className="p-0">
-        <div className="container-fluid mb-5 pl-4 ml-2">
+        <div className="container-fluid mb-5 pl-4 ml-3">
           <div className="row">
-            <div className="col-12 col-md-6 col-lg-4">
+            <div className="col-12 col-md-6 col-lg-4 pl-xl-7 pl-lg-6">
               <Bowl battingTeam={batsmen} bowl={bowl || { boundary: {} }} bowlNo={bowlNo}/>
             </div>
           </div>
         </div>
-        <ScoreEdit matchId={matchId} batsmen={batsmen} batsmanIndices={batsmanIndices}
+        <ScoreEdit matchId={matchId} battingTeamPlayers={batsmen} batsmanIndices={batsmanIndices}
                    overNo={overNo} bowlNo={bowlNo} onInput={onInput}/>
       </ModalBody>
       <ModalFooter className="border-0">
