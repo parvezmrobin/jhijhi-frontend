@@ -7,6 +7,19 @@ import { bindMethods } from '../../lib/utils';
 import fetcher from '../../lib/fetcher';
 import FormGroup from '../form/FormGroup';
 
+export function getIndexOfBatsman(batsmanId) {
+  let selectedBatsmanIndex;
+  const [{ _id: batsman1Id }, { _id: batsman2Id }] = this.props.batsmen;
+  if (batsman1Id === batsmanId) {
+    selectedBatsmanIndex = this.props.batsmanIndices[0];
+  } else if (batsman2Id === batsmanId) {
+    selectedBatsmanIndex = this.props.batsmanIndices[1];
+  } else {
+    throw new Error(`Invalid batsman selected for run out: ${this.state.batsman}`);
+  }
+  return selectedBatsmanIndex;
+}
+
 export default class ScoreInput extends Component {
   static RUN_OUT = 'Run out';
   static OBSTRUCTING_THE_FIELD = 'Obstructing the field';
@@ -130,18 +143,7 @@ export default class ScoreInput extends Component {
     },
   };
 
-  _getIndexOfBatsman(batsmanId) {
-    let selectedBatsmanIndex;
-    const [{ _id: batsman1Id }, { _id: batsman2Id }] = this.props.batsmen;
-    if (batsman1Id === batsmanId) {
-      selectedBatsmanIndex = this.props.batsmanIndices[0];
-    } else if (batsman2Id === batsmanId) {
-      selectedBatsmanIndex = this.props.batsmanIndices[1];
-    } else {
-      throw new Error(`Invalid batsman selected for run out: ${this.state.batsman}`);
-    }
-    return selectedBatsmanIndex;
-  }
+  _getIndexOfBatsman = getIndexOfBatsman;
 
   wickets = [
     'Wicket', 'Bowled', 'Caught', 'Leg before wicket', 'Run out', 'Stumped', 'Hit the ball twice',
@@ -244,7 +246,7 @@ export default class ScoreInput extends Component {
             Insert a zero run first to add bowl with only <em>run out</em>.
           </Tooltip>
         </div>
-        <Modal isOpen={!!uncertainWicket} onOpened={this.onOpen}>
+        <Modal isOpen={!!uncertainWicket}>
           <ModalHeader className="text-primary" toggle={() => this.setState({
             wicket: 'Wicket',
             uncertainWicket: null,

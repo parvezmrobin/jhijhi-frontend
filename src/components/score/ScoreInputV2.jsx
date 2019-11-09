@@ -12,6 +12,8 @@ import * as PropTypes from 'prop-types';
 import { bindMethods } from '../../lib/utils';
 import fetcher from '../../lib/fetcher';
 import FormGroup from '../form/FormGroup';
+import { getIndexOfBatsman } from './ScoreInput';
+
 
 export default class ScoreInputV2 extends Component {
   static RUN_OUT = 'Run out';
@@ -156,18 +158,7 @@ export default class ScoreInputV2 extends Component {
     },
   };
 
-  _getIndexOfBatsman(batsmanId) {
-    let selectedBatsmanIndex;
-    const [{ _id: batsman1Id }, { _id: batsman2Id }] = this.props.batsmen;
-    if (batsman1Id === batsmanId) {
-      selectedBatsmanIndex = this.props.batsmanIndices[0];
-    } else if (batsman2Id === batsmanId) {
-      selectedBatsmanIndex = this.props.batsmanIndices[1];
-    } else {
-      throw new Error(`Invalid batsman selected for run out: ${this.state.batsman}`);
-    }
-    return selectedBatsmanIndex;
-  }
+  _getIndexOfBatsman = getIndexOfBatsman;
 
   static wicketOptions = ScoreInputV2.WICKET_TYPES.map(wicket => ({
     _id: wicket,
@@ -266,7 +257,7 @@ export default class ScoreInputV2 extends Component {
         </div>
 
         {/*Show modal if `wicket` is of uncertain type and batsman is not selected*/}
-        <Modal isOpen={ScoreInputV2.UNCERTAIN_WICKETS.includes(wicket) && !!batsman}>
+        <Modal isOpen={ScoreInputV2.UNCERTAIN_WICKETS.includes(wicket) && !batsman}>
           <ModalHeader className="text-primary" toggle={this.onBatsmanSelectModalClose}>
             Which batsman is out?
           </ModalHeader>
