@@ -197,7 +197,7 @@ export default class ScoreInputV2 extends Component {
     batsmen[1] = batsmen[1] || { _id: null };
 
     return (
-      <section className="score-input v2 rounded">
+      <section className="score-input v2 rounded flex-grow-0">
 
         <div className="col-12 col-md-3 col-lg-auto">
           <label className="sr-only" htmlFor="by"/>
