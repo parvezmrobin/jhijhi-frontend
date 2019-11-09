@@ -8,15 +8,15 @@
 import React, {Component} from 'react';
 import fetcher from '../lib/fetcher';
 import CenterContent from './layouts/CenterContent';
-import Score from './Score';
+import Score from './score/Score';
 import {Button, CustomInput, Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap';
-import Overs from './Overs';
-import CurrentOver from './CurrentOver';
+import Overs from './over/Overs';
+import CurrentOver from './over/CurrentOver';
 import {copySharableLink, toTitleCase} from '../lib/utils';
 import * as PropTypes from 'prop-types';
 import {Redirect} from 'react-router-dom';
-import ScoreModal from './ScoreModal';
-import ErrorModal from "./ErrorModal";
+import ScoreModal from './modal/ScoreModal';
+import ErrorModal from "./modal/ErrorModal";
 
 export default class MatchDetail extends Component {
   constructor(props) {

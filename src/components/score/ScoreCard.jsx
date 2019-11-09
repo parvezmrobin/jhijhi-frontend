@@ -1,7 +1,7 @@
-import SidebarList from './SidebarList';
-import CenterContent from './layouts/CenterContent';
+import SidebarList from '../layouts/SidebarList';
+import CenterContent from '../layouts/CenterContent';
 import React from 'react';
-import { toTitleCase } from '../lib/utils';
+import { toTitleCase } from '../../lib/utils';
 
 function _genSidebarPlayerMapper(innings, battingTeamPlayers) {
   const sidebarContent = {};

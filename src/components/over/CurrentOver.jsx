@@ -6,12 +6,12 @@
 
 
 import React, { Component } from 'react';
-import { toTitleCase } from '../lib/utils';
+import { toTitleCase } from '../../lib/utils';
 import * as feather from 'feather-icons';
 import PropTypes from 'prop-types';
 
-import Bowl from './Bowl';
-import NextBall from './NextBall';
+import Bowl from '../bowl/Bowl';
+import NextBowl from '../bowl/NextBowl';
 
 
 class CurrentOver extends Component {
@@ -40,7 +40,7 @@ class CurrentOver extends Component {
       </h4>}
       <ul className="list-group">
         {renderedBowls}
-        <NextBall onSwitch={onSwitch} onCrease={onCrease} onBowlersEnd={onBowlersEnd}/>
+        <NextBowl onSwitch={onSwitch} onCrease={onCrease} onBowlersEnd={onBowlersEnd}/>
       </ul>
     </div>);
   }

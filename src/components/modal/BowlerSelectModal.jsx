@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import FormGroup from './form/FormGroup';
+import FormGroup from '../form/FormGroup';
 import * as PropTypes from 'prop-types';
-import { bindMethods, subtract } from '../lib/utils';
-import fetcher from '../lib/fetcher';
+import { bindMethods, subtract } from '../../lib/utils';
+import fetcher from '../../lib/fetcher';
 
 export default class BowlerSelectModal extends Component {
   constructor(props) {

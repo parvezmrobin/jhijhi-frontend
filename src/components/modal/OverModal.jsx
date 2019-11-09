@@ -1,9 +1,9 @@
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import { optional, toTitleCase } from '../lib/utils';
-import CurrentOver from './CurrentOver';
+import { optional, toTitleCase } from '../../lib/utils';
+import CurrentOver from '../over/CurrentOver';
 import * as PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import ScoreEdit from './ScoreEdit';
+import ScoreEdit from '../score/ScoreEdit';
 
 export default class OverModal extends Component {
   state = {

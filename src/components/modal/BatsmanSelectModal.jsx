@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Button, CustomInput, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import FormGroup from './form/FormGroup';
+import FormGroup from '../form/FormGroup';
 import * as PropTypes from 'prop-types';
-import { bindMethods } from '../lib/utils';
+import { bindMethods } from '../../lib/utils';
 
 export default class BatsmanSelectModal extends Component {
   constructor(props) {

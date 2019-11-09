@@ -7,11 +7,11 @@
 
 import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
-import UmpireForm from "../components/UmpireForm";
+import UmpireForm from "../components/umpire/UmpireForm";
 import { bindMethods, formatValidationFeedback } from "../lib/utils";
 import fetcher from "../lib/fetcher";
-import ErrorModal from "../components/ErrorModal";
-import UmpireSidebar from "../components/UmpireSidebar";
+import ErrorModal from "../components/modal/ErrorModal";
+import UmpireSidebar from "../components/umpire/UmpireSidebar";
 import Notification from "../components/Notification";
 
 class Umpire extends Component {

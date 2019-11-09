@@ -7,7 +7,7 @@
 
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import InputControl from './form/control/input';
+import InputControl from '../form/control/input';
 
 
 function SidebarList(props) {

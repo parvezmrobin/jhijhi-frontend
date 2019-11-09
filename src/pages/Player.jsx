@@ -7,12 +7,12 @@
 
 import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
-import PlayerForm from '../components/PlayerForm';
+import PlayerForm from '../components/player/PlayerForm';
 import fetcher from '../lib/fetcher';
 import { bindMethods, formatValidationFeedback } from '../lib/utils';
 import { Alert } from 'reactstrap';
-import PlayerSidebar from '../components/PlayerSidebar';
-import ErrorModal from '../components/ErrorModal';
+import PlayerSidebar from '../components/player/PlayerSidebar';
+import ErrorModal from '../components/modal/ErrorModal';
 import Notification from "../components/Notification";
 
 class Player extends Component {

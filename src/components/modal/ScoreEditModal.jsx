@@ -8,9 +8,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import ScoreEdit from './ScoreEdit';
-import { ordinal } from '../lib/utils';
-import Bowl from "./Bowl";
+import ScoreEdit from '../score/ScoreEdit';
+import { ordinal } from '../../lib/utils';
+import Bowl from "../bowl/Bowl";
 
 function ScoreEditModal(props) {
   const { isOpen, close, matchId, overNo, bowlNo, onInput, batsmen, batsmanIndices, bowl } = props;

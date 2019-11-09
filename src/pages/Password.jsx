@@ -4,7 +4,7 @@ import FormGroup from "../components/form/FormGroup";
 import FormButton from "../components/form/FormButton";
 import Notification from "../components/Notification";
 import fetcher from "../lib/fetcher";
-import ErrorModal from "../components/ErrorModal";
+import ErrorModal from "../components/modal/ErrorModal";
 import { formatValidationFeedback } from "../lib/utils";
 
 

@@ -6,8 +6,8 @@
 
 
 import React, { Fragment } from 'react';
-import FormGroup from './form/FormGroup';
-import FormButton from './form/FormButton';
+import FormGroup from '../form/FormGroup';
+import FormButton from '../form/FormButton';
 import { Link } from "react-router-dom";
 
 function MatchForm(props) {

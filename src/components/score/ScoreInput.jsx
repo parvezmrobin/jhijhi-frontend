@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import CheckBoxControl from './form/control/checkbox';
+import CheckBoxControl from '../form/control/checkbox';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Tooltip } from 'reactstrap';
-import SelectControl from './form/control/select';
+import SelectControl from '../form/control/select';
 import * as PropTypes from 'prop-types';
-import { bindMethods } from '../lib/utils';
-import fetcher from '../lib/fetcher';
-import FormGroup from './form/FormGroup';
+import { bindMethods } from '../../lib/utils';
+import fetcher from '../../lib/fetcher';
+import FormGroup from '../form/FormGroup';
 
 export default class ScoreInput extends Component {
   static RUN_OUT = 'Run out';

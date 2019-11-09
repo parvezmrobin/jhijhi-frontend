@@ -12,7 +12,7 @@ import { bindMethods } from '../lib/utils';
 import Toss from '../components/Toss';
 import { Running } from '../components/Running';
 import { Redirect } from 'react-router-dom';
-import ErrorModal from "../components/ErrorModal";
+import ErrorModal from "../components/modal/ErrorModal";
 
 class Live extends Component {
   constructor(props) {

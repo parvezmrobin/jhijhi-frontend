@@ -6,7 +6,7 @@
 
 
 import React from 'react';
-import { toTitleCase } from '../lib/utils';
+import { toTitleCase } from '../../lib/utils';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 

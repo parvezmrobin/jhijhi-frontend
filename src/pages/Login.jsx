@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import AuthForm from '../components/auth/AuthForm';
 import axios from 'axios';
 import { bindMethods } from '../lib/utils';
-import ErrorModal from '../components/ErrorModal';
+import ErrorModal from '../components/modal/ErrorModal';
 
 
 class Login extends Component {

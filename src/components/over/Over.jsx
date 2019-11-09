@@ -6,7 +6,7 @@
 
 
 import React from 'react';
-import { optional, toTitleCase } from '../lib/utils';
+import { optional, toTitleCase } from '../../lib/utils';
 import * as PropTypes from 'prop-types';
 
 function Over(props) {

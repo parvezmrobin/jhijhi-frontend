@@ -2,17 +2,17 @@ import React, { Component } from 'react';
 import {bindMethods, copySharableLink, optional, toTitleCase} from '../lib/utils';
 import fetcher from '../lib/fetcher';
 
-import CurrentOver from './CurrentOver';
-import Overs from './Overs';
-import ScoreInsert from './ScoreInsert';
-import Score from './Score';
-import BatsmanSelectModal from './BatsmanSelectModal';
-import OverModal from './OverModal';
-import ScoreCard from './ScoreCard';
-import BowlerSelectModal from './BowlerSelectModal';
+import CurrentOver from './over/CurrentOver';
+import Overs from './over/Overs';
+import ScoreInsert from './score/ScoreInsert';
+import Score from './score/Score';
+import BatsmanSelectModal from './modal/BatsmanSelectModal';
+import OverModal from './modal/OverModal';
+import ScoreCard from './score/ScoreCard';
+import BowlerSelectModal from './modal/BowlerSelectModal';
 import { Redirect } from 'react-router-dom';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Spinner } from 'reactstrap';
-import ScoreEditModal from './ScoreEditModal';
+import ScoreEditModal from './modal/ScoreEditModal';
 
 export class Running extends Component {
   constructor(props) {

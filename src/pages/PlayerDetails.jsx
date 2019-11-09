@@ -10,8 +10,8 @@ import fetcher from '../lib/fetcher';
 import { toTitleCase } from '../lib/utils';
 import { Table } from 'reactstrap';
 import Loading from './Loading';
-import PlayerSidebar from '../components/PlayerSidebar';
-import ErrorModal from '../components/ErrorModal';
+import PlayerSidebar from '../components/player/PlayerSidebar';
+import ErrorModal from '../components/modal/ErrorModal';
 
 class PlayerDetails extends PureComponent {
   state = {

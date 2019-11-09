@@ -8,7 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, ModalBody, ModalFooter, ModalHeader, Table } from 'reactstrap';
-import { toTitleCase } from '../lib/utils';
+import { toTitleCase } from '../../lib/utils';
 
 function ScoreModal(props) {
   const { battingCard, bowlingCard, totalRun, totalWicket } = _calculateBattingScores(props);

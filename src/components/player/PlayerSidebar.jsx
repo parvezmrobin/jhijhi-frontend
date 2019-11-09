@@ -1,7 +1,7 @@
-import { toTitleCase } from '../lib/utils';
+import { toTitleCase } from '../../lib/utils';
 import { Link } from 'react-router-dom';
-import CenterContent from './layouts/CenterContent';
-import SidebarList from './SidebarList';
+import CenterContent from '../layouts/CenterContent';
+import SidebarList from '../layouts/SidebarList';
 import * as PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import * as feather from 'feather-icons';

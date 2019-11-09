@@ -7,14 +7,14 @@
 
 import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
-import MatchForm from '../components/MatchForm';
+import MatchForm from '../components/match/MatchForm';
 import { bindMethods, formatValidationFeedback } from '../lib/utils';
 import cloneDeep from "lodash/cloneDeep";
 import fetcher from '../lib/fetcher';
 import { Redirect } from 'react-router-dom';
-import ErrorModal from '../components/ErrorModal';
+import ErrorModal from '../components/modal/ErrorModal';
 import Notification from "../components/Notification";
-import MatchSidebar from "../components/MatchSidebar";
+import MatchSidebar from "../components/match/MatchSidebar";
 
 
 class Match extends Component {

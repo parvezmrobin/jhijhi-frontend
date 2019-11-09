@@ -11,7 +11,7 @@ import { Tooltip } from 'reactstrap';
 import PropTypes from 'prop-types';
 
 
-class NextBall extends Component {
+class NextBowl extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -60,11 +60,11 @@ class NextBall extends Component {
 
 }
 
-NextBall.propTypes = {
+NextBowl.propTypes = {
   onCrease: PropTypes.string,
   onBowlersEnd: PropTypes.string,
   onSwitch: PropTypes.func,
 };
 
 
-export default NextBall;
+export default NextBowl;

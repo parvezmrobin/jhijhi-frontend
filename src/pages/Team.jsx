@@ -7,14 +7,14 @@
 
 import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
-import TeamForm from '../components/TeamForm';
+import TeamForm from '../components/team/TeamForm';
 import fetcher from '../lib/fetcher';
 import { bindMethods, formatValidationFeedback } from '../lib/utils';
 import cloneDeep from 'lodash/cloneDeep';
 import { Alert } from 'reactstrap';
-import ErrorModal from '../components/ErrorModal';
+import ErrorModal from '../components/modal/ErrorModal';
 import Notification from "../components/Notification";
-import TeamSidebar from "../components/TeamSidebar";
+import TeamSidebar from "../components/team/TeamSidebar";
 
 
 class Team extends Component {

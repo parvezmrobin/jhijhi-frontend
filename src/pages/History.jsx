@@ -3,9 +3,9 @@ import fetcher from '../lib/fetcher';
 import { Link } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 import CenterContent from '../components/layouts/CenterContent';
-import SidebarList from '../components/SidebarList';
+import SidebarList from '../components/layouts/SidebarList';
 import MatchDetail from '../components/MatchDetail';
-import ErrorModal from "../components/ErrorModal";
+import ErrorModal from "../components/modal/ErrorModal";
 
 
 class History extends Component {
