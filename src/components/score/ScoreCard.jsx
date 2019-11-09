@@ -1,4 +1,4 @@
-import SidebarList from '../layouts/SidebarList';
+import List from '../layouts/List';
 import CenterContent from '../layouts/CenterContent';
 import React from 'react';
 import { toTitleCase } from '../../lib/utils';
@@ -60,7 +60,7 @@ export default function ScoreCard(props) {
     }));
 
   return <CenterContent col="col">
-    <SidebarList title={battingTeamName} itemClass="text-white"
-                 itemMapper={sidebarPlayerMapper} list={sidebarPlayerList}/>
+    <List title={battingTeamName} itemClass="text-white"
+          itemMapper={sidebarPlayerMapper} list={sidebarPlayerList}/>
   </CenterContent>
 }

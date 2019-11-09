@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import InputControl from '../form/control/input';
 
 
-function SidebarList(props) {
+function List(props) {
   const className = 'list-group-item bg-transparent ' + (props.itemClass || '');
   const mapper = props.itemMapper || (item => item);
   const items = props.list.map(
@@ -27,7 +27,7 @@ function SidebarList(props) {
   );
 }
 
-SidebarList.propTypes = {
+List.propTypes = {
   title: PropTypes.string.isRequired,
   itemClass: PropTypes.string,
   itemMapper: PropTypes.func,
@@ -36,4 +36,4 @@ SidebarList.propTypes = {
 };
 
 
-export default SidebarList;
+export default List;

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import * as feather from "feather-icons";
 import { Link } from "react-router-dom";
 import CenterContent from "../layouts/CenterContent";
-import SidebarList from "../layouts/SidebarList";
+import List from "../layouts/List";
 import debounce from "lodash/debounce";
 import * as PropTypes from "prop-types";
 
@@ -46,7 +46,7 @@ export default class MatchSidebar extends Component {
 
     return <aside className="col-md-3">
       <CenterContent col="col">
-        <SidebarList
+        <List
           title="Upcoming Matches"
           itemClass="text-white"
           itemMapper={this.renderMatch}

@@ -3,7 +3,7 @@ import fetcher from '../lib/fetcher';
 import { Link } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 import CenterContent from '../components/layouts/CenterContent';
-import SidebarList from '../components/layouts/SidebarList';
+import List from '../components/layouts/List';
 import MatchDetail from '../components/MatchDetail';
 import ErrorModal from "../components/modal/ErrorModal";
 
@@ -55,8 +55,8 @@ class History extends Component {
     };
     const sidebar = <aside className="col-md-3">
       <CenterContent col="col">
-        <SidebarList title="Completed Matches" itemMapper={sidebarItemMapper} list={matches || []}
-                     onFilter={debounce(this.onFilter, 500)}/>
+        <List title="Completed Matches" itemMapper={sidebarItemMapper} list={matches || []}
+              onFilter={debounce(this.onFilter, 500)}/>
       </CenterContent>
     </aside>;
 

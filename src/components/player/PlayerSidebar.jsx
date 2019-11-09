@@ -1,7 +1,7 @@
 import { toTitleCase } from '../../lib/utils';
 import { Link } from 'react-router-dom';
 import CenterContent from '../layouts/CenterContent';
-import SidebarList from '../layouts/SidebarList';
+import List from '../layouts/List';
 import * as PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import * as feather from 'feather-icons';
@@ -39,7 +39,7 @@ export default class PlayerSidebar extends Component {
 
     return <aside className="col-md-4 col-lg-3">
       <CenterContent col="col">
-        <SidebarList
+        <List
           title="Existing Players"
           itemMapper={renderPlayer}
           list={this.props.players}

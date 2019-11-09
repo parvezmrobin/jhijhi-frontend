@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import * as feather from "feather-icons";
 import { Link } from "react-router-dom";
 import CenterContent from "../layouts/CenterContent";
-import SidebarList from "../layouts/SidebarList";
+import List from "../layouts/List";
 import debounce from "lodash/debounce";
 import * as PropTypes from "prop-types";
 
@@ -36,7 +36,7 @@ export default class TeamSidebar extends Component {
   render() {
     return <aside className="col-md-4 col-lg-3">
       <CenterContent col="col">
-        <SidebarList
+        <List
           title="Existing Teams"
           itemMapper={this._renderTeam}
           list={this.props.teams}
