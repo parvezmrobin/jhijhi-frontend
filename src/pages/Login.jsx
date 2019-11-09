@@ -51,8 +51,9 @@ class Login extends Component {
               return alert('You need to update your browser in order to use this site.');
             }
             window.localStorage.setItem('token', response.data.token);
-            if (this.props.location.search.startsWith('?redirect=')) {
-              window.location.href = this.props.location.search.substr(10);
+            const queryString = this.props.location.search;
+            if (queryString.startsWith('?redirect=')) {
+              window.location.href = '/#' + queryString.substr('?redirect='.length);
             } else {
               window.location.href = '/';
             }

@@ -65,7 +65,7 @@ class App extends Component {
                   <Route path="/login" component={Login}/>
                   <Route path="/register" component={Register}/>
                   <Route path="/public@:id" component={Public}/>
-                  {shouldRedirect && <Redirect to={`/login?redirect=${window.location.pathname}`}/>}
+                  {shouldRedirect && <Redirect to={`/login?redirect=${window.location.hash.substr(1)}`}/>}
                   <Route path="/" exact component={Home}/>
                   <Route path="/contact" component={Contact}/>
                   <Route path="/player-stat@:id" component={PlayerDetails}/>
