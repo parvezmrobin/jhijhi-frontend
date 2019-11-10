@@ -146,6 +146,8 @@ export default class ScoreInputV2 extends Component {
         if (ScoreInputV2.UNCERTAIN_WICKETS.includes(wicket)) {
           bowlEvent.isWicket.player = this._getIndexOfBatsman(batsman);
         }
+      } else {
+        bowlEvent.isWicket = {};
       }
 
       if (boundary !== ScoreInputV2.BOUNDARY_TYPES[0]) {
@@ -153,6 +155,8 @@ export default class ScoreInputV2 extends Component {
         const kind = boundary.endsWith('(Leg By)') ? 'legBy'
           : boundary.endsWith('(By)') ? 'by' : 'regular';
         bowlEvent.boundary = { run, kind };
+      } else {
+        bowlEvent.boundary = {};
       }
       this._makeServerRequest(bowlEvent);
     },
@@ -273,12 +277,15 @@ export default class ScoreInputV2 extends Component {
 
         {/* Error Modal */}
         <Modal isOpen={!!errorMessage}>
-          <ModalHeader className="text-danger" toggle={() => this.setState({ errorMessage: null })}>
-            Error!
+          <ModalHeader className="text-warning border-0" toggle={() => this.setState({ errorMessage: null })}>
+            Warning!
           </ModalHeader>
-          <ModalBody className="text-danger">
+          <ModalBody className="text-warning">
             {errorMessage}
           </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={() => this.setState({ errorMessage: null })}>Got It</Button>
+          </ModalFooter>
         </Modal>
       </section>
     );
