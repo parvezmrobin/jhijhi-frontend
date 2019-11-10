@@ -433,19 +433,16 @@ export class Running extends Component {
 
         const batsman = bowl.playedBy;
         if (bowl.isWicket) {
-          const outBatsman = (typeof bowl.isWicket.player === 'number') ? bowl.isWicket.player : batsman;
+          const outBatsman = Number.isInteger(bowl.isWicket.player) ? bowl.isWicket.player : batsman;
           if (batsman1 == null && batsman === outBatsman) {
-            batsman1 = -1;
+            batsman1 = -1; // indicating that, last on-crease batsman is out
           }
           outBatsmen.push(outBatsman);
-
-          // if it's not runout then, no run, by or legBy is present
-          if (typeof bowl.isWicket.player !== 'number') {
-            continue;
-          }
         }
 
-        if (outBatsmen.indexOf(batsman) !== -1) {
+        // the loop is going from future to past
+        // if `batsman` is out in the future, continue
+        if (outBatsmen.includes(batsman)) {
           continue;
         }
 
@@ -457,8 +454,16 @@ export class Running extends Component {
         }
       }
     }
+
     if (batsman1 === -1) {
       batsman1 = null;
+    }
+
+    const lastOver = innings.overs[innings.overs.length - 1];
+    const lastBowl = lastOver.bowls[lastOver.bowls.length - 1];
+    const lastBowlRuns = lastBowl && ((lastBowl.singles || 0) + (lastBowl.by || 0) + (lastBowl.legBy || 0));
+    if (lastBowlRuns % 2) { // if odd runs in the last bowl
+      [batsman1, batsman2] = [batsman2, batsman1];
     }
 
     // if its a new over
