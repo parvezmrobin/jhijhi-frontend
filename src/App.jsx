@@ -10,9 +10,10 @@ import {HashRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 import {toTitleCase} from './lib/utils';
 import fetcher from './lib/fetcher';
 import ErrorBoundary from './ErrorBoundary';
-import './styles/App.scss';
+// import './styles/App.scss';
 import {logout} from './lib/utils';
 import Navbar from "./components/Navbar";
+import App2 from "./App2";
 
 const Home = React.lazy(() => import(/* webpackChunkName: "Home" */ './pages/Home'));
 const Register = React.lazy(() => import(/* webpackChunkName: "Register" */ './pages/Register'));
@@ -28,7 +29,6 @@ const History = React.lazy(() => import(/* webpackChunkName: "History" */ './pag
 const Kidding = React.lazy(() => import(/* webpackChunkName: "ChangePassword" */ './pages/Kidding'));
 const Password = React.lazy(() => import(/* webpackChunkName: "Password" */ './pages/Password'));
 const Public = React.lazy(() => import(/* webpackChunkName: "Public" */ './pages/Public'));
-
 
 class App extends Component {
   state = {
@@ -81,7 +81,7 @@ class App extends Component {
                   <Route path="/history@:id" component={History}/>
                   <Route path="/kidding" component={Kidding}/>
                   <Route path="/password" component={Password}/>
-
+                  <Route component={App2}/>
                 </Switch>
               </ErrorBoundary>
             </div>

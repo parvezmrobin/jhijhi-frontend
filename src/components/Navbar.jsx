@@ -88,7 +88,7 @@ class Navbar extends Component {
       );
     }
     return (
-      <BaseNavbar color="light" light expand="md" fixed="top">
+      <BaseNavbar color="dark" dark expand="md" fixed="top">
         <NavLink onClick={this.collapse} exact className="navbar-brand" to="/">Jhijhi</NavLink>
         <NavbarToggler onClick={this.toggle}/>
 
