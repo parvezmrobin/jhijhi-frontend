@@ -4,99 +4,152 @@
  * Date: Mar 31, 2019
  */
 
-import React, { Component } from 'react';
-import { NavLink } from 'react-router-dom';
+import React from 'react';
 import { logout } from '../lib/utils';
+import Header from "./Header/Header";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import Button from "./CustomButtons/Button";
+import CustomDropdown from "./CustomDropdown/CustomDropdown";
+import GridItem from "./Grid/GridItem";
+import styles from "assets/jss/material-kit-react/views/componentsSections/navbarsStyle.js";
+import { makeStyles } from "@material-ui/core/styles";
+import GridContainer from "./Grid/GridContainer";
+import Parallax from "./Parallax/Parallax";
 import {
-  Collapse,
-  Nav,
-  Navbar as BaseNavbar,
-  NavbarToggler,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-} from 'reactstrap';
+  AccountCircleOutlined,
+  ContactMail,
+  ExitToApp,
+  Games,
+  Group,
+  Home,
+  KeyboardHide,
+  Person,
+  PersonAdd,
+  Score,
+  SupervisedUserCircle,
+  VerifiedUser,
+  VerifiedUserOutlined,
+} from "@material-ui/icons";
 
+const useStyles = makeStyles(styles);
 
-class Navbar extends Component {
-  state = {
-    isOpen: false,
-  };
+const Navbar = (props) => {
+  const classes = useStyles();
 
-  componentDidMount() {
-    this.setState({ isOpen: false });
+  let rightLinks, leftLinks;
+  if (props.isLoggedIn) {
+    leftLinks = <List className={classes.list}>
+      <ListItem className={classes.listItem}>
+        <Button href="#/" color="transparent" className={classes.navLink}>
+          <Home className={classes.icons}/> Home
+        </Button>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button href="#/contact" color="transparent" className={classes.navLink}>
+          <ContactMail className={classes.icons}/> Contact
+        </Button>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button href="#/" color="transparent" className={classes.navLink}>
+          <Person className={classes.icons}/> Player
+        </Button>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button href="#/contact" color="transparent" className={classes.navLink}>
+          <Group className={classes.icons}/> Team
+        </Button>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button href="#/contact" color="transparent" className={classes.navLink}>
+          <SupervisedUserCircle className={classes.icons}/> Umpire
+        </Button>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button href="#/contact" color="transparent" className={classes.navLink}>
+          <Games className={classes.icons}/> Match
+        </Button>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button href="#/contact" color="transparent" className={classes.navLink}>
+          <Score className={classes.icons}/> Score
+        </Button>
+      </ListItem>
+    </List>;
+
+    rightLinks = <List className={classes.list}>
+      <ListItem className={classes.listItem}>
+        <CustomDropdown
+          noLiPadding
+          buttonText={props.username}
+          buttonProps={{
+            className: classes.navLink,
+            color: "transparent",
+          }}
+          buttonIcon={VerifiedUser}
+          dropdownList={[
+            <Button href="#/password" color="transparent" className={classes.dropdownLink}>
+              <KeyboardHide className={classes.icons}/> Change Password
+            </Button>,
+            <Button href="#/kidding" color="transparent" className={classes.dropdownLink}
+                    style={{ textAlign: 'left' }}>
+              <AccountCircleOutlined className={classes.icons}/> Manage Account
+            </Button>,
+            <Button href="#" color="transparent" className={classes.dropdownLink}
+                    style={{ textAlign: 'left' }}
+                    onClick={logout}>
+              <ExitToApp className={classes.icons}/> Logout
+            </Button>,
+          ]}
+        />
+      </ListItem>
+    </List>;
+  } else {
+    rightLinks = <List className={classes.list}>
+      <ListItem className={classes.listItem}>
+        <Button href="#/register" color="transparent" className={classes.navLink}>
+          <PersonAdd className={classes.icons}/> Register
+        </Button>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button href="#/login" color="transparent" className={classes.navLink}>
+          <VerifiedUserOutlined className={classes.icons}/> Login
+        </Button>
+      </ListItem>
+    </List>;
   }
 
-  toggle = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
-  };
-
-  collapse = () => {
-    this.setState({ isOpen: false });
-  };
-
-  render() {
-    let nav;
-    if (this.props.isLoggedIn) {
-      nav = (
-        <Collapse navbar isOpen={this.state.isOpen} id="navbar">
-          <Nav navbar>
-            <NavLink onClick={this.collapse} className="nav-item nav-link" to="/">Home</NavLink>
-            <NavLink onClick={this.collapse} className="nav-item nav-link"
-                     to="/contact">Contact</NavLink>
-          </Nav>
-          <Nav navbar className="highlight mx-auto">
-            <NavLink onClick={this.collapse} className="nav-item nav-link"
-                     to="/player">Player</NavLink>
-            <NavLink onClick={this.collapse} className="nav-item nav-link" to="/team">Team</NavLink>
-            <NavLink onClick={this.collapse} className="nav-item nav-link"
-                     to="/umpire">Umpire</NavLink>
-            <NavLink onClick={this.collapse} className="nav-item nav-link"
-                     to="/match">Match</NavLink>
-            <NavLink onClick={this.collapse} className="nav-item nav-link"
-                     to="/history@null">Score</NavLink>
-          </Nav>
-          <Nav navbar>
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                {this.props.username}
-              </DropdownToggle>
-              <DropdownMenu right>
-                  <NavLink className="dropdown-item" onClick={this.collapse} to="/password">Change Password</NavLink>
-                  <NavLink className="dropdown-item" onClick={this.collapse} to="/kidding">Manage Account</NavLink>
-                <DropdownItem divider />
-                  <NavLink className="dropdown-item bg-warning text-white" to="#" onClick={() => {
-                    this.collapse();
-                    logout();
-                  }}>Logout</NavLink>
-              </DropdownMenu>
-            </UncontrolledDropdown>
-          </Nav>
-        </Collapse>
-      );
-    } else {
-      nav = (
-        <Collapse navbar isOpen={this.state.isOpen} id="navbar">
-          <Nav navbar className="ml-auto">
-            <NavLink onClick={this.collapse} className="nav-item nav-link"
-                     to="/register">Register</NavLink>
-            <NavLink onClick={this.collapse} className="nav-item nav-link"
-                     to="/login">Login</NavLink>
-          </Nav>
-        </Collapse>
-      );
-    }
-    return (
-      <BaseNavbar color="dark" dark expand="md" fixed="top">
-        <NavLink onClick={this.collapse} exact className="navbar-brand" to="/">Jhijhi</NavLink>
-        <NavbarToggler onClick={this.toggle}/>
-
-        {nav}
-
-      </BaseNavbar>
-    );
-  }
-}
+  return (
+    <GridContainer>
+      <GridItem>
+        <Header
+          brand="Jhijhi"
+          leftLinks={leftLinks}
+          rightLinks={rightLinks}
+          fixed
+          color="transparent"
+          changeColorOnScroll={{
+            height: 400,
+            color: "primary",
+          }}
+        />
+        <Parallax image={require("assets/img/bg4.jpg")}>
+          <div className={classes.container}>
+            <GridContainer>
+              <GridItem>
+                <div className={classes.brand}>
+                  <h1 className={classes.title}>Material Kit React.</h1>
+                  <h3 className={classes.subtitle}>
+                    A Badass Material-UI Kit based on Material Design.
+                  </h3>
+                </div>
+              </GridItem>
+            </GridContainer>
+          </div>
+        </Parallax>
+      </GridItem>
+    </GridContainer>
+  );
+};
 
 export default Navbar;
