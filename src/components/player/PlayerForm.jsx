@@ -5,36 +5,76 @@
  */
 
 
-import React, { Fragment } from 'react';
-import FormGroup from '../form/FormGroup';
-import FormButton from '../form/FormButton';
+import React from 'react';
 import { Link } from 'react-router-dom';
-
+import { CardContent } from "@material-ui/core";
+import Card from "@material-ui/core/Card";
+import Typography from "@material-ui/core/Typography";
+import CustomInput from "../CustomInput/CustomInput";
+import Grid from "@material-ui/core/Grid";
+import Button from "../CustomButtons/Button";
 
 function PlayerForm(props) {
-  const operation = props.values._id ? 'Edit' : 'Create';
+  const isEdit = !!props.values._id;
+  const operation = isEdit ? 'Edit' : 'Create';
   const onSubmit = e => {
     e.preventDefault();
     props.onSubmit(e);
   };
 
   return (
-    <Fragment>
-      <h2>{operation} Player</h2>
-      <hr/>
-      <form onSubmit={onSubmit}>
-        <FormGroup name="name" onChange={e => props.onChange({ name: e.target.value })}
-                   value={props.values.name} isValid={props.isValid.name}
-                   feedback={props.feedback.name} autoFocus={true}/>
-        <FormGroup name="jersey-no" onChange={e => props.onChange({ jerseyNo: e.target.value })}
-                   value={props.values.jerseyNo} isValid={props.isValid.jerseyNo}
-                   feedback={props.feedback.jerseyNo}/>
-        <FormButton type="submit" text={operation} btnClass="outline-success">
-          {props.values._id &&
-          <label className="col-form-label float-right"><Link to="/player">Create</Link> a player instead</label>}
-        </FormButton>
-      </form>
-    </Fragment>
+    <Card>
+      <CardContent>
+        <Typography color="textPrimary" variant="h4">{operation} Player</Typography>
+        <form onSubmit={onSubmit}>
+          <Grid container>
+            <Grid item xs={12}>
+              <CustomInput
+                labelText="Player Name"
+                id="player-name"
+                error={props.isValid.name === false}
+                success={props.isValid.name === true}
+                formControlProps={{
+                  fullWidth: true,
+                  onChange: e => props.onChange({ name: e.target.value }),
+                }}
+                inputProps={{
+                  autoFocus: true,
+                  value: props.values.name,
+                }}
+                feedback={props.feedback.name}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomInput
+                labelText="Jersey No"
+                id="jersey-no"
+                error={props.isValid.jerseyNo === false}
+                success={props.isValid.jerseyNo === true}
+                formControlProps={{
+                  fullWidth: true,
+                  onChange: e => props.onChange({ jerseyNo: e.target.value }),
+                }}
+                inputProps={{
+                  autoFocus: true,
+                  value: props.values.jerseyNo,
+                }}
+                feedback={props.feedback.jerseyNo}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container justify="space-between" alignItems="center">
+                <Button type="submit" variant="outlined" color={isEdit ? 'primary' : 'success'}>
+                  {operation}
+                </Button>
+                {isEdit &&
+                <label className=""><Link to="/player">Create</Link> a player instead</label>}
+              </Grid>
+            </Grid>
+          </Grid>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
 

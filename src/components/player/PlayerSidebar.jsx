@@ -1,11 +1,13 @@
 import { toTitleCase } from '../../lib/utils';
-import { Link } from 'react-router-dom';
-import CenterContent from '../layouts/CenterContent';
 import List from '../layouts/List';
 import * as PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import * as feather from 'feather-icons';
 import debounce from 'lodash/debounce';
+import Link from "@material-ui/core/Link";
+import { Edit } from "@material-ui/icons";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItem from "@material-ui/core/ListItem";
 
 /**
  * Parvez M Robin
@@ -14,38 +16,25 @@ import debounce from 'lodash/debounce';
  */
 
 
-export default class PlayerSidebar extends Component {
-
-  componentDidMount() {
-    feather.replace();
-  }
-
-  componentDidUpdate() {
-    feather.replace();
-  }
-
+class PlayerSidebar extends Component {
   render() {
     const renderPlayer = player => {
       const playerText = `${toTitleCase(player.name)} (${player.jerseyNo})`;
-      const editButton = <Link to={'player@' + player._id} className="float-right">
-        <small className="text-white"><i data-feather="edit"/></small>
-      </Link>;
-      const className = (player._id === this.props.playerId) ? 'text-success' : 'text-white';
-      return <>
-        <Link to={`player-stat@${player._id}`} className={className}>{playerText}</Link>
+      const editButton = <ListItemIcon><Link href={'#/player@' + player._id} className="float-right">
+        <Edit/>
+      </Link></ListItemIcon>;
+
+      return <ListItem key={player._id} selected={player._id === this.props.playerId}>
+        <ListItemText><Link href={`#player-stat@${player._id}`}>{playerText}</Link></ListItemText>
         {this.props.editable && editButton}
-      </>;
+      </ListItem>;
     };
 
-    return <aside className="col-md-4 col-lg-3">
-      <CenterContent col="col">
-        <List
-          title="Existing Players"
-          itemMapper={renderPlayer}
-          list={this.props.players}
-          onFilter={debounce(this.props.onFilter, 1000)}/>
-      </CenterContent>
-    </aside>;
+    return <List
+      title="Existing Players"
+      itemMapper={renderPlayer}
+      list={this.props.players}
+      onFilter={debounce(this.props.onFilter, 1000)}/>;
   }
 }
 
@@ -55,3 +44,6 @@ PlayerSidebar.propTypes = {
   editable: PropTypes.bool,
   onFilter: PropTypes.func.isRequired,
 };
+
+export default PlayerSidebar;
+

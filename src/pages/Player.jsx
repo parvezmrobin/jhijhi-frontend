@@ -14,6 +14,8 @@ import { Alert } from 'reactstrap';
 import PlayerSidebar from '../components/player/PlayerSidebar';
 import ErrorModal from '../components/modal/ErrorModal';
 import Notification from "../components/Notification";
+import GridContainer from "../components/Grid/GridContainer";
+import GridItem from "../components/Grid/GridItem";
 
 class Player extends Component {
   constructor(props) {
@@ -174,14 +176,15 @@ class Player extends Component {
   render() {
     const playerId = this.props.match.params.id;
     return (
-      <div className="container-fluid px-0">
+      <GridContainer style={{marginTop: '60px'}}>
         <Notification message={this.state.message} toggle={() => this.setState({ message: null })}/>
-
-        <div className="row">
+        <GridItem sm={12} md={4} lg={2}>
           <PlayerSidebar editable playerId={playerId} players={this.state.players}
                          onFilter={this._loadPlayers}/>
-          <main className="col pt-3 pt-sm-0">
-            <CenterContent col="col-lg-8 col-md-10">
+        </GridItem>
+        <GridItem sm={12} md={8} lg={10}>
+          <GridContainer justify="center" alignItems="center" style={{height: '100%'}}>
+            <GridItem xs={12} md={8} lg={6} xl={4}>
               {this.state.redirected && <Alert color="primary">
                 <p className="lead mb-0">
                   You need at least 4 players to start a match.
@@ -190,12 +193,13 @@ class Player extends Component {
               <PlayerForm values={this.state.player} onChange={this.onChange}
                           onSubmit={this.onSubmit}
                           isValid={this.state.isValid} feedback={this.state.feedback}/>
-            </CenterContent>
-          </main>
-        </div>
+            </GridItem>
+          </GridContainer>
+        </GridItem>
         <ErrorModal isOpen={this.state.showErrorModal}
                     close={() => this.setState({ showErrorModal: false })}/>
-      </div>
+
+      </GridContainer>
     );
   }
 

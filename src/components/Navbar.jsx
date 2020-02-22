@@ -50,7 +50,7 @@ const Navbar = (props) => {
         </Button>
       </ListItem>
       <ListItem className={classes.listItem}>
-        <Button href="#/" color="transparent" className={classes.navLink}>
+        <Button href="#/player" color="transparent" className={classes.navLink}>
           <Person className={classes.icons}/> Player
         </Button>
       </ListItem>
@@ -126,7 +126,7 @@ const Navbar = (props) => {
           leftLinks={leftLinks}
           rightLinks={rightLinks}
           fixed
-          color="transparent"
+          color="primary"
           changeColorOnScroll={{
             height: 400,
             color: "primary",
