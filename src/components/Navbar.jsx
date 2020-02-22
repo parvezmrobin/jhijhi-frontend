@@ -15,7 +15,6 @@ import GridItem from "./Grid/GridItem";
 import styles from "assets/jss/material-kit-react/views/componentsSections/navbarsStyle.js";
 import { makeStyles } from "@material-ui/core/styles";
 import GridContainer from "./Grid/GridContainer";
-import Parallax from "./Parallax/Parallax";
 import {
   AccountCircleOutlined,
   ContactMail,
@@ -133,20 +132,6 @@ const Navbar = (props) => {
             color: "primary",
           }}
         />
-        <Parallax image={require("assets/img/bg4.jpg")}>
-          <div className={classes.container}>
-            <GridContainer>
-              <GridItem>
-                <div className={classes.brand}>
-                  <h1 className={classes.title}>Material Kit React.</h1>
-                  <h3 className={classes.subtitle}>
-                    A Badass Material-UI Kit based on Material Design.
-                  </h3>
-                </div>
-              </GridItem>
-            </GridContainer>
-          </div>
-        </Parallax>
       </GridItem>
     </GridContainer>
   );

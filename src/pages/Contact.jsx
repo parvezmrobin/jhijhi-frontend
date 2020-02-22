@@ -6,37 +6,38 @@
 
 
 import React, { Component } from 'react';
+import GridContainer from "../components/Grid/GridContainer";
+import GridItem from "../components/Grid/GridItem";
+import Parallax from "../components/Parallax/Parallax";
+import { withStyles } from "@material-ui/core";
+import styles from "assets/jss/material-kit-react/views/componentsSections/navbarsStyle.js";
+import Paper from "@material-ui/core/Paper";
+import Link from "@material-ui/core/Link";
 
 
 class Contact extends Component {
-  componentDidMount() {
-    document.getElementsByTagName('body')[0].classList.add('home');
-  }
-
-  componentWillUnmount() {
-    document.getElementsByTagName('body')[0].classList.remove('home');
-  }
-
   render() {
+    const { classes } = this.props;
     return (
-      <div className="d-flex align-items-center vh-100">
-        <div className="col-md-8 offset-md-2 bg-dark-trans rounded">
-          <div className="d-flex justify-content-center text-center v-100">
-            <div className="col-auto text-white p-1 fs-1 fs-md-2">
-                <span>
+      <Parallax image={require("assets/home2.jpg")}>
+        <div className={classes.container}>
+          <GridContainer>
+            <GridItem className={classes.brand}>
+              <Paper elevation={3}>
+                <h1 className={classes.title}>
                   <span className="d-inline-block">Mail me at</span>
                   {' '}
-                  <a className="d-inline-block" href="mailto:parvezmrobin@gmail.com">
-                    parvezmrobin@gmail.com
-                  </a>
-                </span>
-            </div>
-          </div>
+                  <Link href="mailto:this@parvezmrobin.com">
+                    this@parvezmrobin.com
+                  </Link>
+                </h1>
+              </Paper>
+            </GridItem>
+          </GridContainer>
         </div>
-      </div>
+      </Parallax>
     );
   }
-
 }
 
-export default Contact;
+export default withStyles(styles)(Contact);

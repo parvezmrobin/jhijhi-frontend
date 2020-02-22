@@ -8,10 +8,8 @@ import Grid from "@material-ui/core/Grid";
 
 const styles = {
   grid: {
-    marginRight: "-15px",
-    marginLeft: "-15px",
-    width: "auto"
-  }
+    width: "auto",
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -27,10 +25,10 @@ export default function GridContainer(props) {
 }
 
 GridContainer.defaultProps = {
-  className: ""
+  className: "",
 };
 
 GridContainer.propTypes = {
   children: PropTypes.node,
-  className: PropTypes.string
+  className: PropTypes.string,
 };
