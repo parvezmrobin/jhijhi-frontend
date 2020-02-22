@@ -1,5 +1,6 @@
-import { container, title, infoColor } from "assets/jss/material-kit-react.js";
+import { container, title, primaryColor, infoColor } from "assets/jss/material-kit-react.js";
 import headerLinksStyle from "assets/jss/material-kit-react/components/headerLinksStyle.js";
+import color from 'color';
 
 const navbarsStyle = theme => ({
   section: {
@@ -9,12 +10,18 @@ const navbarsStyle = theme => ({
   container,
   title: {
     ...title,
-    backgroundColor: infoColor,
+    backgroundColor: primaryColor,
     color: 'whitesmoke',
     marginTop: "30px",
     minHeight: "32px",
     textAlign: 'center',
     textDecoration: "none",
+    "& > a": {
+      color: infoColor,
+    },
+    "& > a:hover": {
+      color: color(infoColor).darken(.15).hex(),
+    },
   },
   navbar: {
     marginBottom: "-20px",
