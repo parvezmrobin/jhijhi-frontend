@@ -56,7 +56,6 @@ function PlayerForm(props) {
                   onChange: e => props.onChange({ jerseyNo: e.target.value }),
                 }}
                 inputProps={{
-                  autoFocus: true,
                   value: props.values.jerseyNo,
                 }}
                 feedback={props.feedback.jerseyNo}
