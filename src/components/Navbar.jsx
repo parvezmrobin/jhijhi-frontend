@@ -60,7 +60,7 @@ const Navbar = (props) => {
         </Button>
       </ListItem>
       <ListItem className={classes.listItem}>
-        <Button href="#/match" color="transparent" className={classes.navLink}>
+        <Button href="#/umpire" color="transparent" className={classes.navLink}>
           <SupervisedUserCircle className={classes.icons}/> Umpire
         </Button>
       </ListItem>
