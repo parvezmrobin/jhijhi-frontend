@@ -6,7 +6,6 @@
 
 
 import React, { Component } from 'react';
-import CenterContent from '../components/layouts/CenterContent';
 import PlayerForm from '../components/player/PlayerForm';
 import fetcher from '../lib/fetcher';
 import { bindMethods, formatValidationFeedback } from '../lib/utils';
@@ -176,7 +175,7 @@ class Player extends Component {
   render() {
     const playerId = this.props.match.params.id;
     return (
-      <GridContainer style={{marginTop: '60px'}}>
+      <GridContainer>
         <Notification message={this.state.message} toggle={() => this.setState({ message: null })}/>
         <GridItem sm={12} md={4} lg={2}>
           <PlayerSidebar editable playerId={playerId} players={this.state.players}
