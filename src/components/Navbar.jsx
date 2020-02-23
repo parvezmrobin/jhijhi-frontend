@@ -55,22 +55,22 @@ const Navbar = (props) => {
         </Button>
       </ListItem>
       <ListItem className={classes.listItem}>
-        <Button href="#/contact" color="transparent" className={classes.navLink}>
+        <Button href="#/team" color="transparent" className={classes.navLink}>
           <Group className={classes.icons}/> Team
         </Button>
       </ListItem>
       <ListItem className={classes.listItem}>
-        <Button href="#/contact" color="transparent" className={classes.navLink}>
+        <Button href="#/match" color="transparent" className={classes.navLink}>
           <SupervisedUserCircle className={classes.icons}/> Umpire
         </Button>
       </ListItem>
       <ListItem className={classes.listItem}>
-        <Button href="#/contact" color="transparent" className={classes.navLink}>
+        <Button href="#/match" color="transparent" className={classes.navLink}>
           <Games className={classes.icons}/> Match
         </Button>
       </ListItem>
       <ListItem className={classes.listItem}>
-        <Button href="#/contact" color="transparent" className={classes.navLink}>
+        <Button href="#/history@null" color="transparent" className={classes.navLink}>
           <Score className={classes.icons}/> Score
         </Button>
       </ListItem>
@@ -127,10 +127,6 @@ const Navbar = (props) => {
           rightLinks={rightLinks}
           fixed
           color="primary"
-          changeColorOnScroll={{
-            height: 400,
-            color: "primary",
-          }}
         />
       </GridItem>
     </GridContainer>
