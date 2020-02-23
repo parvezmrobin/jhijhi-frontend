@@ -5,10 +5,15 @@
  */
 
 
-import React, { Fragment } from 'react';
-import FormGroup from '../form/FormGroup';
-import FormButton from '../form/FormButton';
+import React from 'react';
 import { Link } from "react-router-dom";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import Typography from "@material-ui/core/Typography";
+import CustomInput from "../CustomInput/CustomInput";
+import GridContainer from "../Grid/GridContainer";
+import GridItem from "../Grid/GridItem";
+import Button from "../CustomButtons/Button";
 
 
 function TeamForm(props) {
@@ -16,28 +21,62 @@ function TeamForm(props) {
     e.preventDefault();
     props.onSubmit(e)
   };
-  const operation = props.team._id ? 'Edit' : 'Create';
+  const isEdit = props.values._id;
+  const operation = isEdit ? 'Edit' : 'Create';
 
   return (
-    <Fragment>
-      <h2>{operation} Team</h2>
-      <hr/>
-      <form onSubmit={onSubmit}>
-        <FormGroup name="name" value={props.team.name}
-                   onChange={(e) => props.onChange({ name: e.target.value })}
-                   isValid={props.isValid.name}
-                   feedback={props.feedback.name} autoFocus={true}/>
-        <FormGroup name="short-name" value={props.team.shortName}
-                   onChange={(e) => props.onChange({ shortName: e.target.value })}
-                   isValid={props.isValid.shortName}
-                   feedback={props.feedback.shortName}/>
-
-        <FormButton type="submit" text={operation} btnClass="outline-success">
-          {props.team._id &&
-          <label className="col-form-label float-right"><Link to="/team">Create</Link> a team instead</label>}
-        </FormButton>
-      </form>
-    </Fragment>
+    <Card>
+      <CardContent>
+        <Typography color="textPrimary" variant="h4">{operation} Team</Typography>
+        <form onSubmit={onSubmit}>
+          <GridContainer>
+            <GridItem xs={12}>
+              <CustomInput
+                labelText="Team Name"
+                id="team-name"
+                error={props.isValid.name === false}
+                success={props.isValid.name === true}
+                formControlProps={{
+                  fullWidth: true,
+                  onChange: e => props.onChange({ name: e.target.value }),
+                }}
+                inputProps={{
+                  autoFocus: true,
+                  value: props.values.name,
+                }}
+                feedback={props.feedback.name}
+              />
+            </GridItem>
+            <GridItem xs={12}>
+              <CustomInput
+                labelText="Short Name"
+                id="short-name"
+                error={props.isValid.shortName === false}
+                success={props.isValid.shortName === true}
+                formControlProps={{
+                  fullWidth: true,
+                  onChange: e => props.onChange({ shortName: e.target.value }),
+                }}
+                inputProps={{
+                  value: props.values.shortName,
+                }}
+                feedback={props.feedback.shortName}
+              />
+            </GridItem>
+            <GridItem xs={12}>
+              <GridContainer justify="space-between" alignItems="center"
+                             style={{ marginLeft: 0, marginRight: 0 }}>
+                <Button type="submit" variant="outlined" color={isEdit ? 'primary' : 'success'}>
+                  {operation}
+                </Button>
+                {isEdit &&
+                <label className=""><Link to="/team">Create</Link> a team instead</label>}
+              </GridContainer>
+            </GridItem>
+          </GridContainer>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
 

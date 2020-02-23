@@ -1,48 +1,38 @@
-import React, { Component } from "react";
-import * as feather from "feather-icons";
-import { Link } from "react-router-dom";
-import CenterContent from "../layouts/CenterContent";
-import List from "../layouts/List";
-import debounce from "lodash/debounce";
-import * as PropTypes from "prop-types";
-
 /**
  * Parvez M Robin
  * this@parvezmrobin.com
  * Date: Nov 02, 2019
  */
 
+import React, { Component } from "react";
+import List from "../layouts/List";
+import debounce from "lodash/debounce";
+import * as PropTypes from "prop-types";
+import { toTitleCase } from "../../lib/utils";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import { Edit } from "@material-ui/icons";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Link from "@material-ui/core/Link";
+
 export default class TeamSidebar extends Component {
-  componentDidMount() {
-    feather.replace();
-  }
-
-  componentDidUpdate() {
-    feather.replace();
-  }
-
   _renderTeam = team => {
-    const teamText = `${team.name} (${team.shortName})`;
-    const editButton = <Link to={'team@' + team._id} className="float-right">
-      <small className="text-white"><i data-feather="edit"/></small>
-    </Link>;
-    const className = (team._id === this.props.teamId) ? 'text-success' : 'text-white';
-    return <>
-      <span className={className}>{teamText}</span>
+    const teamText = `${toTitleCase(team.name)} (${team.shortName})`;
+    const editButton = <ListItemIcon>
+      <Link href={'#/team@' + team._id}><Edit/></Link>
+    </ListItemIcon>;
+    return <ListItem key={team._id} selected={team._id === this.props.teamId}>
+      <ListItemText>{teamText}</ListItemText>
       {this.props.editable && editButton}
-    </>;
+    </ListItem>;
   };
 
   render() {
-    return <aside className="col-md-4 col-lg-3">
-      <CenterContent col="col">
-        <List
-          title="Existing Teams"
-          itemMapper={this._renderTeam}
-          list={this.props.teams}
-          onFilter={debounce(this.props.onFilter, 1000)}/>
-      </CenterContent>
-    </aside>;
+    return <List
+      title="Existing Teams"
+      itemMapper={this._renderTeam}
+      list={this.props.teams}
+      onFilter={debounce(this.props.onFilter, 1000)}/>;
   }
 }
 

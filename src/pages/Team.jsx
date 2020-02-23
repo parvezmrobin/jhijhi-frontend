@@ -6,7 +6,6 @@
 
 
 import React, { Component } from 'react';
-import CenterContent from '../components/layouts/CenterContent';
 import TeamForm from '../components/team/TeamForm';
 import fetcher from '../lib/fetcher';
 import { bindMethods, formatValidationFeedback } from '../lib/utils';
@@ -15,6 +14,8 @@ import { Alert } from 'reactstrap';
 import ErrorModal from '../components/modal/ErrorModal';
 import Notification from "../components/Notification";
 import TeamSidebar from "../components/team/TeamSidebar";
+import GridContainer from "../components/Grid/GridContainer";
+import GridItem from "../components/Grid/GridItem";
 
 
 class Team extends Component {
@@ -177,29 +178,29 @@ class Team extends Component {
     const message = this.state.message;
     const teamId = this.props.match.params.id;
     return (
-      <div className="container-fluid px-0">
-
+      <GridContainer>
         <Notification message={message} toggle={() => this.setState({ message: null })}/>
 
-        <div className="row">
+        <GridItem sm={12} md={4} lg={2}>
           <TeamSidebar editable teamId={teamId} teams={this.state.teams} onFilter={this._loadTeams}/>
-          <main className="col pt-3 pt-sm-0">
-            <CenterContent col="col-lg-8 col-md-10">
+        </GridItem>
+        <GridItem sm={12} md={8} lg={10}>
+          <GridContainer justify="center" alignItems="center" style={{height: '100%'}}>
+            <GridItem xs={12} md={8} lg={6} xl={4}>
               {this.state.redirected && <Alert color="primary">
                 <p className="lead mb-0">You need at least 2 teams to create a match.</p>
               </Alert>}
 
-              <TeamForm players={this.state.players} onChange={this.onChange}
+              <TeamForm values={this.state.team} onChange={this.onChange}
                         onSubmit={this.onSubmit}
-                        team={this.state.team}
                         isValid={this.state.isValid} feedback={this.state.feedback}/>
-            </CenterContent>
-          </main>
-        </div>
+            </GridItem>
+          </GridContainer>
+        </GridItem>
 
         <ErrorModal isOpen={this.state.showErrorModal} close={() => this.setState({ showErrorModal: false })}/>
 
-      </div>
+      </GridContainer>
     );
   }
 
