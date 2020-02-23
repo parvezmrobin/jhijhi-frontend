@@ -119,7 +119,7 @@ const Navbar = (props) => {
   }
 
   return (
-    <GridContainer>
+    <GridContainer style={{marginTop: '60px'}}>
       <GridItem>
         <Header
           brand="Jhijhi"

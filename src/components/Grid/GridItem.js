@@ -17,6 +17,10 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
+/**
+ * @extends {Grid}
+ * @constructor
+ */
 export default function GridItem(props) {
   const classes = useStyles();
   const { children, className, ...rest } = props;
@@ -29,9 +33,11 @@ export default function GridItem(props) {
 
 GridItem.defaultProps = {
   className: "",
+  item: true,
 };
 
 GridItem.propTypes = {
+  ...Grid.propTypes,
   children: PropTypes.node,
   className: PropTypes.string,
 };
