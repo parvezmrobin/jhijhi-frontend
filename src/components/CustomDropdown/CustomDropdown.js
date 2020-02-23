@@ -53,25 +53,26 @@ export default function CustomDropdown(props) {
     dropdownHeader,
     caret,
     hoverColor,
+    dropdownColor,
     left,
     rtlActive,
-    noLiPadding
+    noLiPadding,
   } = props;
   const caretClasses = classNames({
     [classes.caret]: true,
     [classes.caretActive]: Boolean(anchorEl),
-    [classes.caretRTL]: rtlActive
+    [classes.caretRTL]: rtlActive,
   });
   const dropdownItem = classNames({
     [classes.dropdownItem]: true,
     [classes[hoverColor + "Hover"]]: true,
     [classes.noLiPadding]: noLiPadding,
-    [classes.dropdownItemRTL]: rtlActive
+    [classes.dropdownItemRTL]: rtlActive,
   });
-  let icon = null;
+  let icon;
   switch (typeof buttonIcon) {
     case "object":
-      icon = <props.buttonIcon className={classes.buttonIcon} />;
+      icon = <props.buttonIcon className={classes.buttonIcon}/>;
       break;
     case "string":
       icon = <Icon className={classes.buttonIcon}>{props.buttonIcon}</Icon>;
@@ -92,7 +93,7 @@ export default function CustomDropdown(props) {
         >
           {icon}
           {buttonText !== undefined ? buttonText : null}
-          {caret ? <b className={caretClasses} /> : null}
+          {caret ? <b className={caretClasses}/> : null}
         </Button>
       </div>
       <Popper
@@ -103,15 +104,15 @@ export default function CustomDropdown(props) {
         placement={
           dropup
             ? left
-              ? "top-start"
-              : "top"
+            ? "top-start"
+            : "top"
             : left
             ? "bottom-start"
             : "bottom"
         }
         className={classNames({
           [classes.popperClose]: !anchorEl,
-          [classes.popperResponsive]: true
+          [classes.popperResponsive]: true,
         })}
       >
         {() => (
@@ -124,7 +125,11 @@ export default function CustomDropdown(props) {
                 : { transformOrigin: "0 0 0" }
             }
           >
-            <Paper className={classes.dropdown}>
+            <Paper className={classNames({
+              [classes.dropdown]: true,
+              // attach the class only if `dropdownColor` is not falsy
+              [classes[`${dropdownColor}ColorBackground`]]: !!dropdownColor,
+            })}>
               <ClickAwayListener onClickAway={handleCloseAway}>
                 <MenuList role="menu" className={classes.menuList}>
                   {dropdownHeader !== undefined ? (
@@ -167,7 +172,7 @@ export default function CustomDropdown(props) {
 
 CustomDropdown.defaultProps = {
   caret: true,
-  hoverColor: "primary"
+  hoverColor: "primary",
 };
 
 CustomDropdown.propTypes = {
@@ -178,7 +183,15 @@ CustomDropdown.propTypes = {
     "success",
     "warning",
     "danger",
-    "rose"
+    "rose",
+  ]),
+  dropdownColor: PropTypes.oneOf([
+    "primary",
+    "info",
+    "success",
+    "warning",
+    "danger",
+    "rose",
   ]),
   buttonText: PropTypes.node,
   buttonIcon: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -190,6 +203,6 @@ CustomDropdown.propTypes = {
   caret: PropTypes.bool,
   left: PropTypes.bool,
   noLiPadding: PropTypes.bool,
-  // function that retuns the selected item
-  onClick: PropTypes.func
+  // function that returns the selected item
+  onClick: PropTypes.func,
 };

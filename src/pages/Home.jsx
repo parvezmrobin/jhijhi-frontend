@@ -7,9 +7,17 @@
 
 import React, { Component } from 'react';
 import fetcher from '../lib/fetcher';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
 import { bindMethods } from '../lib/utils';
-import { Link } from 'react-router-dom';
+import GridContainer from "../components/Grid/GridContainer";
+import GridItem from "../components/Grid/GridItem";
+import Paper from "@material-ui/core/Paper";
+import Parallax from "../components/Parallax/Parallax";
+import { withStyles } from "@material-ui/core";
+import styles from "../assets/jss/material-kit-react/views/componentsSections/navbarsStyle";
+import CustomDropdown from "../components/CustomDropdown/CustomDropdown";
+import Link from "@material-ui/core/Link";
+import Typography from "@material-ui/core/Typography";
+import classNames from "classnames";
 
 
 class Home extends Component {
@@ -46,38 +54,48 @@ class Home extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     const options = this.state.matches.map((match) => {
-      return <Link key={match._id} to={`live@${match._id}`}>
-        <DropdownItem className="text-white">{match.name}</DropdownItem>
+      return <Link key={match._id} href={`#live@${match._id}`}>
+        <Typography style={{ color: '#fff' }}>{match.name}</Typography>
       </Link>;
     });
 
     const content = options.length
-      ? <div className="col-auto">
-        <Dropdown id="select-match" isOpen={this.state.isDropdownOpen} toggle={this.toggle}>
-          <DropdownToggle tabIndex={1} caret>
-            Select Match
-          </DropdownToggle>
-          <DropdownMenu className="bg-dark w-100">
-            {options}
-          </DropdownMenu>
-        </Dropdown>
-      </div>
-      : <div className="col-auto p-1 fs-2">
-        <Link className="text-decoration-none" to="/match">Create A Match</Link>
-      </div>;
+      ? (
+        <CustomDropdown
+          buttonText="Select Match"
+          hoverColor="info"
+          dropdownColor="primary"
+          buttonProps={{
+            className: classes.navLink,
+            color: "transparent",
+            style: {fontSize: '24px'},
+          }}
+          dropdownList={options}
+        />
+      ) : (
+        <div className="col-auto p-1 fs-2">
+          <Link href={'#/match'}>Create A Match</Link>
+        </div>
+      );
 
     return (
-      <div className="d-flex align-items-center vh-100">
-        <div className="col-md-8 offset-md-2 bg-dark-trans rounded">
-          <div className="d-flex justify-content-center v-100">
-            {content}
-          </div>
+      <Parallax image={require("assets/home2.jpg")}>
+        <div className={classes.container}>
+          <GridContainer>
+            <GridItem className={classes.brand}>
+              <Paper elevation={3} className={classNames([classes.title, classes.primaryColorBackground])}
+                     style={{ textAlign: 'center' }}>
+                {content}
+              </Paper>
+            </GridItem>
+          </GridContainer>
         </div>
-      </div>
+      </Parallax>
     );
   }
 
 }
 
-export default Home;
+export default withStyles(styles)(Home);

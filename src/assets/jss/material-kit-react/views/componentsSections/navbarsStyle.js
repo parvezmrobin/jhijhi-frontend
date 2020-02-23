@@ -1,8 +1,8 @@
-import { container, title, primaryColor, infoColor } from "assets/jss/material-kit-react.js";
+import { container, title, infoColor, backgroundColors } from "assets/jss/material-kit-react.js";
 import headerLinksStyle from "assets/jss/material-kit-react/components/headerLinksStyle.js";
 import color from 'color';
 
-const navbarsStyle = theme => ({
+const navbarStyle = theme => ({
   section: {
     padding: "70px 0",
     paddingTop: "0",
@@ -10,7 +10,6 @@ const navbarsStyle = theme => ({
   container,
   title: {
     ...title,
-    backgroundColor: primaryColor,
     color: 'whitesmoke',
     marginTop: "30px",
     minHeight: "32px",
@@ -62,6 +61,7 @@ const navbarsStyle = theme => ({
     borderRadius: "50%",
     marginLeft: "5px",
   },
+  ...backgroundColors,
 });
 
-export default navbarsStyle;
+export default navbarStyle;
