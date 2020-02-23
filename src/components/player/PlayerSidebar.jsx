@@ -20,7 +20,7 @@ class PlayerSidebar extends Component {
   render() {
     const renderPlayer = player => {
       const playerText = `${toTitleCase(player.name)} (${player.jerseyNo})`;
-      const editButton = <ListItemIcon><Link href={'#/player@' + player._id} className="float-right">
+      const editButton = <ListItemIcon><Link href={'#/player@' + player._id}>
         <Edit/>
       </Link></ListItemIcon>;
 

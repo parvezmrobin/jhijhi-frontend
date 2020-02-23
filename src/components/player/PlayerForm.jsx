@@ -11,8 +11,9 @@ import { CardContent } from "@material-ui/core";
 import Card from "@material-ui/core/Card";
 import Typography from "@material-ui/core/Typography";
 import CustomInput from "../CustomInput/CustomInput";
-import Grid from "@material-ui/core/Grid";
 import Button from "../CustomButtons/Button";
+import GridContainer from "../Grid/GridContainer";
+import GridItem from "../Grid/GridItem";
 
 function PlayerForm(props) {
   const isEdit = !!props.values._id;
@@ -27,8 +28,8 @@ function PlayerForm(props) {
       <CardContent>
         <Typography color="textPrimary" variant="h4">{operation} Player</Typography>
         <form onSubmit={onSubmit}>
-          <Grid container>
-            <Grid item xs={12}>
+          <GridContainer>
+            <GridItem xs={12}>
               <CustomInput
                 labelText="Player Name"
                 id="player-name"
@@ -44,8 +45,8 @@ function PlayerForm(props) {
                 }}
                 feedback={props.feedback.name}
               />
-            </Grid>
-            <Grid item xs={12}>
+            </GridItem>
+            <GridItem xs={12}>
               <CustomInput
                 labelText="Jersey No"
                 id="jersey-no"
@@ -60,17 +61,18 @@ function PlayerForm(props) {
                 }}
                 feedback={props.feedback.jerseyNo}
               />
-            </Grid>
-            <Grid item xs={12}>
-              <Grid container justify="space-between" alignItems="center">
+            </GridItem>
+            <GridItem xs={12}>
+              <GridContainer justify="space-between" alignItems="center"
+                             style={{ marginLeft: 0, marginRight: 0 }}>
                 <Button type="submit" variant="outlined" color={isEdit ? 'primary' : 'success'}>
                   {operation}
                 </Button>
                 {isEdit &&
                 <label className=""><Link to="/player">Create</Link> a player instead</label>}
-              </Grid>
-            </Grid>
-          </Grid>
+              </GridContainer>
+            </GridItem>
+          </GridContainer>
         </form>
       </CardContent>
     </Card>
