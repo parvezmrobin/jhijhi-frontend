@@ -54,6 +54,7 @@ class Login extends Component {
             const queryString = this.props.location.search;
             if (queryString.startsWith('?redirect=')) {
               window.location.href = '/#' + queryString.substr('?redirect='.length);
+              window.location.reload();
             } else {
               window.location.href = '/';
             }
