@@ -34,7 +34,7 @@ function FormGroup(props) {
   } else if (type === 'tag') {
     control = <TagControl {...inputProps} options={props.options} value={props.value} />
   } else {
-    control = <InputControl type={type} {...inputProps} value={props.value}/>;
+    control = <InputControl type={type} {...inputProps} value={[props.value.toString()]}/>;
   }
 
   return (<div className="form-group row">
