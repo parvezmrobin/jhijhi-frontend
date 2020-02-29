@@ -47,11 +47,16 @@ class Navbar extends Component {
                      to="/contact">Contact</NavLink>
           </Nav>
           <Nav navbar className="highlight mx-auto">
-            <NavLink onClick={this.collapse} className="nav-item nav-link"
-                     to="/player">Player</NavLink>
-            <NavLink onClick={this.collapse} className="nav-item nav-link" to="/team">Team</NavLink>
-            <NavLink onClick={this.collapse} className="nav-item nav-link"
-                     to="/umpire">Umpire</NavLink>
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret>
+                Set Up
+              </DropdownToggle>
+              <DropdownMenu right>
+                <NavLink onClick={this.collapse} className="dropdown-item" to="/player">Player</NavLink>
+                <NavLink onClick={this.collapse} className="dropdown-item" to="/team">Team</NavLink>
+                <NavLink onClick={this.collapse} className="dropdown-item" to="/umpire">Umpire</NavLink>
+              </DropdownMenu>
+            </UncontrolledDropdown>
             <NavLink onClick={this.collapse} className="nav-item nav-link"
                      to="/match">Match</NavLink>
             <NavLink onClick={this.collapse} className="nav-item nav-link"
