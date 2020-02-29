@@ -9,13 +9,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import InputControl from '../form/control/input';
 import { Collapse, Button } from "reactstrap";
-
+import {isMobile} from "../../lib/utils";
 
 class List extends React.Component {
   state = {
-    isOpen: window.innerWidth > Number.parseInt(
-      getComputedStyle(document.documentElement).getPropertyValue('--breakpoint-sm')
-    ), // in mobile view keep the list collapsed by default
+    isOpen: !isMobile, // in mobile view, keep the list collapsed by default
   };
 
   toggle = () => {
