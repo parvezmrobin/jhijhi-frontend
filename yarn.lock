@@ -3002,10 +3002,10 @@ faye-websocket@~0.11.1:
   dependencies:
     websocket-driver ">=0.5.1"
 
-feather-icons@^4.21.0:
-  version "4.24.1"
-  resolved "https://registry.yarnpkg.com/feather-icons/-/feather-icons-4.24.1.tgz#f31a83c5a2d1c040576aacb7882d8acdfb7f7f09"
-  integrity sha512-CGBzG9L9M2sNWEpLY2HJgacW4q1KzypMqLiCPQRr6t4uDDXqYprWRWKcHEwD/vDDiDnkSS7N4L5BLYwjGGH8pw==
+feather-icons@^4.26.0:
+  version "4.26.0"
+  resolved "https://registry.yarnpkg.com/feather-icons/-/feather-icons-4.26.0.tgz#ce856ecdaaffa0c0b3e63148581a3a05c9fcbaf4"
+  integrity sha512-yojf2HBoPipo3H3To83TxYf+8DNtKVwk8fk31HdcfICKkB2I2wIigo637v9WzcFeog6E5FATrQvS7YFdSVs9ew==
   dependencies:
     classnames "^2.2.5"
     core-js "^3.1.3"

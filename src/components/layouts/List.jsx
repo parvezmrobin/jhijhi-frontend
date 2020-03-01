@@ -9,7 +9,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import InputControl from '../form/control/input';
 import { Collapse, Button } from "reactstrap";
-import {isMobile} from "../../lib/utils";
+import { isMobile } from "../../lib/utils";
+import * as feather from "feather-icons";
 
 class List extends React.Component {
   state = {
@@ -20,21 +21,32 @@ class List extends React.Component {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
+  componentDidMount() {
+    feather.replace();
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    feather.replace();
+  }
+
   render() {
-    const className = 'list-group-item bg-transparent ' + (this.props.itemClass || '');
+    const className = `list-group-item bg-transparent ${this.props.itemClass || ''}`;
     const mapper = this.props.itemMapper || (item => item);
     const items = this.props.list.map(
       (item, i) => <li key={item._id} className={className}>{mapper(item, i)}</li>,
     );
+    const { isOpen } = this.state;
     return (
       <>
-        <h3>
-          {this.props.title}
-          <Button onClick={this.toggle} color="primary" className="float-right d-sm-none">
-            {this.state.isOpen ? 'Collapse' : 'Expand'}
+        <h3 className="d-flex justify-content-between">
+          <span>{this.props.title}</span>
+          <Button onClick={this.toggle} color="primary" className="d-sm-none"
+                  key={isOpen}>
+            {isOpen ? 'Collapse' : 'Expand'}
+            <i data-feather={`chevron-${isOpen ? 'up' : 'down'}`}/>
           </Button>
         </h3>
-        <Collapse isOpen={this.state.isOpen}>
+        <Collapse isOpen={isOpen}>
           {this.props.onFilter
           && <InputControl autoFocus placeholder="Type here to filter list"
                            onChange={e => this.props.onFilter(e.target.value)}/>}

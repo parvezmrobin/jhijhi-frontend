@@ -8,6 +8,15 @@
   "rules": {
     "no-console": "warn",
     "comma-dangle": ["error", "always-multiline"],
+    "prefer-destructuring": "warn",
+    "prefer-template": "warn",
+    "prefer-const": "error",
+    "prefer-arrow-callback": "error",
+    "space-before-blocks": "warn",
+    "space-infix-ops": "warn",
+    "space-unary-ops": "warn",
+    "spaced-comment": "warn",
+    "arrow-spacing": "error",
     "consistent-return": "warn"
   }
 }
