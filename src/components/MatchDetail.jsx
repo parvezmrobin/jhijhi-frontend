@@ -5,16 +5,16 @@
  */
 
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import fetcher from '../lib/fetcher';
 import CenterContent from './layouts/CenterContent';
 import Score from './score/Score';
-import {Button, CustomInput, Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap';
+import { Button, CustomInput, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import Overs from './over/Overs';
 import CurrentOver from './over/CurrentOver';
-import {copySharableLink, toTitleCase} from '../lib/utils';
+import { copySharableLink, toTitleCase } from '../lib/utils';
 import * as PropTypes from 'prop-types';
-import {Redirect} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import ScoreModal from './modal/ScoreModal';
 import ErrorModal from "./modal/ErrorModal";
 
@@ -35,7 +35,7 @@ export default class MatchDetail extends Component {
     this._loadMatchIfNecessary();
   }
 
-  componentWillReceiveProps () {
+  componentDidUpdate() {
     this._loadMatchIfNecessary();
   }
 
@@ -53,7 +53,7 @@ export default class MatchDetail extends Component {
       .then(response => {
         return this.setState({ match: response.data });
       })
-      .catch(() => this.setState({showErrorModal: true}));
+      .catch(() => this.setState({ showErrorModal: true }));
   }
 
   componentWillUnmount() {
@@ -85,8 +85,8 @@ export default class MatchDetail extends Component {
     if (isPrivate && match.state !== 'done' && forceWatching === null) {
       return <ForceWatchingModal
         isOpen={forceWatching !== true}
-        close={() => this.setState({forceWatching: true})}
-        move={() => this.setState({forceWatching: false})}/>
+        close={() => this.setState({ forceWatching: true })}
+        move={() => this.setState({ forceWatching: false })}/>
     }
 
     let winningTeam,
@@ -114,14 +114,14 @@ export default class MatchDetail extends Component {
 
     if (innings1score > innings2score) {
       winningTeam = match.team1BatFirst ? match.team1.name : match.team2.name;
-      type = 'by ' + (innings1score - innings2score) + ' run';
+      type = `by ${innings1score - innings2score} run`;
     } else {
       if (match.team1BatFirst) {
         winningTeam = match.team2.name;
-        type = 'by ' + (match.team2Players.length - innings2wicket) + ' wicket';
+        type = `by ${match.team2Players.length - innings2wicket} wicket`;
       } else {
         winningTeam = match.team1.name;
-        type = 'by ' + (match.team1Players.length - innings1wicket) + ' wicket';
+        type = `by ${match.team1Players.length - innings1wicket} wicket`;
       }
 
     }
@@ -220,8 +220,8 @@ export default class MatchDetail extends Component {
         </div>
         <div className="pt-1 col-sm">
           {innings.overs[overIndex]?.bowls && <CurrentOver bowls={innings.overs[overIndex].bowls}
-                       title={`${toTitleCase(bowlerName)} bowled (Over ${overIndex + 1})`}
-                       battingTeam={battingTeamPlayers}/>}
+                                                           title={`${toTitleCase(bowlerName)} bowled (Over ${overIndex + 1})`}
+                                                           battingTeam={battingTeamPlayers}/>}
         </div>
 
       </div>
