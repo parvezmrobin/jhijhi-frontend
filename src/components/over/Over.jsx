@@ -11,7 +11,7 @@ import * as PropTypes from 'prop-types';
 
 function Over(props) {
   const { overNo, over, bowlerName, onOverClick, active } = props;
-  const className = `list-group-item ${active ? 'active' : ''}`;
+  const className = `list-group-item text-dark ${active ? 'active' : ''}`;
   const badges = props.over.bowls.filter(bowl => bowl.isWicket || optional(bowl.boundary).run)
     .map(bowl => bowl.isWicket ? 'W' : bowl.boundary?.run)
     .map(

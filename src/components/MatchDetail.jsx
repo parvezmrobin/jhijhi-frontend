@@ -162,7 +162,7 @@ export default class MatchDetail extends Component {
     const innings = showSecondInnings ? innings2 : innings1;
     const bowlerName = bowlingTeamPlayers[innings.overs[overIndex]?.bowledBy]?.name;
 
-    return <main className="col bg-success min-vh-100 pt-5">
+    return <main className="col min-vh-100 pt-5">
       <h2 className="text-success bg-dark-trans pt-2 pb-3 mt-3 rounded text-center">
         {match.name}
       </h2>
@@ -170,7 +170,7 @@ export default class MatchDetail extends Component {
 
         <div className="pt-3 col-lg text-white">
           <h4 className="text-center">{winningTeam}</h4>
-          <div className="shadow rounded pb-3 px-2">
+          <div className="shadow bg-dark-trans rounded pb-3 px-2">
             <h5 className="text-center">won the match {type}. </h5>
             <h5 className="d-flex justify-content-center my-3">
               <label className={showSecondInnings ? 'badge' : 'badge badge-primary'}>

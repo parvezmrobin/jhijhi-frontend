@@ -37,7 +37,7 @@ export default class Score extends Component {
     }
 
     return <div>
-      <div className='container-fluid bg-dark text-success mt-5 rounded'>
+      <div className='container-fluid text-success mt-5 rounded'>
         <div className="p-2">
           <h4 className="mt-3 text-white">{battingTeamName} - {totalRun} / {totalWicket}</h4>
           <h5>

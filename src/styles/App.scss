@@ -36,6 +36,8 @@ $zindex-fixed: 1060 !default;
 
 $wicketHeight: 1.5rem;
 
+$body-color: white !default;
+
 @import "~bootstrap/scss/bootstrap";
 
 .navbar-light .navbar-nav.highlight {
@@ -54,6 +56,11 @@ $wicketHeight: 1.5rem;
   .nav-link.active {
     color: $primary;
   }
+}
+
+body {
+  background: #43C6AC;  /* fallback for old browsers */
+  background: radial-gradient(ellipse at top, darken($primary, 20%), darken($success, 20%), darken($blue, 20%));
 }
 
 body.home {
@@ -164,7 +171,7 @@ section.score-input {
   @extend .align-items-center;
   @extend .bg-dark;
   @extend .text-white;
-  
+
   &.v2{
     @extend .px-xl-7;
     @extend .px-md-6;
