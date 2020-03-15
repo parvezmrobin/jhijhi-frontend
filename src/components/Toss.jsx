@@ -11,7 +11,7 @@ import SelectControl from "./form/control/select";
 import {bindMethods} from "../lib/utils";
 import fetcher from "../lib/fetcher";
 
-export default class Toss extends Component {
+class Toss extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -83,7 +83,7 @@ export default class Toss extends Component {
     const {name} = this.props;
     const {feedback} = this.state;
     const teams = [{_id: '', name: 'None'}].concat(this.props.teams);
-    const options = ['Bat', 'Bawl'].map(el => ({_id: el, name: el}));
+    const options = ['Bat', 'Bowl'].map(el => ({_id: el, name: el}));
     const ownControl = <SelectControl options={teams} id="own"
                                       onChange={(e) => this.onChange({won: e.target.value})}
                                       value={this.state.values.won} isValid={this.state.isValid.won}/>;
@@ -117,3 +117,5 @@ export default class Toss extends Component {
   }
 
 }
+
+export default Toss;
