@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {bindMethods, copySharableLink, optional, toTitleCase} from '../lib/utils';
+import { bindMethods, copySharableLink, optional, toTitleCase } from '../lib/utils';
 import fetcher from '../lib/fetcher';
 
 import CurrentOver from './over/CurrentOver';
@@ -40,7 +40,7 @@ export class Running extends Component {
   }
 
   handlers = {
-    copySharableLinkAndShowConfirmation (e) {
+    copySharableLinkAndShowConfirmation(e) {
       copySharableLink(this.props.match._id);
       const button = e.target;
       button.innerHTML = 'Copied';
@@ -184,7 +184,7 @@ export class Running extends Component {
               };
             });
           })
-          .catch(() => this.setState({showErrorModal: true}));
+          .catch(() => this.setState({ showErrorModal: true }));
       };
 
       this.setState({ isDeclaring: true }, updateState);
@@ -426,49 +426,52 @@ export class Running extends Component {
     let { batsman1, batsman2 } = this.state;
     const outBatsmen = [];
 
-    outer: for (let i = innings.overs.length - 1; i >= 0; i--) {
-      const over = innings.overs[i];
-      for (let j = over.bowls.length - 1; j >= 0; j--) {
-        const bowl = over.bowls[j];
+    if (innings.overs.length > 0) {
+      outer: for (let i = innings.overs.length - 1; i >= 0; i--) {
+        const over = innings.overs[i];
+        for (let j = over.bowls.length - 1; j >= 0; j--) {
+          const bowl = over.bowls[j];
 
-        const batsman = bowl.playedBy;
-        if (bowl.isWicket) {
-          const outBatsman = Number.isInteger(bowl.isWicket.player) ? bowl.isWicket.player : batsman;
-          if (batsman1 == null && batsman === outBatsman) {
-            batsman1 = -1; // indicating that, last on-crease batsman is out
+          const batsman = bowl.playedBy;
+          if (bowl.isWicket) {
+            const outBatsman = Number.isInteger(bowl.isWicket.player) ? bowl.isWicket.player : batsman;
+            if (batsman1 == null && batsman === outBatsman) {
+              batsman1 = -1; // indicating that, last on-crease batsman is out
+            }
+            outBatsmen.push(outBatsman);
           }
-          outBatsmen.push(outBatsman);
-        }
 
-        // the loop is going from future to past
-        // if `batsman` is out in the future, continue
-        if (outBatsmen.includes(batsman)) {
-          continue;
-        }
+          // the loop is going from future to past
+          // if `batsman` is out in the future, continue
+          if (outBatsmen.includes(batsman)) {
+            continue;
+          }
 
-        if (batsman1 == null) {
-          batsman1 = batsman;
-        } else if (batsman1 !== batsman) {
-          batsman2 = batsman;
-          break outer;
+          if (batsman1 == null) {
+            batsman1 = batsman;
+          } else if (batsman1 !== batsman) {
+            batsman2 = batsman;
+            break outer;
+          }
         }
       }
-    }
 
-    if (batsman1 === -1) {
-      batsman1 = null;
-    }
+      if (batsman1 === -1) {
+        batsman1 = null;
+      }
 
-    const lastOver = innings.overs[innings.overs.length - 1];
-    const lastBowl = lastOver.bowls[lastOver.bowls.length - 1];
-    const lastBowlRuns = lastBowl && ((lastBowl.singles || 0) + (lastBowl.by || 0) + (lastBowl.legBy || 0));
-    if (lastBowlRuns % 2) { // if odd runs in the last bowl
-      [batsman1, batsman2] = [batsman2, batsman1];
-    }
+      const lastOver = innings.overs[innings.overs.length - 1];
 
-    // if its a new over
-    if (innings.overs.length && !innings.overs[innings.overs.length - 1].bowls.length) {
-      [batsman1, batsman2] = [batsman2, batsman1];
+      const lastBowl = lastOver.bowls[lastOver.bowls.length - 1];
+      const lastBowlRuns = lastBowl && ((lastBowl.singles || 0) + (lastBowl.by || 0) + (lastBowl.legBy || 0));
+      if (lastBowlRuns % 2) { // if odd runs in the last bowl
+        [batsman1, batsman2] = [batsman2, batsman1];
+      }
+
+      // if its a new over
+      if (innings.overs.length && !innings.overs[innings.overs.length - 1].bowls.length) {
+        [batsman1, batsman2] = [batsman2, batsman1];
+      }
     }
 
     this.setState(({
@@ -525,7 +528,7 @@ export class Running extends Component {
     const { match, overModal, batsman1, batsman2, editModal } = this.state;
 
     if (match.state === 'done') {
-      return <Redirect to={`/history@${match._id}`}/>;
+      return <Redirect to={`/history@${match._id}`} />;
     }
 
     const overs = this._getCurrentInnings().overs;
@@ -550,7 +553,7 @@ export class Running extends Component {
     return <div className="row">
       <aside className="col-md-3 d-none d-lg-block">
         <ScoreCard innings={innings} battingTeamName={battingTeamName}
-                   battingTeamPlayers={battingTeamPlayers}/>
+          battingTeamPlayers={battingTeamPlayers} />
       </aside>
       <main className="col min-vh-100">
         <div className="row px-1">
@@ -558,25 +561,25 @@ export class Running extends Component {
             <h2 className="my-3">
               {name}
               <button type="button" className="btn btn-warning-light float-right"
-                      onClick={this.onDeclare}>
+                onClick={this.onDeclare}>
                 Declare
               </button>
             </h2>
           </header>
-          <hr/>
+          <hr />
           <ScoreCreate batsmen={[battingTeamPlayers[batsman1], battingTeamPlayers[batsman2]]}
-                       batsmanIndices={[batsman1, batsman2]} matchId={match._id}
-                       onInput={(bowl, isUpdate = false) => this.onInput({
-                         type: 'bowl',
-                         bowl,
-                         isUpdate,
-                       })}/>
+            batsmanIndices={[batsman1, batsman2]} matchId={match._id}
+            onInput={(bowl, isUpdate = false) => this.onInput({
+              type: 'bowl',
+              bowl,
+              isUpdate,
+            })} />
           <div className="col-md-4 px-0">
             <Score battingTeamName={battingTeamShortName} numberOfOvers={numOvers}
-                   tossOwner={team1WonToss ? team1.name : team2.name}
-                   singleBatsman={this.state.singleBatsman}
-                   choice={tossOwnerChoice} innings={innings} inningsNo={inningsNo}
-                   firstInnings={innings1} matchId={match._id} onWinning={this.onDeclare}/>
+              tossOwner={team1WonToss ? team1.name : team2.name}
+              singleBatsman={this.state.singleBatsman}
+              choice={tossOwnerChoice} innings={innings} inningsNo={inningsNo}
+              firstInnings={innings1} matchId={match._id} onWinning={this.onDeclare} />
 
             <button
               onClick={this.copySharableLinkAndShowConfirmation}
@@ -586,17 +589,17 @@ export class Running extends Component {
           </div>
           <div className="col-md-4">
             <CurrentOver overNo={overs.length - 1} bowls={lastOver.bowls} bowler={bowler}
-                         battingTeam={battingTeamPlayers} onCrease={onCreaseBatsmanName}
-                         onBowlersEnd={onBowlersEnd} onEdit={this.onEditClick}
-                         onSwitch={this.switchBatsmen}/>
+              battingTeam={battingTeamPlayers} onCrease={onCreaseBatsmanName}
+              onBowlersEnd={onBowlersEnd} onEdit={this.onEditClick}
+              onSwitch={this.switchBatsmen} />
           </div>
           <div className="col-md-4 px-0">
             <Overs overs={overs.slice(0, -1)} bowlingTeam={bowlingTeamPlayers}
-                   onOverClick={this.openOverModal}/>
+              onOverClick={this.openOverModal} />
           </div>
         </div>
 
-        <footer className="py-3 py-sm-0"/>
+        <footer className="py-3 py-sm-0" />
       </main>
       <BatsmanSelectModal
         allOutPrompted={this.state.showSingleBatsmanModal} batsman1Index={batsman1}
@@ -604,19 +607,19 @@ export class Running extends Component {
         singleBatsman={this.state.singleBatsman}
         onNumberOfBatsmenChange={e => {
           this.setState({ singleBatsman: e.target.checked });
-        }}/>
+        }} />
       <BowlerSelectModal
         open={this.state.bowlerModalIsOpen} bowlers={bowlingTeamPlayers} lastBowler={bowler}
         matchId={match._id}
         onSelect={bowler => this.onInput({
           type: 'over',
           bowler: bowler,
-        })}/>
+        })} />
       <OverModal
         overModal={overModal} toggle={this.closeOverModal}
         batsmanIndices={[batsman1, batsman2]} bowlingTeamPlayers={bowlingTeamPlayers}
         battingTeamPlayers={battingTeamPlayers} matchId={match._id}
-        onEditClick={this.onOverModalEditClick} onEdit={this.onUpdate}/>
+        onEditClick={this.onOverModalEditClick} onEdit={this.onUpdate} />
       <ScoreEditModal
         isOpen={editModal.show} overNo={editModal.overNo} bowlNo={editModal.bowlNo}
         bowl={editModal.show && innings.overs[editModal.overNo].bowls[editModal.bowlNo]} onInput={this.onUpdate}
@@ -627,7 +630,7 @@ export class Running extends Component {
             overNo: -1,
             bowlNo: -1,
           },
-        })}/>
+        })} />
       <Modal isOpen={this.state.showSingleBatsmanModal}>
         <ModalHeader>
           Want to play with single batsman?
@@ -644,7 +647,7 @@ export class Running extends Component {
         </ModalFooter>
       </Modal>
       <Modal centered={true} contentClassName="bg-transparent border-0"
-             isOpen={this.state.isDeclaring}>
+        isOpen={this.state.isDeclaring}>
         <ModalBody>
           <div className="d-flex justify-content-center">
             <Spinner color="primary" style={{
@@ -658,7 +661,7 @@ export class Running extends Component {
         </ModalBody>
       </Modal>
 
-      <ErrorModal isOpen={this.state.showErrorModal} close={() => this.setState({ showErrorModal: false })}/>
+      <ErrorModal isOpen={this.state.showErrorModal} close={() => this.setState({ showErrorModal: false })} />
 
     </div>;
   }

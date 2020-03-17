@@ -42,7 +42,7 @@ class Live extends Component {
       .then(response => {
         return this.setState({ match: response.data });
       })
-      .catch(() => this.setState({showErrorModal: true}));
+      .catch(() => this.setState({ showErrorModal: true }));
   }
 
 
@@ -53,22 +53,25 @@ class Live extends Component {
 
   render() {
     const { match } = this.state;
+
+    console.log(match);
+
     return (
       <div className="container-fluid px-0">
         {!match.state && <PreMatch team1={match.team1} team2={match.team2} name={match.name}
-                                   matchId={this.props.match.params.id}
-                                   onMatchBegin={this.onStateChange}/>}
+          matchId={this.props.match.params.id}
+          onMatchBegin={this.onStateChange} />}
 
         {match.state === 'toss' &&
-        <Toss teams={[match.team1, match.team2]} name={match.name}
-              matchId={this.props.match.params.id} onToss={this.onStateChange}/>}
+          <Toss teams={[match.team1, match.team2]} name={match.name}
+            matchId={this.props.match.params.id} onToss={this.onStateChange} />}
 
         {((match.state === 'innings1') || (match.state === 'innings2')) &&
-        <Running match={match}/>}
+          <Running match={match} />}
 
-        {(match.state === 'done') && <Redirect to={`/history@${match._id}`}/>}
+        {(match.state === 'done') && <Redirect to={`/history@${match._id}`} />}
 
-        <ErrorModal isOpen={this.state.showErrorModal} close={() => this.setState({ showErrorModal: false })}/>
+        <ErrorModal isOpen={this.state.showErrorModal} close={() => this.setState({ showErrorModal: false })} />
       </div>
     );
   }

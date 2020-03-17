@@ -37,7 +37,6 @@ class Register extends Component {
   handlers = {
     onSubmit() {
       const postData = { ...this.state.values };
-
       axios
         .post(`${process.env.SERVER_URL}/api/auth/register`, postData, { cancelToken: this.cancelTokenSource.token })
         .then(() => {
