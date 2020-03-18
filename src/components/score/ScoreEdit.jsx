@@ -16,11 +16,11 @@ function ScoreEdit(props) {
     matchId: props.matchId,
     injectBowlEvent: (bowl) => {
       // `props.battingTeamPlayers` is the array of current battingTeamPlayers
-      // hence for edit mode, calculation of `playedBy` is always incorrect
+      // hence for edit mode, calculation of `playedBy` is almost always incorrect
       delete bowl.playedBy;
 
       return {
-        bowl,
+        ...bowl,
         overNo: props.overNo,
         bowlNo: props.bowlNo,
       };
