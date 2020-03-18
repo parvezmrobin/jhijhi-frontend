@@ -6,31 +6,35 @@
 
 
 import React from 'react';
-import ScoreInputV2 from './ScoreInputV2';
 import * as PropTypes from 'prop-types';
+import ScoreInputV2 from './ScoreInputV2';
 
 function ScoreEdit(props) {
-  const propsToBePassed = {
-    batsmen: props.battingTeamPlayers,
-    batsmanIndices: props.batsmanIndices,
-    matchId: props.matchId,
-    injectBowlEvent: (bowl) => {
-      // `props.battingTeamPlayers` is the array of current battingTeamPlayers
-      // hence for edit mode, calculation of `playedBy` is almost always incorrect
-      delete bowl.playedBy;
+  const { battingTeamPlayers, batsmanIndices, matchId } = props;
+  const injectBowlEvent = (bowl) => {
+    // `props.battingTeamPlayers` is the array of current battingTeamPlayers
+    // hence for edit mode, calculation of `playedBy` is almost always incorrect
+    delete bowl.playedBy; // eslint-disable-line no-param-reassign
 
-      return {
-        ...bowl,
-        overNo: props.overNo,
-        bowlNo: props.bowlNo,
-      };
-    },
-    httpVerb: 'put',
-    shouldResetAfterInput: true,
-    actionText: 'Edit',
-    onInput: bowlEvent => props.onInput(bowlEvent.bowl || bowlEvent),
+    return {
+      ...bowl,
+      overNo: props.overNo,
+      bowlNo: props.bowlNo,
+    };
   };
-  return <ScoreInputV2 {...propsToBePassed}/>;
+
+  return (
+    <ScoreInputV2
+      batsmen={battingTeamPlayers}
+      batsmanIndices={batsmanIndices}
+      matchId={matchId}
+      injectBowlEvent={injectBowlEvent}
+      httpVerb="put"
+      shouldResetAfterInput
+      actionText="Edit"
+      onInput={(bowlEvent) => props.onInput(bowlEvent.bowl || bowlEvent)}
+    />
+  );
 }
 
 ScoreEdit.propTypes = {
