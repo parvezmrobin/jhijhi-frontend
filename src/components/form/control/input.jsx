@@ -9,16 +9,16 @@ import PropTypes from 'prop-types';
 
 
 function InputControl(props) {
-  const p = Object.assign({}, props);
+  const { isValid, ...p } = props;
   let className = 'form-control ';
-  if (p.isValid === true) {
+  if (isValid === true) {
     className += 'is-valid';
   } else if (p.isValid === false) {
     className += 'is-invalid';
   }
-  delete p.isValid;
 
-  return <input className={className} {...p}/>;
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  return <input className={className} {...p} />;
 }
 
 InputControl.propTypes = {

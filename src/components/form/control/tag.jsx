@@ -5,42 +5,43 @@
  */
 
 import React from 'react';
-import CreatableSelect from "react-select/creatable/dist/react-select.esm";
-import PropTypes from "prop-types";
-import InputControl from "./input";
+import CreatableSelect from 'react-select/creatable';
+import PropTypes from 'prop-types';
+import InputControl from './input';
 
 
 function TagControl(props) {
   const p = { ...props };
-  let className = "form-control tag ";
+  let className = 'form-control tag ';
   if (p.isValid === true) {
-    className += "is-valid";
+    className += 'is-valid';
   } else if (p.isValid === false) {
-    className += "is-invalid";
+    className += 'is-invalid';
   }
   p.id = props.id || props.name;
   delete p.isValid;
   delete p.options;
 
   const handleChange = (newValue) => {
-    const value = (newValue || []).map(obj => obj.value);
+    const value = (newValue || []).map((obj) => obj.value);
     p.onChange({ target: { value } }); // simulating e.target.value
   };
 
-  const options = props.options.map(option => ({ label: option, value: option }));
+  const { options } = props;
+  const mappedOptions = options.map((option) => ({ label: option, value: option }));
   return (
     <CreatableSelect
       className={className}
       classNamePrefix="tag"
       placeholder="Insert tags for easy searching"
-      formatCreateLabel={lbl => lbl}
+      formatCreateLabel={(lbl) => lbl}
       isClearable
       isMulti
       closeMenuOnSelect={false}
-      hideSelectedOptions={true}
+      hideSelectedOptions
       onChange={handleChange}
-      options={options}
-      value={p.value.map(val => ({label: val, value: val}))}
+      options={mappedOptions}
+      value={p.value.map((val) => ({ label: val, value: val }))}
     />
   );
 }
