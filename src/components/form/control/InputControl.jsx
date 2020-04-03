@@ -23,8 +23,8 @@ function InputControl(props) {
 
 InputControl.propTypes = {
   // no idea why `input` wants array as value
-  value: PropTypes.arrayOf(PropTypes.string),
-  isValid: PropTypes.bool,
+  value: PropTypes.arrayOf(PropTypes.string).isRequired,
+  isValid: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
 };
 

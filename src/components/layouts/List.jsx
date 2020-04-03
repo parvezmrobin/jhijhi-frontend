@@ -7,7 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import InputControl from '../form/control/input';
+import InputControl from '../form/control/InputControl';
 import { Collapse, Button } from "reactstrap";
 import { isMobile } from "../../lib/utils";
 import * as feather from "feather-icons";

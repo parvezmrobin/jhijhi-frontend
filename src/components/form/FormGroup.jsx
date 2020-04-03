@@ -6,7 +6,7 @@
 
 
 import React from 'react';
-import InputControl from './control/input';
+import InputControl from './control/InputControl';
 import SelectControl from './control/select';
 import TagControl from './control/tag';
 import { toTitleCase } from '../../lib/utils';
