@@ -6,46 +6,51 @@
 
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import InputControl from './control/InputControl';
 import SelectControl from './control/select';
-import TagControl from './control/tag';
+import TagControl from './control/TagControl';
 import { toTitleCase } from '../../lib/utils';
-import PropTypes from 'prop-types';
 
 
 function FormGroup(props) {
-  const labelCol = props.labelCol || 'col-md-4 col-lg-3';
-  const id = props.id || props.name;
-  const type = props.type || 'text';
-  const label = props.label || toTitleCase(props.name);
+  const {
+    labelCol = 'col-md-4 col-lg-3', name, isValid, onChange, autoFocus, disabled, feedback,
+  } = props;
+  const { id = name, type = 'text', label = toTitleCase(name) } = props;
 
   const inputProps = {
     id,
-    name: props.name,
-    isValid: props.isValid,
-    onChange: props.onChange,
-    autoFocus: props.autoFocus,
-    disabled: props.disabled,
+    name,
+    isValid,
+    onChange,
+    autoFocus,
+    disabled,
   };
 
   let control;
   if (type === 'select') {
-    control = <SelectControl {...inputProps} options={props.options} value={props.value}/>;
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    control = <SelectControl {...inputProps} options={props.options} value={props.value} />;
   } else if (type === 'tag') {
-    control = <TagControl {...inputProps} options={props.options} value={props.value} />
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    control = <TagControl {...inputProps} options={props.options} value={props.value} />;
   } else {
-    control = <InputControl type={type} {...inputProps} value={[props.value.toString()]}/>;
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    control = <InputControl type={type} {...inputProps} value={[props.value.toString()]} />;
   }
 
-  return (<div className="form-group row">
-    <label htmlFor={id} className={'col-form-label ' + labelCol}>
-      {label}
-    </label>
-    <div className="col">
-      {control}
-      <div className="invalid-feedback">{props.feedback}</div>
+  return (
+    <div className="form-group row">
+      <label htmlFor={id} className={`col-form-label ${labelCol}`}>
+        {label}
+      </label>
+      <div className="col">
+        {control}
+        <div className="invalid-feedback">{feedback}</div>
+      </div>
     </div>
-  </div>);
+  );
 }
 
 FormGroup.propTypes = {
@@ -58,8 +63,10 @@ FormGroup.propTypes = {
   feedback: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   autoFocus: PropTypes.bool,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.arrayOf(PropTypes.string)]).isRequired,
-  options: PropTypes.array,
+  value: PropTypes.oneOfType(
+    [PropTypes.string, PropTypes.number, PropTypes.arrayOf(PropTypes.string)],
+  ).isRequired,
+  options: PropTypes.arrayOf(PropTypes.string),
   disabled: PropTypes.bool,
 };
 
