@@ -4,33 +4,63 @@
  * Date: Apr 04, 2019
  */
 
-import React, { Fragment } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { shape } from 'prop-types';
+import func from 'lodash/fp/min';
 import FormGroup from '../form/FormGroup';
 import FormButton from '../form/FormButton';
-import { Link } from "react-router-dom";
+import { makeFeedbackType, makeIsValidType, Umpire as UmpireType } from '../../types';
 
 
-function UmpireForm(props) {
-  const operation = props.values._id ? 'Edit' : 'Create';
-  const onSubmit = e => {
+function UmpireForm({
+  values,
+  isValid,
+  feedback,
+  onChange,
+  onSubmit: propsOnSubmit,
+}) {
+  const operation = values._id ? 'Edit' : 'Create';
+  const onSubmit = (e) => {
     e.preventDefault();
-    props.onSubmit(e);
+    propsOnSubmit(e);
   };
   return (
-    <Fragment>
-      <h2>{operation} Umpire</h2>
-      <hr/>
+    <>
+      <h2>
+        {operation}
+        {' '}
+        Umpire
+      </h2>
+      <hr />
       <form onSubmit={onSubmit}>
-        <FormGroup name="name" onChange={e => props.onChange({ name: e.target.value })}
-                   value={props.values.name} isValid={props.isValid.name}
-                   feedback={props.feedback.name} autoFocus={true}/>
+        <FormGroup
+          name="name"
+          onChange={(e) => onChange({ name: e.target.value })}
+          value={values.name}
+          isValid={isValid.name}
+          feedback={feedback.name}
+          autoFocus
+        />
         <FormButton type="submit" text={operation} btnClass="outline-success">
-          {props.values._id &&
-          <label className="col-form-label float-right"><Link to="/umpire">Create</Link> a umpire instead</label>}
+          {values._id && (
+            <span className="col-form-label float-right">
+              <Link to="/umpire">Create</Link>
+              &npsp;an umpire instead
+            </span>
+          )}
         </FormButton>
       </form>
-    </Fragment>
+    </>
   );
 }
+
+UmpireForm.propTypes = {
+  values: shape(UmpireType).isRequired,
+  isValid: shape(makeIsValidType(UmpireType)).isRequired,
+  feedback: shape(makeFeedbackType(UmpireType)).isRequired,
+  onChange: func.isRequired,
+  onSubmit: func.isRequired,
+};
 
 export default UmpireForm;
