@@ -8,6 +8,10 @@
   "rules": {
     "no-console": "warn",
     "no-underscore-dangle": "off",
+    "no-plusplus": "off",
+    "no-continue": "off",
+    "no-restricted-syntax": "off",
+    "no-labels": "off",
     "react/require-default-props": "off",
     "prefer-destructuring": ["error", {
       "array": false,

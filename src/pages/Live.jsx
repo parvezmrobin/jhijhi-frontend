@@ -10,7 +10,7 @@ import PreMatch from '../components/PreMatch';
 import fetcher from '../lib/fetcher';
 import { bindMethods } from '../lib/utils';
 import Toss from '../components/Toss';
-import { Running } from '../components/Running';
+import Running from '../components/Running';
 import { Redirect } from 'react-router-dom';
 import ErrorModal from "../components/modal/ErrorModal";
 
