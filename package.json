@@ -12,6 +12,10 @@
     "type": "git",
     "url": "https://github.com/parvezmrobin/jhijhi-fontend.git"
   },
+  "engines": {
+    "node": "16.x",
+    "yarn": "1.x"
+  },
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack-dev-server --mode development --devtool inline-source-map --hot"
