@@ -123,43 +123,25 @@ class Player extends Component {
     const { player } = this.state;
     const postData = { ...player };
 
-    try {
-      const response = await fetcher
-        .post('players', postData);
-      this.setState((prevState) => ({
-        ...prevState,
-        players: prevState.players.concat(response.data.player),
-        player: {
-          name: '',
-          jerseyNo: '',
-        },
-        isValid: {
-          name: null,
-          jerseyNo: null,
-        },
-        feedback: {
-          name: null,
-          jerseyNo: null,
-        },
-        message: response.data.message,
-      }));
-    } catch (e) {
-      if (e.response) {
-        const serverErrors = e.response.data.err;
-
-        const { feedback, isValid } = this.state;
-        const newFeedback = { ...feedback };
-        const newIsValid = { ...isValid };
-        for (const serverError of serverErrors) {
-          newFeedback[serverError.param] = serverError.msg;
-          newIsValid[serverError.param] = false;
-        }
-
-        this.setState((prevState) => ({
-          ...prevState, isValid: newIsValid, feedback: newFeedback,
-        }));
-      }
-    }
+    const response = await fetcher
+      .post('players', postData);
+    this.setState((prevState) => ({
+      ...prevState,
+      players: prevState.players.concat(response.data.player),
+      player: {
+        name: '',
+        jerseyNo: '',
+      },
+      isValid: {
+        name: null,
+        jerseyNo: null,
+      },
+      feedback: {
+        name: null,
+        jerseyNo: null,
+      },
+      message: response.data.message,
+    }));
   }
 
   _updatePlayer() {
