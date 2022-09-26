@@ -4,10 +4,12 @@
  * Date: Mar 31, 2019
  */
 
-
 import React, { Component } from 'react';
 import {
-  HashRouter as Router, Redirect, Route, Switch,
+  HashRouter as Router,
+  Redirect,
+  Route,
+  Switch,
 } from 'react-router-dom';
 import { toTitleCase, logout } from './lib/utils';
 import fetcher from './lib/fetcher';
@@ -16,21 +18,48 @@ import './styles/App.scss';
 
 import Navbar from './components/Navbar';
 
-const Home = React.lazy(() => import(/* webpackChunkName: "Home" */ './pages/Home'));
-const Register = React.lazy(() => import(/* webpackChunkName: "Register" */ './pages/Register'));
-const Login = React.lazy(() => import(/* webpackChunkName: "Login" */ './pages/Login'));
-const Contact = React.lazy(() => import(/* webpackChunkName: "Contact" */ './pages/Contact'));
-const Team = React.lazy(() => import(/* webpackChunkName: "Team" */ './pages/Team'));
-const Player = React.lazy(() => import(/* webpackChunkName: "Player" */ './pages/Player'));
-const PlayerDetails = React.lazy(() => import(/* webpackChunkName: "Player" */ './pages/PlayerDetails'));
-const Umpire = React.lazy(() => import(/* webpackChunkName: "Umpire" */ './pages/Umpire'));
-const Match = React.lazy(() => import(/* webpackChunkName: "Match" */ './pages/Match'));
-const Live = React.lazy(() => import(/* webpackChunkName: "Live" */ './pages/Live'));
-const History = React.lazy(() => import(/* webpackChunkName: "History" */ './pages/History'));
-const Kidding = React.lazy(() => import(/* webpackChunkName: "ChangePassword" */ './pages/Kidding'));
-const Password = React.lazy(() => import(/* webpackChunkName: "Password" */ './pages/Password'));
-const Public = React.lazy(() => import(/* webpackChunkName: "Public" */ './pages/Public'));
-
+const Home = React.lazy(() =>
+  import(/* webpackChunkName: "Home" */ './pages/Home')
+);
+const Register = React.lazy(() =>
+  import(/* webpackChunkName: "Register" */ './pages/Register')
+);
+const Login = React.lazy(() =>
+  import(/* webpackChunkName: "Login" */ './pages/Login')
+);
+const Contact = React.lazy(() =>
+  import(/* webpackChunkName: "Contact" */ './pages/Contact')
+);
+const Team = React.lazy(() =>
+  import(/* webpackChunkName: "Team" */ './pages/Team')
+);
+const Player = React.lazy(() =>
+  import(/* webpackChunkName: "Player" */ './pages/Player')
+);
+const PlayerDetails = React.lazy(() =>
+  import(/* webpackChunkName: "Player" */ './pages/PlayerDetails')
+);
+const Umpire = React.lazy(() =>
+  import(/* webpackChunkName: "Umpire" */ './pages/Umpire')
+);
+const Match = React.lazy(() =>
+  import(/* webpackChunkName: "Match" */ './pages/Match')
+);
+const Live = React.lazy(() =>
+  import(/* webpackChunkName: "Live" */ './pages/Live')
+);
+const History = React.lazy(() =>
+  import(/* webpackChunkName: "History" */ './pages/History')
+);
+const Kidding = React.lazy(() =>
+  import(/* webpackChunkName: "ChangePassword" */ './pages/Kidding')
+);
+const Password = React.lazy(() =>
+  import(/* webpackChunkName: "Password" */ './pages/Password')
+);
+const Public = React.lazy(() =>
+  import(/* webpackChunkName: "Public" */ './pages/Public')
+);
 
 class App extends Component {
   constructor(props) {
@@ -42,8 +71,11 @@ class App extends Component {
 
   componentDidMount() {
     if (fetcher.isLoggedIn) {
-      fetcher.get('auth/user')
-        .then((response) => this.setState({ username: toTitleCase(response.data.username) }))
+      fetcher
+        .get('auth/user')
+        .then((response) =>
+          this.setState({ username: toTitleCase(response.data.username) })
+        )
         .catch((err) => {
           if (err.response.status === 401) {
             logout();
@@ -61,16 +93,20 @@ class App extends Component {
         <Navbar isLoggedIn={fetcher.isLoggedIn} username={username} />
 
         <div className="container-fluid">
-
           <div className="row">
             <div className="col">
               <ErrorBoundary>
                 <Switch>
-
                   <Route path="/login" component={Login} />
                   <Route path="/register" component={Register} />
                   <Route path="/public@:id" component={Public} />
-                  {shouldRedirect && <Redirect to={`/login?redirect=${window.location.hash.substring(1)}`} />}
+                  {shouldRedirect && (
+                    <Redirect
+                      to={`/login?redirect=${window.location.hash.substring(
+                        1
+                      )}`}
+                    />
+                  )}
                   <Route path="/" exact component={Home} />
                   <Route path="/contact" component={Contact} />
                   <Route path="/player-stat@:id" component={PlayerDetails} />
@@ -86,7 +122,6 @@ class App extends Component {
                   <Route path="/history@:id" component={History} />
                   <Route path="/kidding" component={Kidding} />
                   <Route path="/password" component={Password} />
-
                 </Switch>
               </ErrorBoundary>
             </div>

@@ -4,7 +4,6 @@
  * Date: Mar 31, 2019
  */
 
-
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -16,13 +15,13 @@ import ErrorModal from '../components/modal/ErrorModal';
 class Login extends Component {
   handlers = {
     onSubmit() {
-      const {
-        values,
-      } = this.state;
+      const { values } = this.state;
       const postData = { ...values };
 
       axios
-        .post(`${process.env.SERVER_URL}/api/auth/login`, postData, { cancelToken: this.cancelTokenSource.token })
+        .post(`${process.env.SERVER_URL}/api/auth/login`, postData, {
+          cancelToken: this.cancelTokenSource.token,
+        })
         .then((response) => {
           const isValid = {
             username: true,
@@ -33,13 +32,17 @@ class Login extends Component {
           if (response.data.success) {
             if (typeof window.localStorage === 'undefined') {
               // eslint-disable-next-line no-alert
-              return alert('You need to update your browser in order to use this site.');
+              return alert(
+                'You need to update your browser in order to use this site.'
+              );
             }
             window.localStorage.setItem('token', response.data.token);
             const { location } = this.props;
             const queryString = location.search;
             if (queryString.startsWith('?redirect=')) {
-              window.location.href = `/#${queryString.substring('?redirect='.length)}`;
+              window.location.href = `/#${queryString.substring(
+                '?redirect='.length
+              )}`;
               window.location.reload();
             } else {
               window.location.href = '/';
@@ -57,7 +60,9 @@ class Login extends Component {
     },
 
     onChange(newValues) {
-      this.setState((prevState) => ({ values: { ...prevState.values, ...newValues } }));
+      this.setState((prevState) => ({
+        values: { ...prevState.values, ...newValues },
+      }));
     },
   };
 
@@ -85,12 +90,7 @@ class Login extends Component {
   }
 
   render() {
-    const {
-      values,
-      isValid,
-      feedback,
-      showErrorModal,
-    } = this.state;
+    const { values, isValid, feedback, showErrorModal } = this.state;
     return (
       <AuthForm
         title="Login"
@@ -101,9 +101,7 @@ class Login extends Component {
         feedback={feedback}
       >
         <span className="col-form-label float-right">
-          Don&apos;t have an account?
-          {' '}
-          <Link to="/register">Register</Link>
+          Don&apos;t have an account? <Link to="/register">Register</Link>
         </span>
         <ErrorModal
           isOpen={showErrorModal}

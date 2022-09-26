@@ -4,17 +4,23 @@
  * Date: Apr 04, 2019
  */
 
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import FormGroup from '../form/FormGroup';
 import FormButton from '../form/FormButton';
-import { makeFeedbackType, makeIsValidType, Player as PlayerType } from '../../types';
-
+import {
+  makeFeedbackType,
+  makeIsValidType,
+  Player as PlayerType,
+} from '../../types';
 
 function PlayerForm({
-  values, isValid, feedback, onChange, onSubmit: propOnSubmit,
+  values,
+  isValid,
+  feedback,
+  onChange,
+  onSubmit: propOnSubmit,
 }) {
   const operation = values._id ? 'Edit' : 'Create';
   const onSubmit = (e) => {
@@ -24,11 +30,7 @@ function PlayerForm({
 
   return (
     <>
-      <h2>
-        {operation}
-        {' '}
-Player
-      </h2>
+      <h2>{operation} Player</h2>
       <hr />
       <form onSubmit={onSubmit}>
         <FormGroup
@@ -47,12 +49,11 @@ Player
           feedback={feedback.jerseyNo}
         />
         <FormButton type="submit" text={operation} btnClass="outline-success">
-          {values._id
-          && (
-          <span className="col-form-label float-right">
-            <Link to="/player">Create</Link>
-             &nbsp;a player instead
-          </span>
+          {values._id && (
+            <span className="col-form-label float-right">
+              <Link to="/player">Create</Link>
+              &nbsp;a player instead
+            </span>
           )}
         </FormButton>
       </form>
@@ -64,7 +65,8 @@ PlayerForm.propTypes = {
   values: PropTypes.shape({
     _id: PropTypes.string,
     name: PropTypes.string.isRequired,
-    jerseyNo: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    jerseyNo: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+      .isRequired,
   }).isRequired,
   isValid: PropTypes.shape(makeIsValidType(PlayerType)).isRequired,
   feedback: PropTypes.shape(makeFeedbackType(PlayerType)).isRequired,

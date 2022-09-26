@@ -4,7 +4,6 @@
  * Date: Mar 31, 2019
  */
 
-
 import React, { Component } from 'react';
 import { Alert } from 'reactstrap';
 import PropTypes from 'prop-types';
@@ -41,7 +40,9 @@ class Player extends Component {
     },
 
     onChange(newValues) {
-      this.setState((prevState) => ({ player: { ...prevState.player, ...newValues } }));
+      this.setState((prevState) => ({
+        player: { ...prevState.player, ...newValues },
+      }));
     },
   };
 
@@ -86,7 +87,8 @@ class Player extends Component {
   }
 
   _loadPlayers = (keyword = '') => {
-    fetcher.get(`players?search=${keyword}`)
+    fetcher
+      .get(`players?search=${keyword}`)
       .then((response) => {
         const { match } = this.props;
         if (match.params.id) {
@@ -96,7 +98,6 @@ class Player extends Component {
       })
       .catch(() => this.setState({ showErrorModal: true }));
   };
-
 
   _loadPlayerIfNecessary(playerId) {
     const { players } = this.state;
@@ -124,8 +125,7 @@ class Player extends Component {
     const { player } = this.state;
     const postData = { ...player };
 
-    const response = await fetcher
-      .post('players', postData);
+    const response = await fetcher.post('players', postData);
     this.setState((prevState) => ({
       ...prevState,
       players: prevState.players.concat(response.data.player),
@@ -152,11 +152,12 @@ class Player extends Component {
       jerseyNo: player.jerseyNo,
     };
 
-    return fetcher
-      .put(`players/${player._id}`, postData)
-      .then((response) => this.setState((prevState) => {
+    return fetcher.put(`players/${player._id}`, postData).then((response) =>
+      this.setState((prevState) => {
         const { players } = prevState;
-        const playerIndex = players.findIndex((_player) => _player._id === player._id);
+        const playerIndex = players.findIndex(
+          (_player) => _player._id === player._id
+        );
         if (playerIndex !== -1) {
           players[playerIndex] = response.data.player;
         }
@@ -172,7 +173,8 @@ class Player extends Component {
           },
           message: response.data.message,
         };
-      }));
+      })
+    );
   }
 
   render() {
@@ -180,11 +182,20 @@ class Player extends Component {
     const playerId = match.params.id;
 
     const {
-      players, message, redirected, player, isValid, feedback, showErrorModal,
+      players,
+      message,
+      redirected,
+      player,
+      isValid,
+      feedback,
+      showErrorModal,
     } = this.state;
     return (
       <div className="container-fluid px-0">
-        <Notification message={message} toggle={() => this.setState({ message: null })} />
+        <Notification
+          message={message}
+          toggle={() => this.setState({ message: null })}
+        />
 
         <div className="row">
           <PlayerSidebar
@@ -196,11 +207,11 @@ class Player extends Component {
           <main className="col pt-3 pt-sm-0">
             <CenterContent col="col-lg-8 col-md-10">
               {redirected && (
-              <Alert color="primary">
-                <p className="lead mb-0">
-                  You need at least 4 players to start a match.
-                </p>
-              </Alert>
+                <Alert color="primary">
+                  <p className="lead mb-0">
+                    You need at least 4 players to start a match.
+                  </p>
+                </Alert>
               )}
               <PlayerForm
                 values={player}

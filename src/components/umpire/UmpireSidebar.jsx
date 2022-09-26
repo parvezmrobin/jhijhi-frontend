@@ -8,9 +8,7 @@ import { Link } from 'react-router-dom';
 import React, { Component } from 'react';
 import * as feather from 'feather-icons';
 import debounce from 'lodash/debounce';
-import {
-  arrayOf, bool, shape, string, func,
-} from 'prop-types';
+import { arrayOf, bool, shape, string, func } from 'prop-types';
 import List from '../layouts/List';
 import CenterContent from '../layouts/CenterContent';
 import { toTitleCase } from '../../lib/utils';
@@ -26,17 +24,17 @@ export default class UmpireSidebar extends Component {
   }
 
   render() {
-    const {
-      umpireId, umpires, onFilter, editable,
-    } = this.props;
+    const { umpireId, umpires, onFilter, editable } = this.props;
     const renderUmpire = (umpire) => {
       const umpireText = toTitleCase(umpire.name);
       const editButton = (
         <Link to={`umpire@${umpire._id}`} className="float-right">
-          <small className="text-white"><i data-feather="edit" /></small>
+          <small className="text-white">
+            <i data-feather="edit" />
+          </small>
         </Link>
       );
-      const className = (umpire._id === umpireId) ? 'text-success' : 'text-white';
+      const className = umpire._id === umpireId ? 'text-success' : 'text-white';
       return (
         <>
           <span className={className}>{umpireText}</span>

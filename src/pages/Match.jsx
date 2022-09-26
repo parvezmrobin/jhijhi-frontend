@@ -4,7 +4,6 @@
  * Date: Mar 31, 2019
  */
 
-
 import React, { Component } from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { Redirect } from 'react-router-dom';
@@ -17,7 +16,6 @@ import ErrorModal from '../components/modal/ErrorModal';
 import Notification from '../components/Notification';
 import MatchSidebar from '../components/match/MatchSidebar';
 import { MatchParamId } from '../types';
-
 
 class Match extends Component {
   static initialValidationFeedback = {
@@ -54,7 +52,9 @@ class Match extends Component {
 
   handlers = {
     onChange(newValues) {
-      this.setState((prevState) => ({ match: { ...prevState.match, ...newValues } }));
+      this.setState((prevState) => ({
+        match: { ...prevState.match, ...newValues },
+      }));
     },
 
     onSubmit() {
@@ -117,7 +117,10 @@ class Match extends Component {
         if (match.params.id) {
           this._loadMatch(response.data, match.params.id);
         }
-        return this.setState({ matches: response.data, searchKeyword: keyword });
+        return this.setState({
+          matches: response.data,
+          searchKeyword: keyword,
+        });
       })
       .catch(this.onError);
   };
@@ -125,22 +128,30 @@ class Match extends Component {
   _loadAuxiliaryLists() {
     fetcher
       .get('teams')
-      .then((response) => this.setState({
-        teams: [{
-          _id: null,
-          name: 'None',
-          shortName: 'N',
-        }].concat(response.data),
-      }))
+      .then((response) =>
+        this.setState({
+          teams: [
+            {
+              _id: null,
+              name: 'None',
+              shortName: 'N',
+            },
+          ].concat(response.data),
+        })
+      )
       .catch(this.onError);
     fetcher
       .get('umpires')
-      .then((response) => this.setState({
-        umpires: [{
-          _id: null,
-          name: 'None',
-        }].concat(response.data),
-      }))
+      .then((response) =>
+        this.setState({
+          umpires: [
+            {
+              _id: null,
+              name: 'None',
+            },
+          ].concat(response.data),
+        })
+      )
       .catch(this.onError);
     fetcher
       .get('matches/tags')
@@ -165,15 +176,15 @@ class Match extends Component {
 
   _loadMatch(matches, matchId) {
     const match = matches.find((_match) => _match._id === matchId);
-    if (match) this.setState({ match, ...cloneDeep(Match.initialValidationFeedback) });
+    if (match)
+      this.setState({ match, ...cloneDeep(Match.initialValidationFeedback) });
   }
 
   _createMatch() {
     const { match } = this.state;
 
-    return fetcher
-      .post('matches', { ...match })
-      .then((response) => this.setState((prevState) => ({
+    return fetcher.post('matches', { ...match }).then((response) =>
+      this.setState((prevState) => ({
         ...prevState,
         ...cloneDeep(Match.initialValues),
         matches: prevState.matches.concat({
@@ -182,18 +193,20 @@ class Match extends Component {
         }),
         tags: prevState.tags.concat(prevState.match.tags),
         message: response.data.message,
-      })));
+      }))
+    );
   }
 
   _updateMatch() {
     const { match } = this.state;
     const postData = { ...match };
 
-    return fetcher
-      .put(`matches/${match._id}`, postData)
-      .then((response) => this.setState((prevState) => {
+    return fetcher.put(`matches/${match._id}`, postData).then((response) =>
+      this.setState((prevState) => {
         const matches = [...prevState.matches];
-        const matchIndex = matches.findIndex((_match) => _match._id === match._id);
+        const matchIndex = matches.findIndex(
+          (_match) => _match._id === match._id
+        );
         if (matchIndex !== -1) {
           matches[matchIndex] = response.data.match;
         }
@@ -204,7 +217,8 @@ class Match extends Component {
           ...cloneDeep(Match.initialValidationFeedback),
           message: response.data.message,
         };
-      }));
+      })
+    );
   }
 
   render() {
@@ -222,7 +236,8 @@ class Match extends Component {
     } = this.state;
     const { match: urlMatch } = this.props;
 
-    if (teams && teams.length < 2) { // if `teams` are loaded but has less than 2 teams
+    if (teams && teams.length < 2) {
+      // if `teams` are loaded but has less than 2 teams
       return <Redirect to="/team?redirected=1" />;
     }
 
@@ -230,7 +245,10 @@ class Match extends Component {
 
     return (
       <div className="container-fluid px-0">
-        <Notification message={message} toggle={() => this.setState({ message: null })} />
+        <Notification
+          message={message}
+          toggle={() => this.setState({ message: null })}
+        />
 
         <div className="row">
           <MatchSidebar

@@ -4,7 +4,6 @@
  * Date: Apr 04, 2019
  */
 
-
 /**
  * Changes a string to title case
  * @param str
@@ -17,8 +16,7 @@ export function toTitleCase(str, delimiter = '-') {
   }
   return str
     .split(delimiter)
-    .map(word => word[0].toUpperCase() + word.substr(1)
-      .toLowerCase())
+    .map((word) => word[0].toUpperCase() + word.substr(1).toLowerCase())
     .join(' ');
 }
 
@@ -39,10 +37,12 @@ export function optional(object) {
  */
 export function bindMethods(object, property = 'handlers') {
   for (const methodName in object[property]) {
+    // eslint-disable-next-line no-prototype-builtins
     if (object[property].hasOwnProperty(methodName)) {
       if (typeof object[property][methodName] !== 'function') {
         continue;
       }
+      // eslint-disable-next-line no-param-reassign
       object[methodName] = object[property][methodName].bind(object);
     }
   }
@@ -54,8 +54,12 @@ export function bindMethods(object, property = 'handlers') {
  * @param {Array} subtrahend
  * @param {Function} [matcher]
  */
-export function subtract(from, subtrahend, matcher = ((el1, el2) => el1 === el2)) {
-  return from.filter(el1 => {
+export function subtract(
+  from,
+  subtrahend,
+  matcher = (el1, el2) => el1 === el2
+) {
+  return from.filter((el1) => {
     for (const el2 of subtrahend) {
       if (matcher(el1, el2)) {
         return false;
@@ -84,7 +88,7 @@ export function ordinal(number) {
   return 'th';
 }
 
-export const formatValidationFeedback = err => {
+export const formatValidationFeedback = (err) => {
   if (err.response.status !== 400) {
     throw err;
   }
@@ -124,4 +128,7 @@ export function logout() {
   window.location.reload();
 }
 
-export const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
+export const isMobile =
+  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    window.navigator.userAgent
+  );

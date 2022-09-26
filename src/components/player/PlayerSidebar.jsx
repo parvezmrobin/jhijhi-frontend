@@ -12,7 +12,7 @@ import debounce from 'lodash/debounce';
 import List from '../layouts/List';
 import CenterContent from '../layouts/CenterContent';
 import { toTitleCase } from '../../lib/utils';
-
+import { Player as PlayerType } from '../../types';
 
 export default class PlayerSidebar extends Component {
   componentDidMount() {
@@ -24,20 +24,22 @@ export default class PlayerSidebar extends Component {
   }
 
   render() {
-    const {
-      playerId, players, editable, onFilter,
-    } = this.props;
+    const { playerId, players, editable, onFilter } = this.props;
     const renderPlayer = (player) => {
       const playerText = `${toTitleCase(player.name)} (${player.jerseyNo})`;
       const editButton = (
         <Link to={`player@${player._id}`} className="float-right">
-          <small className="text-white"><i data-feather="edit" /></small>
+          <small className="text-white">
+            <i data-feather="edit" />
+          </small>
         </Link>
       );
-      const className = (player._id === playerId) ? 'text-success' : 'text-white';
+      const className = player._id === playerId ? 'text-success' : 'text-white';
       return (
         <>
-          <Link to={`player-stat@${player._id}`} className={className}>{playerText}</Link>
+          <Link to={`player-stat@${player._id}`} className={className}>
+            {playerText}
+          </Link>
           {editable && editButton}
         </>
       );
@@ -60,7 +62,7 @@ export default class PlayerSidebar extends Component {
 
 PlayerSidebar.propTypes = {
   playerId: PropTypes.string,
-  players: PropTypes.arrayOf(PropTypes.object).isRequired,
+  players: PropTypes.arrayOf(PropTypes.shape(PlayerType)).isRequired,
   editable: PropTypes.bool,
   onFilter: PropTypes.func.isRequired,
 };

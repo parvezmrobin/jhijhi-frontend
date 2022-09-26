@@ -4,7 +4,6 @@
  * Date: Mar 31, 2019
  */
 
-
 import React, { Component } from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { Alert } from 'reactstrap';
@@ -16,7 +15,6 @@ import ErrorModal from '../components/modal/ErrorModal';
 import Notification from '../components/Notification';
 import TeamSidebar from '../components/team/TeamSidebar';
 import { Location, MatchParamId } from '../types';
-
 
 class Team extends Component {
   static initialValidationFeedback = {
@@ -44,7 +42,9 @@ class Team extends Component {
      * @param newValues
      */
     onChange(newValues) {
-      this.setState((prevState) => ({ team: { ...prevState.team, ...newValues } }));
+      this.setState((prevState) => ({
+        team: { ...prevState.team, ...newValues },
+      }));
     },
 
     onSubmit() {
@@ -58,10 +58,7 @@ class Team extends Component {
 
       submission
         .catch((err) => {
-          const {
-            isValid,
-            feedback,
-          } = formatValidationFeedback(err);
+          const { isValid, feedback } = formatValidationFeedback(err);
 
           this.setState({
             isValid,
@@ -132,7 +129,8 @@ class Team extends Component {
     const team = teams.find((_team) => _team._id === teamId);
     if (team) {
       this.setState({
-        team, ...cloneDeep(Team.initialValidationFeedback),
+        team,
+        ...cloneDeep(Team.initialValidationFeedback),
       });
     }
   }
@@ -140,23 +138,22 @@ class Team extends Component {
   _createTeam() {
     const { team } = this.state;
 
-    return fetcher
-      .post('teams', { ...team })
-      .then((response) => this.setState((prevState) => ({
+    return fetcher.post('teams', { ...team }).then((response) =>
+      this.setState((prevState) => ({
         ...prevState,
         teams: prevState.teams.concat(response.data.team),
         message: response.data.message,
         ...cloneDeep(Team.initialValues),
-      })));
+      }))
+    );
   }
 
   _updateTeam() {
     const { team } = this.state;
     const postData = { ...team };
 
-    return fetcher
-      .put(`teams/${team._id}`, postData)
-      .then((response) => this.setState((prevState) => {
+    return fetcher.put(`teams/${team._id}`, postData).then((response) =>
+      this.setState((prevState) => {
         const teams = [...prevState.teams];
         const teamIndex = teams.findIndex((_team) => _team._id === team._id);
         if (teamIndex !== -1) {
@@ -176,19 +173,29 @@ class Team extends Component {
           },
           message: response.data.message,
         };
-      }));
+      })
+    );
   }
 
   render() {
     const {
-      teams, team, players, isValid, feedback, message, redirected, showErrorModal,
+      teams,
+      team,
+      players,
+      isValid,
+      feedback,
+      message,
+      redirected,
+      showErrorModal,
     } = this.state;
     const { match } = this.props;
     const teamId = match.params.id;
     return (
       <div className="container-fluid px-0">
-
-        <Notification message={message} toggle={() => this.setState({ message: null })} />
+        <Notification
+          message={message}
+          toggle={() => this.setState({ message: null })}
+        />
 
         <div className="row">
           <TeamSidebar
@@ -201,7 +208,9 @@ class Team extends Component {
             <CenterContent col="col-lg-8 col-md-10">
               {redirected && (
                 <Alert color="primary">
-                  <p className="lead mb-0">You need at least 2 teams to create a match.</p>
+                  <p className="lead mb-0">
+                    You need at least 2 teams to create a match.
+                  </p>
                 </Alert>
               )}
 
@@ -221,7 +230,6 @@ class Team extends Component {
           isOpen={showErrorModal}
           close={() => this.setState({ showErrorModal: false })}
         />
-
       </div>
     );
   }

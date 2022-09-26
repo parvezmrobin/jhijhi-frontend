@@ -10,8 +10,11 @@ import { shape } from 'prop-types';
 import func from 'lodash/fp/min';
 import FormGroup from '../form/FormGroup';
 import FormButton from '../form/FormButton';
-import { makeFeedbackType, makeIsValidType, Umpire as UmpireType } from '../../types';
-
+import {
+  makeFeedbackType,
+  makeIsValidType,
+  Umpire as UmpireType,
+} from '../../types';
 
 function UmpireForm({
   values,
@@ -27,11 +30,7 @@ function UmpireForm({
   };
   return (
     <>
-      <h2>
-        {operation}
-        {' '}
-        Umpire
-      </h2>
+      <h2>{operation} Umpire</h2>
       <hr />
       <form onSubmit={onSubmit}>
         <FormGroup

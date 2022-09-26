@@ -9,9 +9,7 @@ import CreatableSelect from 'react-select/creatable';
 import PropTypes from 'prop-types';
 
 function TagControl(props) {
-  const {
-    isValid, options, onChange, value,
-  } = props;
+  const { isValid, options, onChange, value } = props;
   let className = 'form-control tag ';
   if (isValid === true) {
     className += 'is-valid';
@@ -24,7 +22,10 @@ function TagControl(props) {
     onChange({ target: { value: mappedValue } }); // simulating e.target.value
   };
 
-  const mappedOptions = options.map((option) => ({ label: option, value: option }));
+  const mappedOptions = options.map((option) => ({
+    label: option,
+    value: option,
+  }));
   return (
     <CreatableSelect
       className={className}

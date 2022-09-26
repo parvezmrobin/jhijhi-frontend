@@ -7,7 +7,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-
 function InputControl(props) {
   const { isValid, ...p } = props;
   let className = 'form-control ';
@@ -27,6 +26,5 @@ InputControl.propTypes = {
   isValid: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
-
 
 export default InputControl;

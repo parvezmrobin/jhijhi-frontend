@@ -8,7 +8,6 @@ import React from 'react';
 import { arrayOf, shape, string } from 'prop-types';
 import { Named } from '../../../types';
 
-
 function SelectControl(props) {
   const p = { ...props };
   let className = 'form-control ';
@@ -23,16 +22,15 @@ function SelectControl(props) {
 
   const { options } = props;
   const optionsEls = options.map((option) => (
-    <option
-      key={option._id}
-      value={option._id}
-    >
+    <option key={option._id} value={option._id}>
       {option.name}
     </option>
   ));
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
-    <select className={className} {...p}>{optionsEls}</select>
+    <select className={className} {...p}>
+      {optionsEls}
+    </select>
   );
 }
 

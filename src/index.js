@@ -4,7 +4,6 @@
  * Date: Mar 31, 2019
  */
 
-
 import { Suspense, createElement, lazy as lazyLoad } from 'react';
 import { render } from 'react-dom';
 import Loading from './pages/Loading';

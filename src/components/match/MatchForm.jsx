@@ -4,12 +4,9 @@
  * Date: Apr 04, 2019
  */
 
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {
-  arrayOf, func, shape, string,
-} from 'prop-types';
+import { arrayOf, func, shape, string } from 'prop-types';
 import FormGroup from '../form/FormGroup';
 import FormButton from '../form/FormButton';
 import {
@@ -100,7 +97,9 @@ function MatchForm({
           name="overs"
           type="number"
           value={values.overs}
-          onChange={(e) => onChange({ overs: Number.parseFloat(e.target.value) })}
+          onChange={(e) =>
+            onChange({ overs: Number.parseFloat(e.target.value) })
+          }
           isValid={isValid.overs}
           feedback={feedback.overs}
         />

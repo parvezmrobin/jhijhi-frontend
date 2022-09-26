@@ -1,14 +1,18 @@
 import PropTypes, {
-  arrayOf, bool, number, oneOfType, shape, string,
+  arrayOf,
+  bool,
+  number,
+  oneOfType,
+  shape,
+  string,
 } from 'prop-types';
 
 function makeTypeMaker(type) {
   return function makeType(baseType) {
-    const keyValues = Object.entries(baseType)
-      .filter(([field]) => field !== '_id');
-    return Object.fromEntries(
-      keyValues.map(([field]) => [field, type]),
+    const keyValues = Object.entries(baseType).filter(
+      ([field]) => field !== '_id'
     );
+    return Object.fromEntries(keyValues.map(([field]) => [field, type]));
   };
 }
 
@@ -75,10 +79,10 @@ export const Match = {
   umpire1: oneOfType([shape(Umpire), string]),
   umpire2: oneOfType([shape(Umpire), string]),
   umpire3: oneOfType([shape(Umpire), string]),
-  team1Players: arrayOf(shape(Player)).isRequired,
-  team2Players: arrayOf(shape(Player)).isRequired,
-  team1Captain: shape(Player),
-  team2Captain: shape(Player),
+  team1Players: arrayOf(oneOfType([shape(Player), string])).isRequired,
+  team2Players: arrayOf(oneOfType([shape(Player), string])).isRequired,
+  team1Captain: oneOfType([shape(Player), string]),
+  team2Captain: oneOfType([shape(Player), string]),
   team1WonToss: bool,
   team1BatFirst: bool,
   state: string.isRequired,

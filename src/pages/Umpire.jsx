@@ -4,7 +4,6 @@
  * Date: Mar 31, 2019
  */
 
-
 import React, { Component } from 'react';
 import CenterContent from '../components/layouts/CenterContent';
 import UmpireForm from '../components/umpire/UmpireForm';
@@ -28,10 +27,7 @@ class Umpire extends Component {
 
       submission
         .catch((err) => {
-          const {
-            isValid,
-            feedback,
-          } = formatValidationFeedback(err);
+          const { isValid, feedback } = formatValidationFeedback(err);
 
           this.setState({
             isValid,
@@ -42,7 +38,9 @@ class Umpire extends Component {
     },
 
     onChange(newValues) {
-      this.setState((prevState) => ({ umpire: { ...prevState.umpire, ...newValues } }));
+      this.setState((prevState) => ({
+        umpire: { ...prevState.umpire, ...newValues },
+      }));
     },
   };
 
@@ -83,7 +81,8 @@ class Umpire extends Component {
 
   _loadUmpires = (keyword = '') => {
     const { match } = this.props;
-    fetcher.get(`umpires?search=${keyword}`)
+    fetcher
+      .get(`umpires?search=${keyword}`)
       .then((response) => {
         if (match.params.id) {
           this._loadUmpire(response.data, match.params.id);
@@ -119,27 +118,28 @@ class Umpire extends Component {
   _createUmpire() {
     const { umpire } = this.state;
 
-    return fetcher
-      .post('umpires', { ...umpire })
-      .then((response) => this.setState((prevState) => ({
+    return fetcher.post('umpires', { ...umpire }).then((response) =>
+      this.setState((prevState) => ({
         ...prevState,
         umpires: prevState.umpires.concat(response.data.umpire),
         umpire: { name: '' },
         isValid: { name: null },
         feedback: { name: null },
         message: response.data.message,
-      })));
+      }))
+    );
   }
 
   _updateUmpire() {
     const { umpire } = this.state;
     const postData = { name: umpire.name };
 
-    return fetcher
-      .put(`umpires/${umpire._id}`, postData)
-      .then((response) => this.setState((prevState) => {
+    return fetcher.put(`umpires/${umpire._id}`, postData).then((response) =>
+      this.setState((prevState) => {
         const umpires = [...prevState.umpires];
-        const umpireIndex = umpires.findIndex((_umpire) => _umpire._id === umpire._id);
+        const umpireIndex = umpires.findIndex(
+          (_umpire) => _umpire._id === umpire._id
+        );
         if (umpireIndex !== -1) {
           umpires[umpireIndex] = response.data.umpire;
         }
@@ -151,16 +151,15 @@ class Umpire extends Component {
           feedback: { name: null },
           message: response.data.message,
         };
-      }));
+      })
+    );
   }
-
 
   render() {
     const { match } = this.props;
     const umpireId = match.params.id;
-    const {
-      umpire, umpires, isValid, feedback, message, showErrorModal,
-    } = this.state;
+    const { umpire, umpires, isValid, feedback, message, showErrorModal } =
+      this.state;
     return (
       <div className="container-fluid px-0">
         <Notification

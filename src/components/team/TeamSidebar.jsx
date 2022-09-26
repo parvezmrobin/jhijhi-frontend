@@ -11,7 +11,7 @@ import debounce from 'lodash/debounce';
 import * as PropTypes from 'prop-types';
 import CenterContent from '../layouts/CenterContent';
 import List from '../layouts/List';
-
+import { Team as TeamType } from '../../types';
 
 export default class TeamSidebar extends Component {
   componentDidMount() {
@@ -27,10 +27,12 @@ export default class TeamSidebar extends Component {
     const teamText = `${team.name} (${team.shortName})`;
     const editButton = (
       <Link to={`team@${team._id}`} className="float-right">
-        <small className="text-white"><i data-feather="edit" /></small>
+        <small className="text-white">
+          <i data-feather="edit" />
+        </small>
       </Link>
     );
-    const className = (team._id === teamId) ? 'text-success' : 'text-white';
+    const className = team._id === teamId ? 'text-success' : 'text-white';
     return (
       <>
         <span className={className}>{teamText}</span>
@@ -59,6 +61,6 @@ export default class TeamSidebar extends Component {
 TeamSidebar.propTypes = {
   editable: PropTypes.bool,
   teamId: PropTypes.string,
-  teams: PropTypes.arrayOf(PropTypes.object),
+  teams: PropTypes.arrayOf(PropTypes.shape(TeamType)).isRequired,
   onFilter: PropTypes.func,
 };

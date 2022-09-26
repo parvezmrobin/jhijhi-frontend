@@ -1,9 +1,9 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /**
  * Parvez M Robin
  * parvezmrobin@gmail.com
  * Date: Apr 01, 2019
  */
-
 
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -13,10 +13,16 @@ import TagControl from './control/TagControl';
 import { toTitleCase } from '../../lib/utils';
 import { Named } from '../../types';
 
-
 function FormGroup(props) {
   const {
-    labelCol = 'col-md-4 col-lg-3', name, isValid, onChange, autoFocus, disabled, feedback,
+    labelCol = 'col-md-4 col-lg-3',
+    name,
+    value,
+    isValid,
+    onChange,
+    autoFocus,
+    disabled,
+    feedback,
   } = props;
   const { id = name, type = 'text', label = toTitleCase(name) } = props;
 
@@ -31,14 +37,15 @@ function FormGroup(props) {
 
   let control;
   if (type === 'select') {
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    control = <SelectControl {...inputProps} options={props.options} value={props.value} />;
+    const { options } = props;
+    control = <SelectControl {...inputProps} options={options} value={value} />;
   } else if (type === 'tag') {
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    control = <TagControl {...inputProps} options={props.options} value={props.value} />;
+    const { options } = props;
+    control = <TagControl {...inputProps} options={options} value={value} />;
   } else {
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    control = <InputControl type={type} {...inputProps} value={[props.value.toString()]} />;
+    control = (
+      <InputControl type={type} {...inputProps} value={[value.toString()]} />
+    );
   }
 
   return (
@@ -64,16 +71,15 @@ FormGroup.propTypes = {
   feedback: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   autoFocus: PropTypes.bool,
-  value: PropTypes.oneOfType(
-    [PropTypes.string, PropTypes.number, PropTypes.arrayOf(PropTypes.string)],
-  ).isRequired,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.arrayOf(PropTypes.string),
+  ]).isRequired,
   options: PropTypes.arrayOf(
-    PropTypes.oneOfType(
-      [PropTypes.shape(Named), PropTypes.string],
-    ).isRequired,
+    PropTypes.oneOfType([PropTypes.shape(Named), PropTypes.string]).isRequired
   ),
   disabled: PropTypes.bool,
 };
-
 
 export default FormGroup;
