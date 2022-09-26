@@ -1,6 +1,25 @@
-import {
+import PropTypes, {
   arrayOf, bool, number, shape, string,
 } from 'prop-types';
+
+function makeTypeMaker(type) {
+  return function makeType(baseType) {
+    const keyValues = Object.entries(baseType)
+      .filter(([field]) => field !== '_id');
+    return Object.fromEntries(
+      keyValues.map(([field]) => [field, type]),
+    );
+  };
+}
+
+export const makeIsValidType = makeTypeMaker(bool);
+export const makeFeedbackType = makeTypeMaker(string);
+
+export const Location = {
+  location: shape({
+    search: string.isRequired,
+  }).isRequired,
+};
 
 export const Player = {
   _id: string.isRequired,
@@ -9,7 +28,7 @@ export const Player = {
 };
 
 export const Team = {
-  _id: string.isRequired,
+  _id: string,
   name: string.isRequired,
   shortName: string.isRequired,
 };
@@ -64,3 +83,6 @@ export const Match = {
   innings1: shape(Innings),
   innings2: shape(Innings),
 };
+export const MatchParamId = PropTypes.shape({
+  params: PropTypes.shape({ id: PropTypes.string }).isRequired,
+}).isRequired;

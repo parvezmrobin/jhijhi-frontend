@@ -5,40 +5,67 @@
  */
 
 
-import React, { Fragment } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { func, shape } from 'prop-types';
 import FormGroup from '../form/FormGroup';
 import FormButton from '../form/FormButton';
-import { Link } from "react-router-dom";
+import { makeFeedbackType, makeIsValidType, Team as TeamType } from '../../types';
 
 
-function TeamForm(props) {
+function TeamForm({
+  team, isValid, feedback, onChange, onSubmit: propOnSubmit,
+}) {
   const onSubmit = (e) => {
     e.preventDefault();
-    props.onSubmit(e)
+    propOnSubmit(e);
   };
-  const operation = props.team._id ? 'Edit' : 'Create';
+  const operation = team._id ? 'Edit' : 'Create';
 
   return (
-    <Fragment>
-      <h2>{operation} Team</h2>
-      <hr/>
+    <>
+      <h2>
+        {operation}
+        &nbsp;Team
+      </h2>
+      <hr />
       <form onSubmit={onSubmit}>
-        <FormGroup name="name" value={props.team.name}
-                   onChange={(e) => props.onChange({ name: e.target.value })}
-                   isValid={props.isValid.name}
-                   feedback={props.feedback.name} autoFocus={true}/>
-        <FormGroup name="short-name" value={props.team.shortName}
-                   onChange={(e) => props.onChange({ shortName: e.target.value })}
-                   isValid={props.isValid.shortName}
-                   feedback={props.feedback.shortName}/>
+        <FormGroup
+          name="name"
+          value={team.name}
+          onChange={(e) => onChange({ name: e.target.value })}
+          isValid={isValid.name}
+          feedback={feedback.name}
+          autoFocus
+        />
+        <FormGroup
+          name="short-name"
+          value={team.shortName}
+          onChange={(e) => onChange({ shortName: e.target.value })}
+          isValid={isValid.shortName}
+          feedback={feedback.shortName}
+        />
 
         <FormButton type="submit" text={operation} btnClass="outline-success">
-          {props.team._id &&
-          <label className="col-form-label float-right"><Link to="/team">Create</Link> a team instead</label>}
+          {team._id && (
+          <span className="col-form-label float-right">
+            <Link to="/team">Create</Link>
+            {' '}
+                a team instead
+          </span>
+          )}
         </FormButton>
       </form>
-    </Fragment>
+    </>
   );
 }
+
+TeamForm.propTypes = {
+  team: shape(TeamType).isRequired,
+  isValid: shape(makeIsValidType(TeamType)).isRequired,
+  feedback: shape(makeFeedbackType(TeamType)).isRequired,
+  onChange: func.isRequired,
+  onSubmit: func.isRequired,
+};
 
 export default TeamForm;

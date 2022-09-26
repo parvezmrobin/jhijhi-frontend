@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import FormGroup from '../form/FormGroup';
 import FormButton from '../form/FormButton';
+import { makeFeedbackType, makeIsValidType, Player as PlayerType } from '../../types';
 
 
 function PlayerForm({
@@ -65,14 +66,8 @@ PlayerForm.propTypes = {
     name: PropTypes.string.isRequired,
     jerseyNo: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   }).isRequired,
-  isValid: PropTypes.shape({
-    name: PropTypes.bool,
-    jerseyNo: PropTypes.bool,
-  }).isRequired,
-  feedback: PropTypes.shape({
-    name: PropTypes.string,
-    jerseyNo: PropTypes.string,
-  }).isRequired,
+  isValid: PropTypes.shape(makeIsValidType(PlayerType)).isRequired,
+  feedback: PropTypes.shape(makeFeedbackType(PlayerType)).isRequired,
   onChange: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
 };

@@ -15,6 +15,7 @@ import { bindMethods, formatValidationFeedback } from '../lib/utils';
 import PlayerSidebar from '../components/player/PlayerSidebar';
 import ErrorModal from '../components/modal/ErrorModal';
 import Notification from '../components/Notification';
+import { MatchParamId } from '../types';
 
 class Player extends Component {
   handlers = {
@@ -227,9 +228,7 @@ Player.propTypes = {
   history: PropTypes.shape({
     listen: PropTypes.func.isRequired,
   }).isRequired,
-  match: PropTypes.shape({
-    params: PropTypes.shape({ id: PropTypes.string }).isRequired,
-  }).isRequired,
+  match: MatchParamId,
 };
 
 export default Player;
