@@ -13,7 +13,7 @@ function InputControl(props) {
   let className = 'form-control ';
   if (isValid === true) {
     className += 'is-valid';
-  } else if (p.isValid === false) {
+  } else if (isValid === false) {
     className += 'is-invalid';
   }
 
@@ -23,7 +23,7 @@ function InputControl(props) {
 
 InputControl.propTypes = {
   // no idea why `input` wants array as value
-  value: PropTypes.arrayOf(PropTypes.string).isRequired,
+  value: PropTypes.arrayOf(PropTypes.string),
   isValid: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
