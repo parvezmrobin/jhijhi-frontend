@@ -44,7 +44,7 @@ function TagControl(props) {
 }
 
 TagControl.propTypes = {
-  isValid: PropTypes.bool.isRequired,
+  isValid: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   options: PropTypes.arrayOf(PropTypes.string).isRequired,
   value: PropTypes.arrayOf(PropTypes.string).isRequired,

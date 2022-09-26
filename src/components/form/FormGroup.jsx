@@ -11,6 +11,7 @@ import InputControl from './control/InputControl';
 import SelectControl from './control/select';
 import TagControl from './control/TagControl';
 import { toTitleCase } from '../../lib/utils';
+import { Named } from '../../types';
 
 
 function FormGroup(props) {
@@ -66,7 +67,11 @@ FormGroup.propTypes = {
   value: PropTypes.oneOfType(
     [PropTypes.string, PropTypes.number, PropTypes.arrayOf(PropTypes.string)],
   ).isRequired,
-  options: PropTypes.arrayOf(PropTypes.string),
+  options: PropTypes.arrayOf(
+    PropTypes.oneOfType(
+      [PropTypes.shape(Named), PropTypes.string],
+    ).isRequired,
+  ),
   disabled: PropTypes.bool,
 };
 

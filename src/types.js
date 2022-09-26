@@ -1,5 +1,5 @@
 import PropTypes, {
-  arrayOf, bool, number, shape, string,
+  arrayOf, bool, number, oneOfType, shape, string,
 } from 'prop-types';
 
 function makeTypeMaker(type) {
@@ -21,21 +21,23 @@ export const Location = {
   }).isRequired,
 };
 
-export const Player = {
-  _id: string.isRequired,
+export const Named = {
+  _id: string,
   name: string.isRequired,
+};
+
+export const Player = {
+  ...Named,
   jerseyNo: number.isRequired,
 };
 
 export const Team = {
-  _id: string,
-  name: string.isRequired,
+  ...Named,
   shortName: string.isRequired,
 };
 
 export const Umpire = {
-  _id: string.isRequired,
-  name: string.isRequired,
+  ...Named,
 };
 
 const Bowl = {
@@ -65,20 +67,20 @@ const Innings = {
 };
 
 export const Match = {
-  _id: string.isRequired,
+  _id: string,
   name: string.isRequired,
   overs: number.isRequired,
-  team1: shape(Team).isRequired,
-  team2: shape(Team).isRequired,
-  umpire1: shape(Umpire),
-  umpire2: shape(Umpire),
-  umpire3: shape(Umpire),
+  team1: oneOfType([shape(Team), string]).isRequired,
+  team2: oneOfType([shape(Team), string]).isRequired,
+  umpire1: oneOfType([shape(Umpire), string]),
+  umpire2: oneOfType([shape(Umpire), string]),
+  umpire3: oneOfType([shape(Umpire), string]),
   team1Players: arrayOf(shape(Player)).isRequired,
   team2Players: arrayOf(shape(Player)).isRequired,
-  team1Captain: shape(Player).isRequired,
-  team2Captain: shape(Player).isRequired,
-  team1WonToss: bool.isRequired,
-  team1BatFirst: bool.isRequired,
+  team1Captain: shape(Player),
+  team2Captain: shape(Player),
+  team1WonToss: bool,
+  team1BatFirst: bool,
   state: string.isRequired,
   innings1: shape(Innings),
   innings2: shape(Innings),
