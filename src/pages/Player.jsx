@@ -6,18 +6,47 @@
 
 
 import React, { Component } from 'react';
+import { Alert } from 'reactstrap';
+import PropTypes from 'prop-types';
 import CenterContent from '../components/layouts/CenterContent';
 import PlayerForm from '../components/player/PlayerForm';
 import fetcher from '../lib/fetcher';
 import { bindMethods, formatValidationFeedback } from '../lib/utils';
-import { Alert } from 'reactstrap';
 import PlayerSidebar from '../components/player/PlayerSidebar';
 import ErrorModal from '../components/modal/ErrorModal';
-import Notification from "../components/Notification";
+import Notification from '../components/Notification';
 
 class Player extends Component {
+  handlers = {
+    onSubmit() {
+      const { player } = this.state;
+      let submission;
+      if (player._id) {
+        submission = this._updatePlayer();
+      } else {
+        submission = this._createPlayer();
+      }
+
+      submission
+        .catch((err) => {
+          const { isValid, feedback } = formatValidationFeedback(err);
+
+          this.setState({
+            isValid,
+            feedback,
+          });
+        })
+        .catch(() => this.setState({ showErrorModal: true }));
+    },
+
+    onChange(newValues) {
+      this.setState((prevState) => ({ player: { ...prevState.player, ...newValues } }));
+    },
+  };
+
   constructor(props) {
     super(props);
+    const { location } = this.props;
     this.state = {
       players: [],
       player: {
@@ -34,40 +63,42 @@ class Player extends Component {
       },
       message: null,
       showErrorModal: false,
-      redirected: this.props.location.search.startsWith('?redirected=1'),
+      redirected: location.search.startsWith('?redirected=1'),
     };
 
     bindMethods(this);
   }
 
   componentDidMount() {
-    this.unlisten = this.props.history.listen((location) => {
-      const playerId = location.pathname.substr(8);
+    const { history } = this.props;
+    this.unlisten = history.listen((location) => {
+      const playerId = location.pathname.substring(8);
       this._loadPlayerIfNecessary(playerId);
     });
 
     this._loadPlayers();
   }
 
+  componentWillUnmount() {
+    this.unlisten();
+    fetcher.cancelAll();
+  }
+
   _loadPlayers = (keyword = '') => {
     fetcher.get(`players?search=${keyword}`)
-      .then(response => {
-        if (this.props.match.params.id) {
-          this._loadPlayer(response.data, this.props.match.params.id);
+      .then((response) => {
+        const { match } = this.props;
+        if (match.params.id) {
+          this._loadPlayer(response.data, match.params.id);
         }
         return this.setState({ players: response.data });
       })
       .catch(() => this.setState({ showErrorModal: true }));
   };
 
-  componentWillUnmount() {
-    this.unlisten();
-    fetcher.cancelAll();
-  }
-
 
   _loadPlayerIfNecessary(playerId) {
-    const players = this.state.players;
+    const { players } = this.state;
     if (players.length && playerId) {
       this._loadPlayer(players, playerId);
     } else {
@@ -81,37 +112,54 @@ class Player extends Component {
   }
 
   _loadPlayer(players, playerId) {
-    const player = players.find(_player => _player._id === playerId);
+    const player = players.find((_player) => _player._id === playerId);
 
     if (player) {
       this.setState({ player });
     }
   }
 
-  _createPlayer() {
-    const postData = { ...this.state.player };
+  async _createPlayer() {
+    const { player } = this.state;
+    const postData = { ...player };
 
-    return fetcher
-      .post('players', postData)
-      .then(response => {
-        return this.setState(prevState => ({
-          ...prevState,
-          players: prevState.players.concat(response.data.player),
-          player: {
-            name: '',
-            jerseyNo: '',
-          },
-          isValid: {
-            name: null,
-            jerseyNo: null,
-          },
-          feedback: {
-            name: null,
-            jerseyNo: null,
-          },
-          message: response.data.message,
+    try {
+      const response = await fetcher
+        .post('players', postData);
+      this.setState((prevState) => ({
+        ...prevState,
+        players: prevState.players.concat(response.data.player),
+        player: {
+          name: '',
+          jerseyNo: '',
+        },
+        isValid: {
+          name: null,
+          jerseyNo: null,
+        },
+        feedback: {
+          name: null,
+          jerseyNo: null,
+        },
+        message: response.data.message,
+      }));
+    } catch (e) {
+      if (e.response) {
+        const serverErrors = e.response.data.err;
+
+        const { feedback, isValid } = this.state;
+        const newFeedback = { ...feedback };
+        const newIsValid = { ...isValid };
+        for (const serverError of serverErrors) {
+          newFeedback[serverError.param] = serverError.msg;
+          newIsValid[serverError.param] = false;
+        }
+
+        this.setState((prevState) => ({
+          ...prevState, isValid: newIsValid, feedback: newFeedback,
         }));
-      });
+      }
+    }
   }
 
   _updatePlayer() {
@@ -123,82 +171,83 @@ class Player extends Component {
 
     return fetcher
       .put(`players/${player._id}`, postData)
-      .then(response => {
-        return this.setState(prevState => {
-          const playerIndex = prevState.players.findIndex(_player => _player._id === player._id);
-          if (playerIndex !== -1) {
-            prevState.players[playerIndex] = response.data.player;
-          }
-          return {
-            ...prevState,
-            isValid: {
-              name: null,
-              jerseyNo: null,
-            },
-            feedback: {
-              name: null,
-              jerseyNo: null,
-            },
-            message: response.data.message,
-          };
-        });
-      });
+      .then((response) => this.setState((prevState) => {
+        const { players } = prevState;
+        const playerIndex = players.findIndex((_player) => _player._id === player._id);
+        if (playerIndex !== -1) {
+          players[playerIndex] = response.data.player;
+        }
+        return {
+          ...prevState,
+          isValid: {
+            name: null,
+            jerseyNo: null,
+          },
+          feedback: {
+            name: null,
+            jerseyNo: null,
+          },
+          message: response.data.message,
+        };
+      }));
   }
 
-  handlers = {
-    onSubmit() {
-      let submission;
-      if (this.state.player._id) {
-        submission = this._updatePlayer();
-      } else {
-        submission = this._createPlayer();
-      }
-
-      submission
-        .catch(err => {
-          const { isValid, feedback } = formatValidationFeedback(err);
-
-          this.setState({
-            isValid,
-            feedback,
-          });
-        })
-        .catch(() => this.setState({ showErrorModal: true }));
-    },
-
-    onChange(newValues) {
-      this.setState(prevState => ({ player: { ...prevState.player, ...newValues } }));
-    },
-  };
-
   render() {
-    const playerId = this.props.match.params.id;
+    const { match } = this.props;
+    const playerId = match.params.id;
+
+    const {
+      players, message, redirected, player, isValid, feedback, showErrorModal,
+    } = this.state;
     return (
       <div className="container-fluid px-0">
-        <Notification message={this.state.message} toggle={() => this.setState({ message: null })}/>
+        <Notification message={message} toggle={() => this.setState({ message: null })} />
 
         <div className="row">
-          <PlayerSidebar editable playerId={playerId} players={this.state.players}
-                         onFilter={this._loadPlayers}/>
+          <PlayerSidebar
+            editable
+            playerId={playerId}
+            players={players}
+            onFilter={this._loadPlayers}
+          />
           <main className="col pt-3 pt-sm-0">
             <CenterContent col="col-lg-8 col-md-10">
-              {this.state.redirected && <Alert color="primary">
+              {redirected && (
+              <Alert color="primary">
                 <p className="lead mb-0">
                   You need at least 4 players to start a match.
                 </p>
-              </Alert>}
-              <PlayerForm values={this.state.player} onChange={this.onChange}
-                          onSubmit={this.onSubmit}
-                          isValid={this.state.isValid} feedback={this.state.feedback}/>
+              </Alert>
+              )}
+              <PlayerForm
+                values={player}
+                onChange={this.onChange}
+                onSubmit={this.onSubmit}
+                isValid={isValid}
+                feedback={feedback}
+              />
             </CenterContent>
           </main>
         </div>
-        <ErrorModal isOpen={this.state.showErrorModal}
-                    close={() => this.setState({ showErrorModal: false })}/>
+        <ErrorModal
+          isOpen={showErrorModal}
+          close={() => this.setState({ showErrorModal: false })}
+        />
       </div>
     );
   }
-
 }
+
+Player.propTypes = {
+  location: PropTypes.shape({
+    search: PropTypes.string.isRequired,
+  }).isRequired,
+  history: PropTypes.shape({
+    listen: PropTypes.func.isRequired,
+  }).isRequired,
+  match: PropTypes.shape({
+    params: PropTypes.shape({ id: PropTypes.string }).isRequired,
+  }).isRequired,
+};
 
 export default Player;

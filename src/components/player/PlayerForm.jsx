@@ -5,37 +5,76 @@
  */
 
 
-import React, { Fragment } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import FormGroup from '../form/FormGroup';
 import FormButton from '../form/FormButton';
-import { Link } from 'react-router-dom';
 
 
-function PlayerForm(props) {
-  const operation = props.values._id ? 'Edit' : 'Create';
-  const onSubmit = e => {
+function PlayerForm({
+  values, isValid, feedback, onChange, onSubmit: propOnSubmit,
+}) {
+  const operation = values._id ? 'Edit' : 'Create';
+  const onSubmit = (e) => {
     e.preventDefault();
-    props.onSubmit(e);
+    propOnSubmit(e);
   };
 
   return (
-    <Fragment>
-      <h2>{operation} Player</h2>
-      <hr/>
+    <>
+      <h2>
+        {operation}
+        {' '}
+Player
+      </h2>
+      <hr />
       <form onSubmit={onSubmit}>
-        <FormGroup name="name" onChange={e => props.onChange({ name: e.target.value })}
-                   value={props.values.name} isValid={props.isValid.name}
-                   feedback={props.feedback.name} autoFocus={true}/>
-        <FormGroup name="jersey-no" onChange={e => props.onChange({ jerseyNo: e.target.value })}
-                   value={props.values.jerseyNo} isValid={props.isValid.jerseyNo}
-                   feedback={props.feedback.jerseyNo}/>
+        <FormGroup
+          name="name"
+          onChange={(e) => onChange({ name: e.target.value })}
+          value={values.name}
+          isValid={isValid.name}
+          feedback={feedback.name}
+          autoFocus
+        />
+        <FormGroup
+          name="jersey-no"
+          onChange={(e) => onChange({ jerseyNo: e.target.value })}
+          value={values.jerseyNo}
+          isValid={isValid.jerseyNo}
+          feedback={feedback.jerseyNo}
+        />
         <FormButton type="submit" text={operation} btnClass="outline-success">
-          {props.values._id &&
-          <label className="col-form-label float-right"><Link to="/player">Create</Link> a player instead</label>}
+          {values._id
+          && (
+          <span className="col-form-label float-right">
+            <Link to="/player">Create</Link>
+             &nbsp;a player instead
+          </span>
+          )}
         </FormButton>
       </form>
-    </Fragment>
+    </>
   );
 }
+
+PlayerForm.propTypes = {
+  values: PropTypes.shape({
+    _id: PropTypes.string,
+    name: PropTypes.string.isRequired,
+    jerseyNo: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  }).isRequired,
+  isValid: PropTypes.shape({
+    name: PropTypes.bool,
+    jerseyNo: PropTypes.bool,
+  }).isRequired,
+  feedback: PropTypes.shape({
+    name: PropTypes.string,
+    jerseyNo: PropTypes.string,
+  }).isRequired,
+  onChange: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+};
 
 export default PlayerForm;
