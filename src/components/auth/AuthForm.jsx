@@ -5,47 +5,95 @@
  */
 
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import CenterContent from '../layouts/CenterContent';
 import FormGroup from '../form/FormGroup';
 import FormButton from '../form/FormButton';
 
 
 class AuthForm extends Component {
-  btnText;
   onSubmit;
-  confirmPassword;
 
   render() {
-    const action = this.props.action || "";
-    const btnClass = this.props.btnClass || "outline-primary";
-    const btnText = this.props.btnText || this.props.title;
-    const confirmPasswordField = this.props.confirmPassword &&
-      <FormGroup name="confirm" type="password" value={this.props.values.confirm}
-                 onChange={e => this.props.onChange({confirm: e.target.value})}/>;
+    const { title, values } = this.props;
+    const {
+      action = '',
+      btnClass = 'outline-primary',
+      btnText = title,
+      confirmPassword,
+      onChange,
+      onSubmit,
+      isValid,
+      feedback,
+      children,
+    } = this.props;
+    const confirmPasswordField = confirmPassword
+      && (
+      <FormGroup
+        name="confirm"
+        type="password"
+        value={values.confirm}
+        onChange={(e) => onChange({ confirm: e.target.value })}
+      />
+      );
 
     return (
       <CenterContent col="col-md-8 col-lg-6 col-xl-5">
-        <h2>{this.props.title}</h2>
-        <hr/>
-        <form onSubmit={e => {e.preventDefault(); this.props.onSubmit(e)}} action={action} method="post">
-          <FormGroup name="username" value={this.props.values.username} autoFocus={true}
-                     isValid={this.props.isValid.username}
-                     feedback={this.props.feedback.username}
-                     onChange={e => this.props.onChange({username: e.target.value})}/>
-          <FormGroup name="password" type="password" value={this.props.values.password}
-                     isValid={this.props.isValid.password}
-                     feedback={this.props.feedback.password}
-                     onChange={e => this.props.onChange({password: e.target.value})}/>
+        <h2>{title}</h2>
+        <hr />
+        <form onSubmit={(e) => { e.preventDefault(); onSubmit(e); }} action={action} method="post">
+          <FormGroup
+            name="username"
+            value={values.username}
+            autoFocus
+            isValid={isValid.username}
+            feedback={feedback.username}
+            onChange={(e) => onChange({ username: e.target.value })}
+          />
+          <FormGroup
+            name="password"
+            type="password"
+            value={values.password}
+            isValid={isValid.password}
+            feedback={feedback.password}
+            onChange={(e) => onChange({ password: e.target.value })}
+          />
           {confirmPasswordField}
           <FormButton type="submit" text={btnText} btnClass={btnClass}>
-            {this.props.children}
+            {children}
           </FormButton>
         </form>
       </CenterContent>
     );
   }
-
 }
 
-export default AuthForm
+AuthForm.propTypes = {
+  title: PropTypes.string.isRequired,
+  action: PropTypes.string,
+  btnClass: PropTypes.string,
+  btnText: PropTypes.string,
+  confirmPassword: PropTypes.bool,
+  onChange: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  isValid: PropTypes.shape({
+    username: PropTypes.bool,
+    password: PropTypes.bool,
+  }).isRequired,
+  feedback: PropTypes.shape({
+    username: PropTypes.string,
+    password: PropTypes.string,
+  }).isRequired,
+  values: PropTypes.shape({
+    username: PropTypes.string.isRequired,
+    password: PropTypes.string.isRequired,
+    confirm: PropTypes.string,
+  }),
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
+};
+
+export default AuthForm;
