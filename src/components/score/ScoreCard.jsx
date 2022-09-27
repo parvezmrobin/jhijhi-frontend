@@ -3,7 +3,7 @@ import { arrayOf, shape, string } from 'prop-types';
 import List from '../layouts/List';
 import CenterContent from '../layouts/CenterContent';
 import { toTitleCase } from '../../lib/utils';
-import { Innings as InningsType, Player as PlayerType } from '../../types';
+import { InningsType, PlayerType } from '../../types';
 
 function _genSidebarPlayerMapper(innings, battingTeamPlayers) {
   const sidebarContent = {};

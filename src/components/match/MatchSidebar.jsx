@@ -11,7 +11,7 @@ import debounce from 'lodash/debounce';
 import * as PropTypes from 'prop-types';
 import CenterContent from '../layouts/CenterContent';
 import List from '../layouts/List';
-import { Match as MatchType } from '../../types';
+import { MatchType } from '../../types';
 
 export default class MatchSidebar extends Component {
   componentDidMount() {

@@ -9,11 +9,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import FormGroup from '../form/FormGroup';
 import FormButton from '../form/FormButton';
-import {
-  makeFeedbackType,
-  makeIsValidType,
-  Player as PlayerType,
-} from '../../types';
+import { makeFeedbackType, makeIsValidType, PlayerType } from '../../types';
 
 function PlayerForm({
   values,

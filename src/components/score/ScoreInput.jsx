@@ -15,7 +15,7 @@ import SelectControl from '../form/control/select';
 import { bindMethods } from '../../lib/utils';
 import fetcher from '../../lib/fetcher';
 import FormGroup from '../form/FormGroup';
-import { Player as PlayerType } from '../../types';
+import { PlayerType } from '../../types';
 
 export function getIndexOfBatsman(batsmanId) {
   let selectedBatsmanIndex;

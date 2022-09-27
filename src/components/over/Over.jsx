@@ -4,62 +4,66 @@
  * Date: Apr 04, 2019
  */
 
-
 import React from 'react';
-import { optional, toTitleCase } from '../../lib/utils';
 import * as PropTypes from 'prop-types';
+import { shape } from 'prop-types';
+import { optional, toTitleCase } from '../../lib/utils';
+import { BowlType } from '../../types';
 
 function Over(props) {
   const { overNo, over, bowlerName, onOverClick, active } = props;
   const className = `list-group-item text-dark ${active ? 'active' : ''}`;
-  const badges = props.over.bowls.filter(bowl => bowl.isWicket || optional(bowl.boundary).run)
-    .map(bowl => bowl.isWicket ? 'W' : bowl.boundary?.run)
-    .map(
-      (event, i) => (
-        <span key={i} className={`bowl-event ${(event === 'W') ? 'wicket' : 'boundary'}`}>
+  /* eslint-disable react/no-array-index-key */
+  const badges = over.bowls
+    .filter((bowl) => bowl.isWicket || optional(bowl.boundary).run)
+    .map((bowl) => (bowl.isWicket ? 'W' : bowl.boundary?.run))
+    .map((event, i) => (
+      <span
+        key={i}
+        className={`bowl-event ${event === 'W' ? 'wicket' : 'boundary'}`}
+      >
         {event}
-      </span>),
-    );
+      </span>
+    ));
 
   return (
     <li onClick={() => onOverClick(overNo - 1)} className={className}>
-      {overNo}. <strong>{toTitleCase(bowlerName, ' ')}</strong> » {Over.getRuns(over)} {badges}
+      {overNo}. <strong>{toTitleCase(bowlerName, ' ')}</strong> »{' '}
+      {Over.getRuns(over)} {badges}
     </li>
   );
 }
 
-Over.getRuns = (over) => {
-  return over.bowls.reduce((runs, bowl) => {
+Over.getRuns = (over) =>
+  over.bowls.reduce((runs, bowl) => {
+    let _runs = runs;
     if (bowl.singles) {
-      runs += bowl.singles;
+      _runs += bowl.singles;
     }
     if (bowl.by) {
-      runs += bowl.by;
+      _runs += bowl.by;
     }
     if (bowl.legBy) {
-      runs += bowl.legBy;
+      _runs += bowl.legBy;
     }
     if (bowl.boundary?.run) {
-      runs += bowl.boundary?.run;
+      _runs += bowl.boundary.run;
     }
     if (bowl.isWide || bowl.isNo) {
-      runs++;
+      _runs++;
     }
 
-    return runs;
+    return _runs;
   }, 0);
-};
-
 
 Over.propTypes = {
   overNo: PropTypes.number.isRequired,
   over: PropTypes.shape({
-    bowls: PropTypes.arrayOf(PropTypes.object).isRequired,
+    bowls: PropTypes.arrayOf(shape(BowlType)).isRequired,
   }).isRequired,
   bowlerName: PropTypes.string.isRequired,
   onOverClick: PropTypes.func.isRequired,
   active: PropTypes.bool,
 };
-
 
 export default Over;

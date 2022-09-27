@@ -9,11 +9,7 @@ import { Link } from 'react-router-dom';
 import { func, shape } from 'prop-types';
 import FormGroup from '../form/FormGroup';
 import FormButton from '../form/FormButton';
-import {
-  makeFeedbackType,
-  makeIsValidType,
-  Team as TeamType,
-} from '../../types';
+import { makeFeedbackType, makeIsValidType, TeamType } from '../../types';
 
 function TeamForm({
   team,

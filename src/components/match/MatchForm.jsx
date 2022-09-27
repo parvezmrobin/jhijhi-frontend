@@ -12,9 +12,9 @@ import FormButton from '../form/FormButton';
 import {
   makeFeedbackType,
   makeIsValidType,
-  Match as MatchType,
-  Team as TeamType,
-  Umpire as UmpireType,
+  MatchType,
+  TeamType,
+  UmpireType,
 } from '../../types';
 
 function MatchForm({

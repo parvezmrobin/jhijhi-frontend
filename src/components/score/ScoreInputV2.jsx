@@ -15,7 +15,7 @@ import { bindMethods } from '../../lib/utils';
 import fetcher from '../../lib/fetcher';
 import FormGroup from '../form/FormGroup';
 import { getIndexOfBatsman } from './ScoreInput';
-import { Player as PlayerType } from '../../types';
+import { PlayerType } from '../../types';
 
 export default class ScoreInputV2 extends Component {
   static RUN_OUT = 'Run out';

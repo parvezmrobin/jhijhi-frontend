@@ -5,7 +5,7 @@ import { number, shape } from 'prop-types';
 import { optional, toTitleCase } from '../../lib/utils';
 import CurrentOver from '../over/CurrentOver';
 import ScoreEdit from '../score/ScoreEdit';
-import { Bowl as BowlType, Player as PlayerType } from '../../types';
+import { BowlType, PlayerType } from '../../types';
 
 export default class OverModal extends Component {
   constructor(props, context) {

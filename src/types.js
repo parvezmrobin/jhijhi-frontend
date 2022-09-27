@@ -30,21 +30,27 @@ export const Named = {
   name: string.isRequired,
 };
 
-export const Player = {
+const Player = {
   ...Named,
   jerseyNo: number.isRequired,
 };
 
-export const Team = {
+export const PlayerType = Player;
+
+const Team = {
   ...Named,
   shortName: string.isRequired,
 };
 
-export const Umpire = {
+export const TeamType = Team;
+
+const Umpire = {
   ...Named,
 };
 
-export const Bowl = {
+export const UmpireType = Umpire;
+
+const Bowl = {
   playedBy: number.isRequired,
   isWicket: shape({
     kind: string.isRequired,
@@ -61,16 +67,22 @@ export const Bowl = {
   isNo: string.isRequired,
 };
 
+export const BowlType = Bowl;
+
 const Over = {
   bowledBy: number.isRequired,
   bowls: arrayOf(shape(Bowl)),
 };
 
-export const Innings = {
+export const OverType = Over;
+
+const Innings = {
   overs: arrayOf(shape(Over)),
 };
 
-export const Match = {
+export const InningsType = Innings;
+
+const Match = {
   _id: string,
   name: string.isRequired,
   overs: number.isRequired,
@@ -89,6 +101,9 @@ export const Match = {
   innings1: shape(Innings),
   innings2: shape(Innings),
 };
+
+export const MatchType = Match;
+
 export const MatchParamId = PropTypes.shape({
   params: PropTypes.shape({ id: PropTypes.string }).isRequired,
 }).isRequired;

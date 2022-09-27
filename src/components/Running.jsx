@@ -27,7 +27,7 @@ import ScoreCard from './score/ScoreCard';
 import BowlerSelectModal from './modal/BowlerSelectModal';
 import ScoreEditModal from './modal/ScoreEditModal';
 import ErrorModal from './modal/ErrorModal';
-import { Match } from '../types';
+import { MatchType } from '../types';
 
 class Running extends Component {
   /**
@@ -875,7 +875,7 @@ class Running extends Component {
 }
 
 Running.propTypes = {
-  match: PropTypes.shape(Match),
+  match: PropTypes.shape(MatchType),
 };
 
 export default Running;

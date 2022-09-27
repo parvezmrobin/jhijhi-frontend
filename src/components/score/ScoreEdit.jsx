@@ -8,7 +8,7 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 import { shape } from 'prop-types';
 import ScoreInputV2 from './ScoreInputV2';
-import { Player as PlayerType } from '../../types';
+import { PlayerType } from '../../types';
 
 function ScoreEdit(props) {
   const {

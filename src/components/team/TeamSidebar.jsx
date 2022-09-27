@@ -11,7 +11,7 @@ import debounce from 'lodash/debounce';
 import * as PropTypes from 'prop-types';
 import CenterContent from '../layouts/CenterContent';
 import List from '../layouts/List';
-import { Team as TeamType } from '../../types';
+import { TeamType } from '../../types';
 
 export default class TeamSidebar extends Component {
   componentDidMount() {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { CustomInput } from 'reactstrap';
 import { shape } from 'prop-types';
-import { Innings as InningsType } from '../../types';
+import { InningsType } from '../../types';
 
 export default class Score extends Component {
   /**

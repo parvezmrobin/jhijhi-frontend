@@ -12,7 +12,7 @@ import debounce from 'lodash/debounce';
 import List from '../layouts/List';
 import CenterContent from '../layouts/CenterContent';
 import { toTitleCase } from '../../lib/utils';
-import { Player as PlayerType } from '../../types';
+import { PlayerType } from '../../types';
 
 export default class PlayerSidebar extends Component {
   componentDidMount() {

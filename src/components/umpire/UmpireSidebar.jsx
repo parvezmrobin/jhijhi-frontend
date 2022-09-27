@@ -12,7 +12,7 @@ import { arrayOf, bool, shape, string, func } from 'prop-types';
 import List from '../layouts/List';
 import CenterContent from '../layouts/CenterContent';
 import { toTitleCase } from '../../lib/utils';
-import { Umpire as UmpireType } from '../../types';
+import { UmpireType } from '../../types';
 
 export default class UmpireSidebar extends Component {
   componentDidMount() {

@@ -10,7 +10,7 @@ import { shape } from 'prop-types';
 import { CustomInput } from 'reactstrap';
 import ScoreInput from './ScoreInput';
 import ScoreInputV2 from './ScoreInputV2';
-import { Player as PlayerType } from '../../types';
+import { PlayerType } from '../../types';
 
 class ScoreCreate extends Component {
   constructor(props, context) {

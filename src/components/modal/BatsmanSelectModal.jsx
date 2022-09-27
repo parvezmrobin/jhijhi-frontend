@@ -11,7 +11,7 @@ import * as PropTypes from 'prop-types';
 import { shape } from 'prop-types';
 import FormGroup from '../form/FormGroup';
 import { bindMethods } from '../../lib/utils';
-import { Player as PlayerType } from '../../types';
+import { PlayerType } from '../../types';
 
 export default class BatsmanSelectModal extends Component {
   constructor(props) {

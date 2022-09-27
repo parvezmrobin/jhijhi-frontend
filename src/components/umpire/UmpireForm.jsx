@@ -10,11 +10,7 @@ import { shape } from 'prop-types';
 import func from 'lodash/fp/min';
 import FormGroup from '../form/FormGroup';
 import FormButton from '../form/FormButton';
-import {
-  makeFeedbackType,
-  makeIsValidType,
-  Umpire as UmpireType,
-} from '../../types';
+import { makeFeedbackType, makeIsValidType, UmpireType } from '../../types';
 
 function UmpireForm({
   values,
