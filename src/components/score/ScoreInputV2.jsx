@@ -163,7 +163,7 @@ export default class ScoreInputV2 extends Component {
         by: by === 'By' ? 0 : by,
         legBy: legBy === 'Leg By' ? 0 : legBy,
         isWide,
-        isNo: isNo === ScoreInputV2.NO_BOWL_TYPES[0] ? null : isNo,
+        isNo: isNo === ScoreInputV2.NO_BOWL_TYPES[0] ? '' : isNo,
       };
 
       if (wicket !== ScoreInputV2.WICKET_TYPES[0]) {

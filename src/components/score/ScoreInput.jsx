@@ -61,8 +61,8 @@ export default class ScoreInput extends Component {
   }));
 
   singles = ['Singles', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((el) => ({
-    _id: el,
-    name: el,
+    _id: el.toString(),
+    name: el.toString(),
   }));
 
   constructor(props) {
@@ -159,7 +159,7 @@ export default class ScoreInput extends Component {
       by: isBy,
       legBy: isLegBy,
       isWide,
-      isNo: isNo ? 'True' : null, // later can be replaced by reason of no
+      isNo: isNo ? 'True' : '', // later can be replaced by reason of no
       boundary: {
         run: 0,
       },
@@ -378,7 +378,7 @@ export default class ScoreInput extends Component {
         </Modal>
 
         {/* Error Modal */}
-        <Modal isOpen={errorMessage}>
+        <Modal isOpen={!!errorMessage}>
           <ModalHeader
             className="text-danger"
             toggle={() => this.setState({ errorMessage: null })}
