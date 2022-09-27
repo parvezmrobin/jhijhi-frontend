@@ -4,13 +4,12 @@
  * Date: Mar 31, 2019
  */
 
-
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { func, shape } from 'prop-types';
 import AuthForm from '../components/auth/AuthForm';
-import { bindMethods, formatValidationFeedback } from "../lib/utils";
-import axios from "axios";
-
+import { bindMethods, formatValidationFeedback } from '../lib/utils';
 
 class Register extends Component {
   constructor(props) {
@@ -36,15 +35,23 @@ class Register extends Component {
 
   handlers = {
     onSubmit() {
-      const postData = { ...this.state.values };
+      const { values } = this.state;
+      const { history } = this.props;
 
       axios
-        .post(`${process.env.SERVER_URL}/api/auth/register`, postData, { cancelToken: this.cancelTokenSource.token })
+        .post(
+          `${process.env.SERVER_URL}/api/auth/register`,
+          { ...values },
+          {
+            cancelToken: this.cancelTokenSource.token,
+          }
+        )
         .then(() => {
-          this.props.history.push('/login');
-          return window.location.href = "";
+          history.push('/login');
+          window.location.href = '';
+          return window.location.href;
         })
-        .catch(err => {
+        .catch((err) => {
           const { isValid, feedback } = formatValidationFeedback(err);
 
           this.setState({ isValid, feedback });
@@ -52,7 +59,9 @@ class Register extends Component {
     },
 
     onChange(newValues) {
-      this.setState(prevState => ({ values: { ...prevState.values, ...newValues } }));
+      this.setState((prevState) => ({
+        values: { ...prevState.values, ...newValues },
+      }));
     },
   };
 
@@ -61,17 +70,30 @@ class Register extends Component {
   }
 
   render() {
+    const { values, isValid, feedback } = this.state;
     return (
-      <AuthForm title="Register" onChange={this.onChange} onSubmit={this.onSubmit} values={this.state.values}
-        isValid={this.state.isValid} feedback={this.state.feedback} confirmPassword={true}
-        btnClass="outline-success">
-        <label className="col-form-label float-right">
+      <AuthForm
+        title="Register"
+        onChange={this.onChange}
+        onSubmit={this.onSubmit}
+        values={values}
+        isValid={isValid}
+        feedback={feedback}
+        confirmPassword
+        btnClass="outline-success"
+      >
+        <span className="col-form-label float-right">
           Already Registered? <Link to="/login">Login</Link>
-        </label>
+        </span>
       </AuthForm>
     );
   }
-
 }
+
+Register.propTypes = {
+  history: shape({
+    push: func.isRequired,
+  }).isRequired,
+};
 
 export default Register;
