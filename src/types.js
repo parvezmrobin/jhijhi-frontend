@@ -44,7 +44,7 @@ export const Umpire = {
   ...Named,
 };
 
-const Bowl = {
+export const Bowl = {
   playedBy: number.isRequired,
   isWicket: shape({
     kind: string.isRequired,
@@ -66,7 +66,7 @@ const Over = {
   bowls: arrayOf(shape(Bowl)),
 };
 
-const Innings = {
+export const Innings = {
   overs: arrayOf(shape(Over)),
 };
 

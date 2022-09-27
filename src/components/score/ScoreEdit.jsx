@@ -4,13 +4,21 @@
  * Date: Jun 01, 2019
  */
 
-
 import React from 'react';
 import * as PropTypes from 'prop-types';
+import { shape } from 'prop-types';
 import ScoreInputV2 from './ScoreInputV2';
+import { Player as PlayerType } from '../../types';
 
 function ScoreEdit(props) {
-  const { battingTeamPlayers, batsmanIndices, matchId } = props;
+  const {
+    battingTeamPlayers,
+    batsmanIndices,
+    matchId,
+    overNo,
+    bowlNo,
+    onInput,
+  } = props;
   const injectBowlEvent = (bowl) => {
     // `props.battingTeamPlayers` is the array of current battingTeamPlayers
     // hence for edit mode, calculation of `playedBy` is almost always incorrect
@@ -18,8 +26,8 @@ function ScoreEdit(props) {
 
     return {
       ...bowl,
-      overNo: props.overNo,
-      bowlNo: props.bowlNo,
+      overNo,
+      bowlNo,
     };
   };
 
@@ -32,13 +40,13 @@ function ScoreEdit(props) {
       httpVerb="put"
       shouldResetAfterInput
       actionText="Edit"
-      onInput={(bowlEvent) => props.onInput(bowlEvent.bowl || bowlEvent)}
+      onInput={(bowlEvent) => onInput(bowlEvent.bowl || bowlEvent)}
     />
   );
 }
 
 ScoreEdit.propTypes = {
-  battingTeamPlayers: PropTypes.arrayOf(PropTypes.object).isRequired,
+  battingTeamPlayers: PropTypes.arrayOf(shape(PlayerType)).isRequired,
   batsmanIndices: PropTypes.arrayOf(PropTypes.number).isRequired,
   matchId: PropTypes.string.isRequired,
   overNo: PropTypes.number.isRequired,

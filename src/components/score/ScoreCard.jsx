@@ -1,7 +1,9 @@
+import React from 'react';
+import { arrayOf, shape, string } from 'prop-types';
 import List from '../layouts/List';
 import CenterContent from '../layouts/CenterContent';
-import React from 'react';
 import { toTitleCase } from '../../lib/utils';
+import { Innings as InningsType, Player as PlayerType } from '../../types';
 
 function _genSidebarPlayerMapper(innings, battingTeamPlayers) {
   const sidebarContent = {};
@@ -14,7 +16,10 @@ function _genSidebarPlayerMapper(innings, battingTeamPlayers) {
           isOut: null,
         };
       }
-      const runOutBatsmanName = bowl.isWicket && Number.isInteger(bowl.isWicket.player) && battingTeamPlayers[bowl.isWicket.player].name;
+      const runOutBatsmanName =
+        bowl.isWicket &&
+        Number.isInteger(bowl.isWicket.player) &&
+        battingTeamPlayers[bowl.isWicket.player].name;
       if (runOutBatsmanName && !sidebarContent[runOutBatsmanName]) {
         sidebarContent[runOutBatsmanName] = {
           run: 0,
@@ -28,39 +33,57 @@ function _genSidebarPlayerMapper(innings, battingTeamPlayers) {
         sidebarContent[batsmanName].run += bowl.boundary.run;
       }
       if (bowl.isWicket) {
-        const outBatsmanName = bowl.isWicket.player ? battingTeamPlayers[bowl.isWicket.player].name : batsmanName;
+        const outBatsmanName = bowl.isWicket.player
+          ? battingTeamPlayers[bowl.isWicket.player].name
+          : batsmanName;
         sidebarContent[outBatsmanName].isOut = bowl.isWicket.kind;
       }
     }
   }
 
-  const _sidebarPlayerMapper = ({name}) => {
+  const _sidebarPlayerMapper = ({ name }) => {
     if (!sidebarContent[name]) {
       return toTitleCase(name, ' ');
     }
 
-    const isOut = sidebarContent[name].isOut;
+    const { isOut } = sidebarContent[name];
     const className = isOut ? 'text-secondary' : 'text-success';
     const status = isOut ? toTitleCase(isOut, ' ') : 'Playing';
-    return <span className={className}>
+    return (
+      <span className={className}>
         {toTitleCase(name, ' ')} ({sidebarContent[name].run}) - {status}
-      </span>;
+      </span>
+    );
   };
   return _sidebarPlayerMapper;
 }
 
 export default function ScoreCard(props) {
-  const {innings, battingTeamName, battingTeamPlayers} = props;
-  const sidebarPlayerMapper = _genSidebarPlayerMapper(innings, battingTeamPlayers);
+  const { innings, battingTeamName, battingTeamPlayers } = props;
+  const sidebarPlayerMapper = _genSidebarPlayerMapper(
+    innings,
+    battingTeamPlayers
+  );
 
-  const sidebarPlayerList = battingTeamPlayers
-    .map(({_id, name}) => ({
-      _id,
-      name,
-    }));
+  const sidebarPlayerList = battingTeamPlayers.map(({ _id, name }) => ({
+    _id,
+    name,
+  }));
 
-  return <CenterContent col="col">
-    <List title={battingTeamName} itemClass="text-white"
-          itemMapper={sidebarPlayerMapper} list={sidebarPlayerList}/>
-  </CenterContent>
+  return (
+    <CenterContent col="col">
+      <List
+        title={battingTeamName}
+        itemClass="text-white"
+        itemMapper={sidebarPlayerMapper}
+        list={sidebarPlayerList}
+      />
+    </CenterContent>
+  );
 }
+
+ScoreCard.propTypes = {
+  innings: shape(InningsType),
+  battingTeamName: string,
+  battingTeamPlayers: arrayOf(shape(PlayerType)),
+};

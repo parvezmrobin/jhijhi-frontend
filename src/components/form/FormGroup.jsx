@@ -75,7 +75,7 @@ FormGroup.propTypes = {
     PropTypes.string,
     PropTypes.number,
     PropTypes.arrayOf(PropTypes.string),
-  ]).isRequired,
+  ]),
   options: PropTypes.arrayOf(
     PropTypes.oneOfType([PropTypes.shape(Named), PropTypes.string]).isRequired
   ),

@@ -1,11 +1,19 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import {
-  Button, Modal, ModalBody, ModalFooter, ModalHeader, Spinner,
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Spinner,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import {
-  bindMethods, copySharableLink, optional, toTitleCase,
+  bindMethods,
+  copySharableLink,
+  optional,
+  toTitleCase,
 } from '../lib/utils';
 import fetcher from '../lib/fetcher';
 
@@ -34,7 +42,13 @@ class Running extends Component {
    * @return {[Number|null, Number|null]}
    * @private
    */
-  static _onBowlEvent(inputEvent, innings, batsman1Index, batsman2Index, singleBatsman) {
+  static _onBowlEvent(
+    inputEvent,
+    innings,
+    batsman1Index,
+    batsman2Index,
+    singleBatsman
+  ) {
     const { bowl } = inputEvent;
     const { bowls } = innings.overs[innings.overs.length - 1];
     let _batsman1Index = batsman1Index;
@@ -82,7 +96,7 @@ class Running extends Component {
       if (i !== -1) {
         return i;
       }
-      return (player._id === batsman1) ? playerI : -1;
+      return player._id === batsman1 ? playerI : -1;
     }, -1);
   }
 
@@ -123,10 +137,8 @@ class Running extends Component {
      * @returns {{batsman1: String|undefined, batsman2: String|undefined}}
      */
     onBatsmenSelect(batsmenValues) {
-      const {
-        errors,
-        indices,
-      } = this._validateAndGetSelectedBatsmen(batsmenValues);
+      const { errors, indices } =
+        this._validateAndGetSelectedBatsmen(batsmenValues);
       if (errors) {
         return errors;
       }
@@ -170,7 +182,11 @@ class Running extends Component {
         if (inputEvent.type === 'bowl') {
           // should be a static function since used inside a callback
           [batsman1Index, batsman2Index] = Running._onBowlEvent(
-            inputEvent, innings, batsman1Index, batsman2Index, singleBatsman,
+            inputEvent,
+            innings,
+            batsman1Index,
+            batsman2Index,
+            singleBatsman
           );
         } else if (inputEvent.type === 'over') {
           innings.overs.push({
@@ -202,13 +218,12 @@ class Running extends Component {
      */
     onUpdate(bowl) {
       const {
-        editModal: {
-          overNo,
-          bowlNo,
-        },
+        editModal: { overNo, bowlNo },
       } = this.state;
       if (overNo < 0 || bowlNo < 0) {
-        throw new Error('Can\'t update bowl without `overNo` and `bowlNo` initialized');
+        throw new Error(
+          "Can't update bowl without `overNo` and `bowlNo` initialized"
+        );
       }
 
       const innings = this._getCurrentInnings();
@@ -224,10 +239,7 @@ class Running extends Component {
 
     onDeclare() {
       const {
-        match: {
-          state,
-          _id,
-        },
+        match: { state, _id },
         isDeclaring,
       } = this.state;
       if (isDeclaring || state === 'done') {
@@ -238,22 +250,24 @@ class Running extends Component {
         if (state === 'innings1') {
           nextState = 'innings2';
         } else {
-          nextState = (state === 'innings2') ? 'done' : null;
+          nextState = state === 'innings2' ? 'done' : null;
         }
         if (!nextState) {
           return;
         }
         fetcher
           .put(`matches/${_id}/declare`, { state: nextState })
-          .then((response) => this.setState((prevState) => ({
-            isDeclaring: false,
-            match: {
-              ...prevState.match,
-              ...response.data,
-            },
-            batsman1: null,
-            batsman2: null,
-          })))
+          .then((response) =>
+            this.setState((prevState) => ({
+              isDeclaring: false,
+              match: {
+                ...prevState.match,
+                ...response.data,
+              },
+              batsman1: null,
+              batsman2: null,
+            }))
+          )
           .catch(() => this.setState({ showErrorModal: true }));
       };
 
@@ -318,10 +332,7 @@ class Running extends Component {
       this.componentDidUpdate();
     }
 
-    let {
-      batsman1,
-      batsman2,
-    } = this.state;
+    let { batsman1, batsman2 } = this.state;
     const outBatsmen = [];
     if (innings.overs.length > 0) {
       outer: for (let i = innings.overs.length - 1; i >= 0; i--) {
@@ -332,7 +343,8 @@ class Running extends Component {
           const batsman = bowl.playedBy;
           if (bowl.isWicket) {
             const outBatsman = Number.isInteger(bowl.isWicket.player)
-              ? bowl.isWicket.player : batsman;
+              ? bowl.isWicket.player
+              : batsman;
             if (batsman1 == null && batsman === outBatsman) {
               batsman1 = -1; // indicating that, last on-crease batsman is out
             }
@@ -359,32 +371,31 @@ class Running extends Component {
       }
 
       const lastOver = innings.overs[innings.overs.length - 1];
-      const lastBowl = lastOver.bowls[lastOver.bowls.length - 1];
-      const lastBowlRuns = (lastBowl.singles || 0) + (lastBowl.by || 0) + (lastBowl.legBy || 0);
-      if (lastBowlRuns % 2) { // if odd runs in the last bowl
-        [batsman1, batsman2] = [batsman2, batsman1];
-      }
 
       // if it's a new over
-      if (innings.overs.length && !innings.overs[innings.overs.length - 1].bowls.length) {
+      if (innings.overs.length && !lastOver.bowls.length) {
         [batsman1, batsman2] = [batsman2, batsman1];
+      } else {
+        const lastBowl = lastOver.bowls[lastOver.bowls.length - 1];
+        const lastBowlRuns =
+          (lastBowl.singles || 0) + (lastBowl.by || 0) + (lastBowl.legBy || 0);
+        if (lastBowlRuns % 2 === 1) {
+          // if odd runs in the last bowl
+          [batsman1, batsman2] = [batsman2, batsman1];
+        }
       }
     }
-    this.setState(({
+    this.setState({
       batsman1,
       batsman2,
-    }));
+    });
   }
-
 
   componentDidUpdate() {
     let innings;
     const {
       bowlerModalIsOpen,
-      match: {
-        state,
-        overs: numOvers,
-      },
+      match: { state, overs: numOvers },
       singleBatsman,
       showSingleBatsmanModal,
       batsman1,
@@ -400,7 +411,11 @@ class Running extends Component {
       }
       throw e;
     }
-    if (singleBatsman && !Number.isInteger(batsman1) && Number.isInteger(batsman2)) {
+    if (
+      singleBatsman &&
+      !Number.isInteger(batsman1) &&
+      Number.isInteger(batsman2)
+    ) {
       this.setState({
         batsman1: batsman2,
         batsman2: null,
@@ -408,12 +423,16 @@ class Running extends Component {
     }
     if (!bowlerModalIsOpen && this._shouldStartNewOver()) {
       this.setState({ bowlerModalIsOpen: true });
-      if ((state !== 'done') && !isDeclaring && (innings.overs.length === numOvers)) {
+      if (
+        state !== 'done' &&
+        !isDeclaring &&
+        innings.overs.length === numOvers
+      ) {
         this.onDeclare();
         return;
       }
     }
-    if ((state !== 'done') && !isDeclaring && this._isAllOut()) {
+    if (state !== 'done' && !isDeclaring && this._isAllOut()) {
       if (!singleBatsman) {
         if (!showSingleBatsmanModal) {
           this.setState({ showSingleBatsmanModal: true });
@@ -430,12 +449,7 @@ class Running extends Component {
 
   _getBattingTeamPlayers() {
     const {
-      match: {
-        state,
-        team1BatFirst,
-        team1Players,
-        team2Players,
-      },
+      match: { state, team1BatFirst, team1Players, team2Players },
     } = this.state;
     let battingTeamPlayers;
     if (state === 'innings1') {
@@ -448,16 +462,12 @@ class Running extends Component {
 
   _getCurrentInnings() {
     const {
-      match: {
-        state,
-        innings1,
-        innings2,
-      },
+      match: { state, innings1, innings2 },
     } = this.state;
     if (['innings1', 'innings2'].indexOf(state) === -1) {
       throw new Error(`State is ${state} in Running page`);
     }
-    return (state === 'innings1') ? innings1 : innings2;
+    return state === 'innings1' ? innings1 : innings2;
   }
 
   /**
@@ -482,42 +492,44 @@ class Running extends Component {
    * @private
    */
   _validateAndGetSelectedBatsmen(batsmenValues) {
-    const {
-      batsman1Id,
-      batsman2Id,
-    } = batsmenValues;
+    const { batsman1Id, batsman2Id } = batsmenValues;
 
-    const {
-      innings,
-      battingTeamPlayers,
-    } = this._getCurrentInningsDescription();
+    const { innings, battingTeamPlayers } =
+      this._getCurrentInningsDescription();
     const indices = {};
     if (batsman1Id) {
-      indices.batsman1 = Running._getIndexOfBatsman(battingTeamPlayers, batsman1Id);
+      indices.batsman1 = Running._getIndexOfBatsman(
+        battingTeamPlayers,
+        batsman1Id
+      );
       if (indices.batsman1 === -1) {
         // Batsman is selected while match was transitioning from innings1 to innings2
         // and a batsman from innings1 is selected
-        return { errors: { batsman1: 'Error while selecting batsman. Try again.' } };
+        return {
+          errors: { batsman1: 'Error while selecting batsman. Try again.' },
+        };
       }
     }
     if (batsman2Id) {
-      indices.batsman2 = Running._getIndexOfBatsman(battingTeamPlayers, batsman2Id);
+      indices.batsman2 = Running._getIndexOfBatsman(
+        battingTeamPlayers,
+        batsman2Id
+      );
       if (indices.batsman2 === -1) {
         // Batsman is selected while match was transitioning from innings1 to innings2
         // and a batsman from innings1 is selected
-        return { errors: { batsman2: 'Error while selecting batsman. Try again.' } };
+        return {
+          errors: { batsman2: 'Error while selecting batsman. Try again.' },
+        };
       }
     }
 
-    const {
-      batsman1,
-      batsman2,
-    } = this.state;
-    if (!batsman1Id && (indices.batsman2 === batsman1)) {
+    const { batsman1, batsman2 } = this.state;
+    if (!batsman1Id && indices.batsman2 === batsman1) {
       // if batsman1Id is selected and corresponding index is same as state's batsman1
       return { errors: { batsman2: 'Already Selected As Batsman1' } };
     }
-    if (!batsman2Id && (indices.batsman1 === batsman2)) {
+    if (!batsman2Id && indices.batsman1 === batsman2) {
       // if batsman2Id is selected and corresponding index is same as state's batsman2
       return { errors: { batsman1: 'Already Selected As Batsman2' } };
     }
@@ -532,7 +544,8 @@ class Running extends Component {
           continue;
         }
         const outBatsman = bowl.isWicket.player
-          ? battingTeamPlayers[bowl.isWicket.player]._id : batsman;
+          ? battingTeamPlayers[bowl.isWicket.player]._id
+          : batsman;
         if (outBatsman === batsman1Id) {
           errors.batsman1 = 'Already Out';
         } else if (!singleBatsman && outBatsman === batsman2Id) {
@@ -560,12 +573,15 @@ class Running extends Component {
     if (!innings.overs.length) {
       return true;
     }
-    const numBowls = innings.overs[innings.overs.length - 1].bowls.reduce((numValidBowls, bowl) => {
-      if (!(bowl.isWide || bowl.isNo)) {
-        return numValidBowls + 1;
-      }
-      return numValidBowls;
-    }, 0);
+    const numBowls = innings.overs[innings.overs.length - 1].bowls.reduce(
+      (numValidBowls, bowl) => {
+        if (!(bowl.isWide || bowl.isNo)) {
+          return numValidBowls + 1;
+        }
+        return numValidBowls;
+      },
+      0
+    );
     return numBowls === 6;
   }
 
@@ -574,14 +590,14 @@ class Running extends Component {
    * @private
    */
   _isAllOut() {
-    const {
-      innings,
-      battingTeamPlayers,
-    } = this._getCurrentInningsDescription();
+    const { innings, battingTeamPlayers } =
+      this._getCurrentInningsDescription();
     const totalBattingTeamPlayers = battingTeamPlayers.length;
     const { singleBatsman } = this.state;
     let outCount = 0;
-    const totalWickets = singleBatsman ? totalBattingTeamPlayers : totalBattingTeamPlayers - 1;
+    const totalWickets = singleBatsman
+      ? totalBattingTeamPlayers
+      : totalBattingTeamPlayers - 1;
     for (const over of innings.overs) {
       for (const bowl of over.bowls) {
         if (optional(bowl.isWicket).kind) {
@@ -591,7 +607,9 @@ class Running extends Component {
             return true;
           }
           if (outCount > totalWickets) {
-            throw new Error(`Fallen wickets(${outCount}) are greater than actual wickets(${totalWickets})`);
+            throw new Error(
+              `Fallen wickets(${outCount}) are greater than actual wickets(${totalWickets})`
+            );
           }
         }
       }
@@ -600,13 +618,7 @@ class Running extends Component {
   }
 
   render() {
-    const {
-      match,
-      overModal,
-      batsman1,
-      batsman2,
-      editModal,
-    } = this.state;
+    const { match, overModal, batsman1, batsman2, editModal } = this.state;
 
     if (match.state === 'done') {
       return <Redirect to={`/history@${match._id}`} />;
@@ -631,13 +643,16 @@ class Running extends Component {
     let battingTeamName;
     let battingTeamShortName;
     if (state === 'innings1') {
-      [battingTeamName, battingTeamShortName] = team1BatFirst ? [team1.name,
-        team1.shortName] : [team2.name, team2.shortName];
+      [battingTeamName, battingTeamShortName] = team1BatFirst
+        ? [team1.name, team1.shortName]
+        : [team2.name, team2.shortName];
     } else {
-      [battingTeamName, battingTeamShortName] = team1BatFirst ? [team2.name,
-        team2.shortName] : [team1.name, team1.shortName];
+      [battingTeamName, battingTeamShortName] = team1BatFirst
+        ? [team2.name, team2.shortName]
+        : [team1.name, team1.shortName];
     }
-    const [innings, inningsNo] = (state === 'innings1') ? [innings1, 1] : [innings2, 2];
+    const [innings, inningsNo] =
+      state === 'innings1' ? [innings1, 1] : [innings2, 2];
     let tossOwnerChoice;
     if (team1WonToss) {
       tossOwnerChoice = team1BatFirst ? 'bat' : 'bowl';
@@ -645,14 +660,26 @@ class Running extends Component {
       tossOwnerChoice = team1BatFirst ? 'bowl' : 'bat';
     }
 
-    const [battingTeamPlayers, bowlingTeamPlayers] = (battingTeamName === team1.name)
-      ? [team1Players, team2Players] : [team2Players, team1Players];
+    const [battingTeamPlayers, bowlingTeamPlayers] =
+      battingTeamName === team1.name
+        ? [team1Players, team2Players]
+        : [team2Players, team1Players];
 
-    const onCreaseBatsmanName = toTitleCase(battingTeamPlayers[batsman1] && battingTeamPlayers[batsman1].name, ' ');
-    const onBowlersEnd = toTitleCase(battingTeamPlayers[batsman2] && battingTeamPlayers[batsman2].name, ' ');
+    const onCreaseBatsmanName = toTitleCase(
+      battingTeamPlayers[batsman1] && battingTeamPlayers[batsman1].name,
+      ' '
+    );
+    const onBowlersEnd = toTitleCase(
+      battingTeamPlayers[batsman2] && battingTeamPlayers[batsman2].name,
+      ' '
+    );
     const bowler = bowlingTeamPlayers[lastOver.bowledBy];
     const {
-      singleBatsman, bowlerModalIsOpen, showSingleBatsmanModal, isDeclaring, showErrorModal,
+      singleBatsman,
+      bowlerModalIsOpen,
+      showSingleBatsmanModal,
+      isDeclaring,
+      showErrorModal,
     } = this.state;
     return (
       <div className="row">
@@ -679,14 +706,19 @@ class Running extends Component {
             </header>
             <hr />
             <ScoreCreate
-              batsmen={[battingTeamPlayers[batsman1], battingTeamPlayers[batsman2]]}
+              batsmen={[
+                battingTeamPlayers[batsman1],
+                battingTeamPlayers[batsman2],
+              ]}
               batsmanIndices={[batsman1, batsman2]}
               matchId={match._id}
-              onInput={(bowl, isUpdate = false) => this.onInput({
-                type: 'bowl',
-                bowl,
-                isUpdate,
-              })}
+              onInput={(bowl, isUpdate = false) =>
+                this.onInput({
+                  type: 'bowl',
+                  bowl,
+                  isUpdate,
+                })
+              }
             />
             <div className="col-md-4 px-0">
               <Score
@@ -749,10 +781,12 @@ class Running extends Component {
           bowlers={bowlingTeamPlayers}
           lastBowler={bowler}
           matchId={match._id}
-          onSelect={(_bowler) => this.onInput({
-            type: 'over',
-            bowler: _bowler,
-          })}
+          onSelect={(_bowler) =>
+            this.onInput({
+              type: 'over',
+              bowler: _bowler,
+            })
+          }
         />
         <OverModal
           overModal={overModal}
@@ -768,37 +802,43 @@ class Running extends Component {
           isOpen={editModal.show}
           overNo={editModal.overNo}
           bowlNo={editModal.bowlNo}
-          bowl={editModal.show && innings.overs[editModal.overNo].bowls[editModal.bowlNo]}
+          bowl={
+            editModal.show &&
+            innings.overs[editModal.overNo].bowls[editModal.bowlNo]
+          }
           onInput={this.onUpdate}
           batsmanIndices={[batsman1, batsman2]}
           batsmen={battingTeamPlayers}
           matchId={match._id}
-          close={() => this.setState({
-            editModal: {
-              show: false,
-              overNo: -1,
-              bowlNo: -1,
-            },
-          })}
+          close={() =>
+            this.setState({
+              editModal: {
+                show: false,
+                overNo: -1,
+                bowlNo: -1,
+              },
+            })
+          }
         />
         <Modal isOpen={showSingleBatsmanModal}>
-          <ModalHeader>
-            Want to play with single batsman?
-          </ModalHeader>
+          <ModalHeader>Want to play with single batsman?</ModalHeader>
           <ModalFooter>
             <Button
               color="primary"
-              onClick={() => this.setState({
-                singleBatsman: true,
-                showSingleBatsmanModal: false,
-              })}
+              onClick={() =>
+                this.setState({
+                  singleBatsman: true,
+                  showSingleBatsmanModal: false,
+                })
+              }
             >
               Yeah
             </Button>
-            <Button onClick={() => {
-              this.setState({ showSingleBatsmanModal: false });
-              this.onDeclare();
-            }}
+            <Button
+              onClick={() => {
+                this.setState({ showSingleBatsmanModal: false });
+                this.onDeclare();
+              }}
             >
               Nah
             </Button>
@@ -829,7 +869,6 @@ class Running extends Component {
           isOpen={showErrorModal}
           close={() => this.setState({ showErrorModal: false })}
         />
-
       </div>
     );
   }
