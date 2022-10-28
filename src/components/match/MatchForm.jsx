@@ -116,7 +116,7 @@ function MatchForm({
           {values._id && (
             <span className="col-form-label float-right">
               <Link to="/match">Create</Link>
-              &npsp;a match instead
+              &nbsp;a match instead
             </span>
           )}
         </FormButton>
