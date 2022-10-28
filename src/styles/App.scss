@@ -308,3 +308,12 @@ th[scope="row"] {
 .tag__multi-value__remove:hover {
   background-color: transparent !important;
 }
+
+.modal-content.bg-dark {
+  .modal-header {
+    border-bottom-color: var(--dark);
+  }
+  .modal-footer {
+    border-top-color: var(--dark);
+  }
+}
