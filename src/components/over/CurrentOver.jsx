@@ -35,10 +35,9 @@ class CurrentOver extends Component {
 
     let bowlNo = 1;
     let bowlIndex = 0;
-    /* eslint-disable react/no-array-index-key */
     const renderedBowls = bowls.map((bowl, i) => (
       <Bowl
-        key={i}
+        key={bowl._id}
         active={Number.isInteger(activeIndex) && i === activeIndex}
         bowl={bowl}
         bowlIndex={bowlIndex++}

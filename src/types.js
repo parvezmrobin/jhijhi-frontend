@@ -54,8 +54,8 @@ const Bowl = {
   _id: string.isRequired,
   playedBy: number.isRequired,
   isWicket: shape({
-    kind: string.isRequired,
-    player: number.isRequired,
+    kind: string,
+    player: number,
   }),
   singles: number,
   by: number,

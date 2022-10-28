@@ -206,7 +206,12 @@ export default class ScoreInputV2 extends Component {
     const request = fetcher[httpVerb];
     request(`matches/${matchId}/bowl`, _bowlEvent)
       .then((res) => {
-        onInput(isUpdate ? res.data.bowl : _bowlEvent, isUpdate);
+        if (isUpdate) {
+          onInput(res.data.bowl, isUpdate);
+        } else {
+          _bowlEvent._id = res.data._id;
+          onInput(_bowlEvent, isUpdate);
+        }
         return shouldResetAfterInput && this.resetInputFields();
       })
       .catch((err) =>

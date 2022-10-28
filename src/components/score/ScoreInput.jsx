@@ -178,7 +178,12 @@ export default class ScoreInput extends Component {
       : fetcher.put;
     request(`matches/${matchId}/${endPoint}`, _bowlEvent)
       .then((res) => {
-        onInput(isNewBowl ? _bowlEvent : res.data.bowl, !isNewBowl);
+        if (isNewBowl) {
+          _bowlEvent._id = res.data._id;
+          onInput(_bowlEvent, !isNewBowl);
+        } else {
+          onInput(res.data.bowl, !isNewBowl);
+        }
         return shouldResetAfterInput && this.resetInputFields();
       })
       .catch((err) => {
