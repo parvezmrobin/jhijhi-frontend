@@ -51,6 +51,7 @@ const Umpire = {
 export const UmpireType = Umpire;
 
 const Bowl = {
+  _id: string.isRequired,
   playedBy: number.isRequired,
   isWicket: shape({
     kind: string.isRequired,
@@ -60,11 +61,11 @@ const Bowl = {
   by: number,
   legBy: number,
   boundary: shape({
-    run: number.isRequired,
-    kind: string.isRequired,
+    run: number,
+    kind: string,
   }),
   isWide: bool.isRequired,
-  isNo: string.isRequired,
+  isNo: string,
 };
 
 export const BowlType = Bowl;
