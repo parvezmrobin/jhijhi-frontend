@@ -194,7 +194,7 @@ export default class ScoreInputV2 extends Component {
     },
   };
 
-  _makeServerRequest(bowlEvent, isUpdate = false) {
+  _makeServerRequest(bowlEvent) {
     const {
       matchId,
       onInput,
@@ -202,16 +202,12 @@ export default class ScoreInputV2 extends Component {
       shouldResetAfterInput,
       httpVerb,
     } = this.props;
-    const _bowlEvent = injectBowlEvent(bowlEvent, isUpdate);
+    const _bowlEvent = injectBowlEvent(bowlEvent);
     const request = fetcher[httpVerb];
     request(`matches/${matchId}/bowl`, _bowlEvent)
       .then((res) => {
-        if (isUpdate) {
-          onInput(res.data.bowl, isUpdate);
-        } else {
-          _bowlEvent._id = res.data._id;
-          onInput(_bowlEvent, isUpdate);
-        }
+        _bowlEvent._id = res.data._id;
+        onInput(_bowlEvent);
         return shouldResetAfterInput && this.resetInputFields();
       })
       .catch((err) =>
