@@ -112,7 +112,7 @@ class Match extends Component {
   _loadMatches = (keyword = '') => {
     const { match } = this.props;
     fetcher
-      .get(`matches?search=${keyword}`)
+      .get(`matches?search=${keyword}&compact=1`)
       .then((response) => {
         if (match.params.id) {
           this._loadMatch(response.data, match.params.id);

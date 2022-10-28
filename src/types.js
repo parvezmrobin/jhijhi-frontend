@@ -83,7 +83,7 @@ const Innings = {
 
 export const InningsType = Innings;
 
-const Match = {
+export const CompactMatchType = {
   _id: string,
   name: string.isRequired,
   overs: number.isRequired,
@@ -99,6 +99,10 @@ const Match = {
   team1WonToss: bool,
   team1BatFirst: bool,
   state: string.isRequired,
+};
+
+const Match = {
+  ...CompactMatchType,
   innings1: shape(Innings),
   innings2: shape(Innings),
 };

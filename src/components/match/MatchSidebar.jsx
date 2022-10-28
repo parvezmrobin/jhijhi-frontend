@@ -11,7 +11,7 @@ import debounce from 'lodash/debounce';
 import * as PropTypes from 'prop-types';
 import CenterContent from '../layouts/CenterContent';
 import List from '../layouts/List';
-import { MatchType } from '../../types';
+import { CompactMatchType } from '../../types';
 
 export default class MatchSidebar extends Component {
   componentDidMount() {
@@ -81,7 +81,7 @@ export default class MatchSidebar extends Component {
 MatchSidebar.propTypes = {
   editable: PropTypes.bool,
   matchId: PropTypes.string,
-  matches: PropTypes.arrayOf(PropTypes.shape(MatchType)),
+  matches: PropTypes.arrayOf(PropTypes.shape(CompactMatchType)),
   onFilter: PropTypes.func,
   searchKeyword: PropTypes.string,
 };
