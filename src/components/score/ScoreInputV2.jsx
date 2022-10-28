@@ -7,8 +7,7 @@
 
 import React, { Component } from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import * as PropTypes from 'prop-types';
-import { shape } from 'prop-types';
+import { arrayOf, bool, func, number, shape, string } from 'prop-types';
 import CheckBoxControl from '../form/control/checkbox';
 import SelectControl from '../form/control/select';
 import { bindMethods } from '../../lib/utils';
@@ -174,6 +173,7 @@ export default class ScoreInputV2 extends Component {
         if (ScoreInputV2.UNCERTAIN_WICKETS.includes(wicket)) {
           bowlEvent.isWicket.player = this._getIndexOfBatsman(batsman);
         }
+        // else `bowlEvent.playedBy` is out
       } else {
         bowlEvent.isWicket = {};
       }
@@ -337,31 +337,43 @@ export default class ScoreInputV2 extends Component {
           </button>
         </div>
 
-        {/* Show modal if `wicket` is of uncertain type and batsman is not selected */}
-        <Modal
-          isOpen={ScoreInputV2.UNCERTAIN_WICKETS.includes(wicket) && !batsman}
-        >
-          <ModalHeader
-            className="text-primary"
-            toggle={this.onBatsmanSelectModalClose}
-          >
-            Which batsman is out?
-          </ModalHeader>
-          <ModalBody>
-            <FormGroup
-              type="select"
-              name="batsman"
-              value={batsman}
-              onChange={(e) => this.setState({ batsman: e.target.value })}
-              options={batsmen}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button color="primary" onClick={this.onBatsmanSelectModalClose}>
-              Select
-            </Button>
-          </ModalFooter>
-        </Modal>
+        {
+          // Render modal only if `batsmen` has real batsman entries
+          batsmen.every((_batsman) => _batsman._id) && (
+            <Modal
+              isOpen={
+                // Show modal if `wicket` is of uncertain type and batsman is not selected
+                ScoreInputV2.UNCERTAIN_WICKETS.includes(wicket) && !batsman
+              }
+            >
+              <ModalHeader
+                className="text-primary"
+                toggle={this.onBatsmanSelectModalClose}
+              >
+                Which batsman is out?
+              </ModalHeader>
+
+              <ModalBody>
+                <FormGroup
+                  type="select"
+                  name="batsman"
+                  value={batsman}
+                  onChange={(e) => this.setState({ batsman: e.target.value })}
+                  options={batsmen}
+                />
+              </ModalBody>
+
+              <ModalFooter>
+                <Button
+                  color="primary"
+                  onClick={this.onBatsmanSelectModalClose}
+                >
+                  Select
+                </Button>
+              </ModalFooter>
+            </Modal>
+          )
+        }
 
         {/* Error Modal */}
         <Modal isOpen={!!errorMessage}>
@@ -387,11 +399,13 @@ export default class ScoreInputV2 extends Component {
 }
 
 ScoreInputV2.propTypes = {
-  batsmen: PropTypes.arrayOf(shape(PlayerType)).isRequired,
-  matchId: PropTypes.string.isRequired,
-  onInput: PropTypes.func.isRequired,
-  injectBowlEvent: PropTypes.func.isRequired, // to support injecting over and bowl number while editing
-  shouldResetAfterInput: PropTypes.bool.isRequired,
-  actionText: PropTypes.string.isRequired,
-  httpVerb: PropTypes.string.isRequired,
+  batsmen: arrayOf(shape(PlayerType)).isRequired,
+  // eslint-disable-next-line react/no-unused-prop-types
+  batsmanIndices: arrayOf(number).isRequired, // use in getIndexOfBatsman
+  matchId: string.isRequired,
+  onInput: func.isRequired,
+  injectBowlEvent: func.isRequired, // to support injecting over and bowl number while editing
+  shouldResetAfterInput: bool.isRequired,
+  actionText: string.isRequired,
+  httpVerb: string.isRequired,
 };

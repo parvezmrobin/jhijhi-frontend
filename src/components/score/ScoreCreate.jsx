@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
-import { shape } from 'prop-types';
+import { number, shape } from 'prop-types';
 import { CustomInput } from 'reactstrap';
 import ScoreInput from './ScoreInput';
 import ScoreInputV2 from './ScoreInputV2';
@@ -21,17 +21,10 @@ class ScoreCreate extends Component {
   }
 
   render() {
-    const propsToBePassed = {
-      ...this.props,
-      injectBowlEvent: (el) => el,
-      defaultHttpVerb: 'post',
-      shouldResetAfterInput: true,
-      actionText: 'Insert',
-    };
+    const { batsmen, batsmanIndices, matchId, onInput } = this.props;
+    const injectBowlEvent = (el) => el;
 
     const { useV2 } = this.state;
-    propsToBePassed[useV2 ? 'httpVerb' : 'defaultHttpVerb'] = 'post';
-    const ScoreComponent = useV2 ? ScoreInputV2 : ScoreInput;
     return (
       <div className="container-fluid px-0">
         <div className="text-white lead">
@@ -57,8 +50,28 @@ class ScoreCreate extends Component {
             Convenient Scoring
           </label>
         </div>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <ScoreComponent {...propsToBePassed} />
+        {useV2 ? (
+          <ScoreInputV2
+            batsmen={batsmen}
+            batsmanIndices={batsmanIndices}
+            matchId={matchId}
+            onInput={onInput}
+            injectBowlEvent={injectBowlEvent}
+            shouldResetAfterInput
+            actionText="Insert"
+            httpVerb="post"
+          />
+        ) : (
+          <ScoreInput
+            batsmen={batsmen}
+            batsmanIndices={batsmanIndices}
+            matchId={matchId}
+            onInput={onInput}
+            defaultHttpVerb="post"
+            injectBowlEvent={injectBowlEvent}
+            shouldResetAfterInput
+          />
+        )}
       </div>
     );
   }
@@ -66,7 +79,7 @@ class ScoreCreate extends Component {
 
 ScoreCreate.propTypes = {
   batsmen: PropTypes.arrayOf(shape(PlayerType)).isRequired,
-  batsmanIndices: PropTypes.arrayOf(PropTypes.number).isRequired,
+  batsmanIndices: PropTypes.arrayOf(number).isRequired,
   matchId: PropTypes.string.isRequired,
   onInput: PropTypes.func.isRequired,
 };

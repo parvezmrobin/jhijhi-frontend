@@ -8,8 +8,7 @@ import {
   ModalHeader,
   Tooltip,
 } from 'reactstrap';
-import * as PropTypes from 'prop-types';
-import { shape } from 'prop-types';
+import { arrayOf, bool, func, number, oneOf, shape, string } from 'prop-types';
 import CheckBoxControl from '../form/control/checkbox';
 import SelectControl from '../form/control/select';
 import { bindMethods } from '../../lib/utils';
@@ -19,15 +18,13 @@ import { PlayerType } from '../../types';
 
 export function getIndexOfBatsman(batsmanId) {
   let selectedBatsmanIndex;
-  const [{ _id: batsman1Id }, { _id: batsman2Id }] = this.props.batsmen;
-  if (batsman1Id === batsmanId) {
+  const [{ _id: batsman0Id }, { _id: batsman1Id }] = this.props.batsmen;
+  if (batsman0Id === batsmanId) {
     selectedBatsmanIndex = this.props.batsmanIndices[0];
-  } else if (batsman2Id === batsmanId) {
+  } else if (batsman1Id === batsmanId) {
     selectedBatsmanIndex = this.props.batsmanIndices[1];
   } else {
-    throw new Error(
-      `Invalid batsman selected for run out: ${this.state.batsman}`
-    );
+    throw new Error(`Invalid batsman selected: ${this.state.batsman}`);
   }
   return selectedBatsmanIndex;
 }
@@ -393,10 +390,12 @@ export default class ScoreInput extends Component {
 }
 
 ScoreInput.propTypes = {
-  batsmen: PropTypes.arrayOf(shape(PlayerType)).isRequired,
-  matchId: PropTypes.string.isRequired,
-  onInput: PropTypes.func.isRequired,
-  defaultHttpVerb: PropTypes.oneOf(['post', 'put']).isRequired,
-  injectBowlEvent: PropTypes.func.isRequired, // to support injecting over and bowl number while editing
-  shouldResetAfterInput: PropTypes.bool.isRequired,
+  batsmen: arrayOf(shape(PlayerType)).isRequired,
+  // eslint-disable-next-line react/no-unused-prop-types
+  batsmanIndices: arrayOf(number).isRequired, // use in getIndexOfBatsman
+  matchId: string.isRequired,
+  onInput: func.isRequired,
+  defaultHttpVerb: oneOf(['post', 'put']).isRequired,
+  injectBowlEvent: func.isRequired, // to support injecting over and bowl number while editing
+  shouldResetAfterInput: bool.isRequired,
 };
