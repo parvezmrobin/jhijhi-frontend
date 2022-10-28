@@ -28,13 +28,20 @@ import BowlerSelectModal from './modal/BowlerSelectModal';
 import ScoreEditModal from './modal/ScoreEditModal';
 import ErrorModal from './modal/ErrorModal';
 import { MatchType } from '../types';
+import ScoreInput from './score/ScoreInput';
 
 class Running extends Component {
   /**
    * Event handler for bowl input
+   * Basically pushes / updates bowl into current over
+   * and updates batsmen in crease, if necessary
+   *
+   * *** This method is only called from `ScoreCreate` component
+   * *** and not `ScoreEdit` component. Only `ScoreInput` component
+   * *** might set `isUpdate` to true and not `ScoreInputV2` component.
    * @param inputEvent
-   * @param [inputEvent.bowl]
-   * @param inputEvent.isUpdate
+   * @param inputEvent.bowl
+   * @param {boolean} inputEvent.isUpdate
    * @param innings
    * @param batsman1Index
    * @param batsman2Index
@@ -50,19 +57,21 @@ class Running extends Component {
     singleBatsman
   ) {
     const { bowl } = inputEvent;
-    const { bowls } = innings.overs[innings.overs.length - 1];
+    const { bowls: bowlsOfLastOver } = innings.overs[innings.overs.length - 1];
     let _batsman1Index = batsman1Index;
     let _batsman2Index = batsman2Index;
 
+    // push or update bowl into the last over
     if (inputEvent.isUpdate) {
-      const lastBowl = bowls[bowls.length - 1];
-      bowls[bowls.length - 1] = { ...lastBowl, ...bowl };
+      const lastBowl = bowlsOfLastOver[bowlsOfLastOver.length - 1];
+      bowlsOfLastOver[bowlsOfLastOver.length - 1] = { ...lastBowl, ...bowl };
     } else {
-      bowls.push(bowl);
+      bowlsOfLastOver.push(bowl);
     }
 
+    // if it is an out, make corresponding batsman null
     if (optional(bowl.isWicket).kind) {
-      if (bowl.isWicket.kind.toLowerCase() === 'run out') {
+      if (ScoreInput.UNCERTAIN_WICKETS.includes(bowl.isWicket.kind)) {
         if (bowl.isWicket.player === _batsman1Index) {
           _batsman1Index = null;
         } else if (bowl.isWicket.player === _batsman2Index) {
@@ -75,15 +84,17 @@ class Running extends Component {
       }
     }
 
+    // if it is in single batsman mode, there is no crease switching involved
     if (singleBatsman) {
       return [_batsman1Index, _batsman2Index];
     }
 
     if (inputEvent.isUpdate && bowl.by % 2) {
+      // TODO: check `ScoreInput` component to be sure why only `by` value is checked
       [_batsman1Index, _batsman2Index] = [_batsman2Index, _batsman1Index];
     } else {
       // if undefined, add 0 instead
-      const run = (bowl.singles || 0) + (bowl.legBy || 0);
+      const run = (bowl.singles || 0) + (bowl.by || 0) + (bowl.legBy || 0);
       if (run % 2) {
         [_batsman1Index, _batsman2Index] = [_batsman2Index, _batsman1Index];
       }
