@@ -198,14 +198,12 @@ export default class Score extends Component {
             </h5>
             <h5 className="font-weight-normal">{inningsText}</h5>
             <CustomInput
-              type="switch"
+              type="checkbox"
               label="Single Batsman"
               id="single-batsman"
               className="pt-2 pb-2 my-1 text-white"
               checked={singleBatsman}
-              onChange={(e) =>
-                this.setState({ singleBatsman: e.target.checked })
-              }
+              readOnly
             />
           </div>
         </div>
