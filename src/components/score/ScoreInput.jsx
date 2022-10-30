@@ -16,13 +16,20 @@ import fetcher from '../../lib/fetcher';
 import FormGroup from '../form/FormGroup';
 import { PlayerType } from '../../types';
 
-export function getIndexOfBatsman(batsmanId) {
+/**
+ * get indices of batsman in the crease given batsman's id
+ * @param {string} batsmanId
+ * @param {Object[]} batsmen
+ * @param {number[]} batsmanIndices
+ * @returns {*}
+ */
+export function getIndexOfBatsman(batsmanId, batsmen, batsmanIndices) {
   let selectedBatsmanIndex;
-  const [{ _id: batsman0Id }, { _id: batsman1Id }] = this.props.batsmen;
+  const [{ _id: batsman0Id }, { _id: batsman1Id }] = batsmen;
   if (batsman0Id === batsmanId) {
-    selectedBatsmanIndex = this.props.batsmanIndices[0];
+    selectedBatsmanIndex = batsmanIndices[0];
   } else if (batsman1Id === batsmanId) {
-    selectedBatsmanIndex = this.props.batsmanIndices[1];
+    selectedBatsmanIndex = batsmanIndices[1];
   } else {
     throw new Error(`Invalid batsman selected: ${this.state.batsman}`);
   }
@@ -38,8 +45,6 @@ export default class ScoreInput extends Component {
     ScoreInput.RUN_OUT,
     ScoreInput.OBSTRUCTING_THE_FIELD,
   ];
-
-  _getIndexOfBatsman = getIndexOfBatsman;
 
   wickets = [
     'Wicket',
@@ -138,8 +143,13 @@ export default class ScoreInput extends Component {
       this._makeServerRequest(bowlEvent);
     },
     onUncertainWicket() {
+      const { batsmen, batsmanIndices } = this.props;
       const { batsman, uncertainWicket } = this.state;
-      const selectedBatsmanIndex = this._getIndexOfBatsman(batsman);
+      const selectedBatsmanIndex = getIndexOfBatsman(
+        batsman,
+        batsmen,
+        batsmanIndices
+      );
       const bowlEvent = {
         batsman: selectedBatsmanIndex,
         kind: uncertainWicket,
@@ -149,10 +159,10 @@ export default class ScoreInput extends Component {
   };
 
   _createBowlEvent() {
-    const { batsmen } = this.props;
+    const { batsmen, batsmanIndices } = this.props;
     const { isBy, isLegBy, isWide, isNo } = this.state;
     return {
-      playedBy: this._getIndexOfBatsman(batsmen[0]._id),
+      playedBy: getIndexOfBatsman(batsmen[0]._id, batsmen, batsmanIndices),
       by: isBy,
       legBy: isLegBy,
       isWide,
@@ -396,8 +406,7 @@ export default class ScoreInput extends Component {
 
 ScoreInput.propTypes = {
   batsmen: arrayOf(shape(PlayerType)).isRequired,
-  // eslint-disable-next-line react/no-unused-prop-types
-  batsmanIndices: arrayOf(number).isRequired, // use in getIndexOfBatsman
+  batsmanIndices: arrayOf(number).isRequired,
   matchId: string.isRequired,
   onInput: func.isRequired,
   defaultHttpVerb: oneOf(['post', 'put']).isRequired,

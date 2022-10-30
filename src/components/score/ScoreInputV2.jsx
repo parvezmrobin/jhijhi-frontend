@@ -105,8 +105,6 @@ export default class ScoreInputV2 extends Component {
     name: type,
   }));
 
-  _getIndexOfBatsman = getIndexOfBatsman;
-
   constructor(props) {
     super(props);
     this.state = {
@@ -154,10 +152,11 @@ export default class ScoreInputV2 extends Component {
     */
       const { by, legBy, isWide, isNo, boundary, singles, wicket, batsman } =
         this.state;
-      const { batsmen } = this.props;
+      const { batsmen, batsmanIndices } = this.props;
 
       const bowlEvent = {
-        playedBy: this._getIndexOfBatsman(batsmen[0]._id), // by default, the on-crease batsman is out
+        // by default, the on-crease batsman is out
+        playedBy: getIndexOfBatsman(batsmen[0]._id, batsmen, batsmanIndices),
         singles: singles === 'Singles' ? 0 : singles,
         by: by === 'By' ? 0 : by,
         legBy: legBy === 'Leg By' ? 0 : legBy,
@@ -171,7 +170,11 @@ export default class ScoreInputV2 extends Component {
         };
 
         if (ScoreInputV2.UNCERTAIN_WICKETS.includes(wicket)) {
-          bowlEvent.isWicket.player = this._getIndexOfBatsman(batsman);
+          bowlEvent.isWicket.player = getIndexOfBatsman(
+            batsman,
+            batsmen,
+            batsmanIndices
+          );
         }
         // else `bowlEvent.playedBy` is out
       } else {
@@ -401,8 +404,7 @@ export default class ScoreInputV2 extends Component {
 
 ScoreInputV2.propTypes = {
   batsmen: arrayOf(shape(PlayerType)).isRequired,
-  // eslint-disable-next-line react/no-unused-prop-types
-  batsmanIndices: arrayOf(number).isRequired, // use in getIndexOfBatsman
+  batsmanIndices: arrayOf(number).isRequired,
   matchId: string.isRequired,
   onInput: func.isRequired,
   injectBowlEvent: func.isRequired, // to support injecting over and bowl number while editing
