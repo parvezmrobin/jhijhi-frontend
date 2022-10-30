@@ -36,32 +36,32 @@ export function getIndexOfBatsman(batsmanId, batsmen, batsmanIndices) {
   return selectedBatsmanIndex;
 }
 
+export const RUN_OUT = 'Run out';
+
+export const OBSTRUCTING_THE_FIELD = 'Obstructing the field';
+
+export const UNCERTAIN_WICKETS = [RUN_OUT, OBSTRUCTING_THE_FIELD];
+
+export const WICKET_TYPES = [
+  'Wicket',
+  'Bowled',
+  'Caught',
+  'Leg before wicket',
+  RUN_OUT,
+  'Stumped',
+  'Hit the ball twice',
+  'Hit wicket',
+  OBSTRUCTING_THE_FIELD,
+  // 'Timed out', // Timed out takes place even before playing a bowl, hence needed to handle exceptionally
+  'Retired',
+];
+
+export const wicketOptions = WICKET_TYPES.map((wicket) => ({
+  _id: wicket,
+  name: wicket,
+}));
+
 export default class ScoreInput extends Component {
-  static RUN_OUT = 'Run out';
-
-  static OBSTRUCTING_THE_FIELD = 'Obstructing the field';
-
-  static UNCERTAIN_WICKETS = [
-    ScoreInput.RUN_OUT,
-    ScoreInput.OBSTRUCTING_THE_FIELD,
-  ];
-
-  wickets = [
-    'Wicket',
-    'Bowled',
-    'Caught',
-    'Leg before wicket',
-    'Run out',
-    'Stumped',
-    'Hit the ball twice',
-    'Hit wicket',
-    'Obstructing the field',
-    /* 'Timed out', */ 'Retired',
-  ].map((wicket) => ({
-    _id: wicket,
-    name: wicket,
-  }));
-
   singles = ['Singles', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((el) => ({
     _id: el.toString(),
     name: el.toString(),
@@ -127,7 +127,7 @@ export default class ScoreInput extends Component {
     },
     onWicket(wicket) {
       const { batsmen } = this.props;
-      if (ScoreInput.UNCERTAIN_WICKETS.includes(wicket)) {
+      if (UNCERTAIN_WICKETS.includes(wicket)) {
         this.setState({
           uncertainWicket: wicket,
           batsman: batsmen[0]._id,
@@ -339,7 +339,7 @@ export default class ScoreInput extends Component {
             id="wicket"
             name="wicket"
             className="form-control text-danger"
-            options={this.wickets}
+            options={wicketOptions}
             onChange={(e) => {
               this.onStateUpdate({ wicket: e.target.value });
               this.onWicket(e.target.value);

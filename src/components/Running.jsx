@@ -28,7 +28,7 @@ import BowlerSelectModal from './modal/BowlerSelectModal';
 import ScoreEditModal from './modal/ScoreEditModal';
 import ErrorModal from './modal/ErrorModal';
 import { MatchType } from '../types';
-import ScoreInput from './score/ScoreInput';
+import { UNCERTAIN_WICKETS } from './score/ScoreInput';
 
 class Running extends Component {
   /**
@@ -71,7 +71,7 @@ class Running extends Component {
 
     // if it is an out, make corresponding batsman null
     if (optional(bowl.isWicket).kind) {
-      if (ScoreInput.UNCERTAIN_WICKETS.includes(bowl.isWicket.kind)) {
+      if (UNCERTAIN_WICKETS.includes(bowl.isWicket.kind)) {
         if (bowl.isWicket.player === _batsman1Index) {
           _batsman1Index = null;
         } else if (bowl.isWicket.player === _batsman2Index) {

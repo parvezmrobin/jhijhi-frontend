@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { arrayOf, shape, string } from 'prop-types';
+import { arrayOf, func, shape, string } from 'prop-types';
 import { Named } from '../../../types';
 
 function SelectControl(props) {
@@ -17,13 +17,16 @@ function SelectControl(props) {
     className += 'is-invalid';
   }
   p.id = p.id || p.name;
+  const _render = p.render || ((opt) => opt.name);
+
   delete p.isValid;
   delete p.options;
+  delete p.render;
 
   const { options } = props;
   const optionsEls = options.map((option) => (
     <option key={option._id} value={option._id}>
-      {option.name}
+      {_render(option)}
     </option>
   ));
   return (
@@ -38,6 +41,7 @@ SelectControl.propTypes = {
   id: string,
   name: string.isRequired,
   options: arrayOf(shape(Named)).isRequired,
+  render: func,
 };
 
 export default SelectControl;

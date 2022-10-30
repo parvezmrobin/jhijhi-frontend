@@ -13,33 +13,15 @@ import SelectControl from '../form/control/select';
 import { bindMethods } from '../../lib/utils';
 import fetcher from '../../lib/fetcher';
 import FormGroup from '../form/FormGroup';
-import { getIndexOfBatsman } from './ScoreInput';
+import {
+  getIndexOfBatsman,
+  UNCERTAIN_WICKETS,
+  WICKET_TYPES,
+  wicketOptions,
+} from './ScoreInput';
 import { PlayerType } from '../../types';
 
 export default class ScoreInputV2 extends Component {
-  static RUN_OUT = 'Run out';
-
-  static OBSTRUCTING_THE_FIELD = 'Obstructing the field';
-
-  static UNCERTAIN_WICKETS = [
-    ScoreInputV2.RUN_OUT,
-    ScoreInputV2.OBSTRUCTING_THE_FIELD,
-  ];
-
-  static WICKET_TYPES = [
-    'Wicket',
-    'Bowled',
-    'Caught',
-    'Leg before wicket',
-    ScoreInputV2.RUN_OUT,
-    'Stumped',
-    'Hit the ball twice',
-    'Hit wicket',
-    ScoreInputV2.OBSTRUCTING_THE_FIELD,
-    // 'Timed out', // Timed out takes place even before playing a bowl, hence needed to handle exceptionally
-    'Retired',
-  ];
-
   static NO_BOWL_TYPES = [
     'No Bowl',
     'Front foot',
@@ -71,13 +53,8 @@ export default class ScoreInputV2 extends Component {
     singles: 'Singles',
     wicket: 'Wicket',
     boundary: 'Boundary',
-    batsman: '', // selected batsman on uncertain outs
+    uncertainBatsmanId: '', // selected batsman on uncertain outs
   };
-
-  static wicketOptions = ScoreInputV2.WICKET_TYPES.map((wicket) => ({
-    _id: wicket,
-    name: wicket,
-  }));
 
   static boundaryOptions = ScoreInputV2.BOUNDARY_TYPES.map((boundary) => ({
     _id: boundary,
@@ -123,7 +100,14 @@ export default class ScoreInputV2 extends Component {
     onBatsmanSelectModalClose() {
       this.setState({
         wicket: 'Wicket',
-        batsman: '',
+        uncertainBatsmanId: '',
+      });
+    },
+
+    makeOnCreaseBatsmanUncertain() {
+      const { batsmen } = this.props;
+      this.setState({
+        uncertainBatsmanId: batsmen[0]._id,
       });
     },
 
@@ -150,8 +134,16 @@ export default class ScoreInputV2 extends Component {
        isNo: String, // containing the reason of no
      }
     */
-      const { by, legBy, isWide, isNo, boundary, singles, wicket, batsman } =
-        this.state;
+      const {
+        by,
+        legBy,
+        isWide,
+        isNo,
+        boundary,
+        singles,
+        wicket,
+        uncertainBatsmanId,
+      } = this.state;
       const { batsmen, batsmanIndices } = this.props;
 
       const bowlEvent = {
@@ -164,14 +156,14 @@ export default class ScoreInputV2 extends Component {
         isNo: isNo === ScoreInputV2.NO_BOWL_TYPES[0] ? '' : isNo,
       };
 
-      if (wicket !== ScoreInputV2.WICKET_TYPES[0]) {
+      if (wicket !== WICKET_TYPES[0]) {
         bowlEvent.isWicket = {
           kind: wicket,
         };
 
-        if (ScoreInputV2.UNCERTAIN_WICKETS.includes(wicket)) {
+        if (UNCERTAIN_WICKETS.includes(wicket)) {
           bowlEvent.isWicket.player = getIndexOfBatsman(
-            batsman,
+            uncertainBatsmanId,
             batsmen,
             batsmanIndices
           );
@@ -231,13 +223,23 @@ export default class ScoreInputV2 extends Component {
       boundary,
       singles,
       wicket,
-      batsman,
+      uncertainBatsmanId,
       errorMessage,
     } = this.state;
     const { batsmen, actionText } = this.props;
     // prevent error while any of the batsmen changed to null
     batsmen[0] = batsmen[0] || { _id: null };
     batsmen[1] = batsmen[1] || { _id: null };
+
+    let uncertainBatsmanName = '';
+    if (uncertainBatsmanId) {
+      const uncertainBatsman = batsmen.find(
+        (_batsman) => _batsman._id === uncertainBatsmanId
+      );
+      if (uncertainBatsman) {
+        uncertainBatsmanName = `(${uncertainBatsman.name})`;
+      }
+    }
 
     return (
       <section className="score-input v2 rounded flex-grow-0">
@@ -326,7 +328,12 @@ export default class ScoreInputV2 extends Component {
             id="wicket"
             name="wicket"
             className="form-control text-danger"
-            options={ScoreInputV2.wicketOptions}
+            options={wicketOptions}
+            render={(opt) =>
+              `${opt.name} ${
+                UNCERTAIN_WICKETS.includes(opt.name) ? uncertainBatsmanName : ''
+              }`
+            }
             onChange={(e) => this.onStateUpdate({ wicket: e.target.value })}
           />
         </div>
@@ -347,8 +354,9 @@ export default class ScoreInputV2 extends Component {
             <Modal
               isOpen={
                 // Show modal if `wicket` is of uncertain type and batsman is not selected
-                ScoreInputV2.UNCERTAIN_WICKETS.includes(wicket) && !batsman
+                UNCERTAIN_WICKETS.includes(wicket) && !uncertainBatsmanId
               }
+              contentClassName="bg-dark"
             >
               <ModalHeader
                 className="text-primary"
@@ -361,8 +369,10 @@ export default class ScoreInputV2 extends Component {
                 <FormGroup
                   type="select"
                   name="batsman"
-                  value={batsman}
-                  onChange={(e) => this.setState({ batsman: e.target.value })}
+                  value={uncertainBatsmanId}
+                  onChange={(e) =>
+                    this.setState({ uncertainBatsmanId: e.target.value })
+                  }
                   options={batsmen}
                 />
               </ModalBody>
@@ -370,7 +380,7 @@ export default class ScoreInputV2 extends Component {
               <ModalFooter>
                 <Button
                   color="primary"
-                  onClick={this.onBatsmanSelectModalClose}
+                  onClick={this.makeOnCreaseBatsmanUncertain}
                 >
                   Select
                 </Button>
@@ -380,7 +390,7 @@ export default class ScoreInputV2 extends Component {
         }
 
         {/* Error Modal */}
-        <Modal isOpen={!!errorMessage}>
+        <Modal isOpen={!!errorMessage} contentClassName="bg-dark">
           <ModalHeader
             className="text-warning border-0"
             toggle={() => this.setState({ errorMessage: null })}

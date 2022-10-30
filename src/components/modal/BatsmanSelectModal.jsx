@@ -117,7 +117,7 @@ export default class BatsmanSelectModal extends Component {
             {!batsman1Exists && (
               <FormGroup
                 type="select"
-                name="batsman-1"
+                name="on-crease"
                 value={batsman1Id}
                 onChange={(e) =>
                   this.onSelectionChange({ batsman1Id: e.target.value })
@@ -130,7 +130,7 @@ export default class BatsmanSelectModal extends Component {
             {!batsman2Exists && !singleBatsman && (
               <FormGroup
                 type="select"
-                name="batsman-2"
+                name="bowler's-end"
                 value={batsman2Id}
                 onChange={(e) =>
                   this.onSelectionChange({ batsman2Id: e.target.value })

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
-import { CustomInput } from 'reactstrap';
 import { shape } from 'prop-types';
 import { InningsType } from '../../types';
 
@@ -197,17 +196,10 @@ export default class Score extends Component {
               </small>
             </h5>
             <h5 className="font-weight-normal">{inningsText}</h5>
-            <CustomInput
-              type="checkbox"
-              label="Single Batsman"
-              id="single-batsman"
-              className="pt-2 pb-2 my-1 text-white"
-              checked={singleBatsman}
-              readOnly
-            />
+            {singleBatsman && <p>In single batsman mode</p>}
           </div>
         </div>
-        <div className="container-fluid mt-2 text-white">
+        <div className="container-fluid text-white">
           <div className="px-2">{runRateText}</div>
           <p className="px-2">
             <em>{tossOwner}</em> won the toss <br />
