@@ -4,12 +4,10 @@
  * Date: Apr 04, 2019
  */
 
-
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Tooltip } from 'reactstrap';
 import PropTypes from 'prop-types';
-
 
 class NextBowl extends Component {
   constructor(props) {
@@ -20,13 +18,12 @@ class NextBowl extends Component {
     };
   }
 
-  toggleTooltip = () => {
-    this.setState(state => ({ isTooltipOpen: !state.isTooltipOpen }));
-  };
-
   componentDidMount() {
     this.timerId = setInterval(() => {
-      this.setState({ dots: (this.state.dots.length === 3) ? '' : this.state.dots + '.' });
+      const { dots } = this.state;
+      this.setState({
+        dots: dots.length === 3 ? '' : `${dots}.`,
+      });
     }, 500);
   }
 
@@ -34,30 +31,49 @@ class NextBowl extends Component {
     clearInterval(this.timerId);
   }
 
+  toggleTooltip = () => {
+    this.setState((state) => ({ isTooltipOpen: !state.isTooltipOpen }));
+  };
+
   render() {
     const { onCrease, onBowlersEnd, onSwitch } = this.props;
     const { dots, isTooltipOpen } = this.state;
-    const switchButton = <Link to="#" id="batsman-switch" onClick={onSwitch} className="float-right">
-      <i className="text-primary" data-feather="chevrons-up"/>
-    </Link>;
+    const switchButton = (
+      // eslint-disable-next-line jsx-a11y/anchor-is-valid
+      <Link
+        to="#"
+        id="batsman-switch"
+        onClick={onSwitch}
+        className="float-right"
+      >
+        <i className="text-primary" data-feather="chevrons-up" />
+      </Link>
+    );
 
     return (
       <>
-        {onCrease &&
-        <li className="list-group-item text-white bg-dark">{onCrease} is on crease{dots}</li>}
-        {onBowlersEnd &&
-        <>
-          <li className="list-group-item text-white bg-secondary">
-            {onBowlersEnd} is on bowler's end{dots} {switchButton}
+        {onCrease && (
+          <li className="list-group-item text-white bg-dark">
+            {onCrease} is on crease{dots}
           </li>
-          <Tooltip isOpen={isTooltipOpen} toggle={this.toggleTooltip} target="batsman-switch">
-            Put {onBowlersEnd} on crease
-          </Tooltip>
-        </>}
+        )}
+        {onBowlersEnd && (
+          <>
+            <li className="list-group-item text-white bg-secondary">
+              {onBowlersEnd} is on bowler‘s end{dots} {switchButton}
+            </li>
+            <Tooltip
+              isOpen={isTooltipOpen}
+              toggle={this.toggleTooltip}
+              target="batsman-switch"
+            >
+              Put {onBowlersEnd} on crease
+            </Tooltip>
+          </>
+        )}
       </>
     );
   }
-
 }
 
 NextBowl.propTypes = {
@@ -65,6 +81,5 @@ NextBowl.propTypes = {
   onBowlersEnd: PropTypes.string,
   onSwitch: PropTypes.func,
 };
-
 
 export default NextBowl;

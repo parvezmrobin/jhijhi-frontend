@@ -4,7 +4,6 @@
  * Date: Mar 31, 2019
  */
 
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';

@@ -4,19 +4,101 @@
  * Date: Apr 09, 2019
  */
 
-
 import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
+import { shape } from 'prop-types';
+import { Redirect } from 'react-router-dom';
 import CenterContent from './layouts/CenterContent';
 import CheckBoxControl from './form/control/checkbox';
 import { bindMethods, subtract, toTitleCase } from '../lib/utils';
 import FormGroup from './form/FormGroup';
 import FormButton from './form/FormButton';
 import fetcher from '../lib/fetcher';
-import * as PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
+import { PlayerType, TeamType } from '../types';
 
+const getCheckboxOnChangeForTeam = (team, id) => {
+  // if checkbox is checked, key is 'select' and 'unselect otherwise. value is the index
+  if (team === 1) {
+    return (e) =>
+      this.onTeam1PlayerChange({
+        [e.target.checked ? 'select' : 'unselect']: id,
+      });
+  }
+  if (team === 2) {
+    return (e) =>
+      this.onTeam2PlayerChange({
+        [e.target.checked ? 'select' : 'unselect']: id,
+      });
+  }
+  throw new Error('Unknown Team');
+};
+
+const getListItemMapperForTeam = (team) => {
+  function listItemMapper({ _id, jerseyNo, name }) {
+    // noinspection RequiredAttributes
+    return (
+      <li key={_id} className="list-group-item bg-transparent flex-fill">
+        <CheckBoxControl
+          name={`cb-${jerseyNo}-${team}`}
+          onChange={getCheckboxOnChangeForTeam(team, _id)}
+        >
+          {`${toTitleCase(name)} (${jerseyNo})`}
+        </CheckBoxControl>
+      </li>
+    );
+  }
+  listItemMapper.propTypes = PlayerType;
+
+  return listItemMapper;
+};
 
 export default class PreMatch extends Component {
+  static makeCaptainForm(
+    teamNo,
+    players,
+    playerIds,
+    captain,
+    onChange,
+    isValid,
+    feedback
+  ) {
+    const selectOptions = players.filter(
+      (el) => playerIds.indexOf(el._id) !== -1
+    );
+    let captainForm;
+    if (selectOptions.length) {
+      captainForm = (
+        <FormGroup
+          label="Captain"
+          type="select"
+          options={selectOptions}
+          name={`team${teamNo}-captain`}
+          value={captain}
+          onChange={onChange}
+          isValid={isValid}
+          feedback={feedback}
+        />
+      );
+    } else {
+      captainForm = (
+        <FormGroup
+          label="Captain"
+          type="select"
+          options={[
+            { _id: '-1', name: 'Choose players first to select captain' },
+          ]}
+          disabled
+          name={`team${teamNo}-captain`}
+          value={captain}
+          onChange={onChange}
+          isValid={isValid}
+          feedback={feedback}
+        />
+      );
+    }
+
+    return captainForm;
+  }
 
   constructor(props) {
     super(props);
@@ -44,20 +126,23 @@ export default class PreMatch extends Component {
 
   handlers = {
     onButtonClick() {
+      const { team2Captain, team1Players, team2Players, team1Captain } =
+        this.state;
       const postData = {
-        team1Players: this.state.team1Players,
-        team2Players: this.state.team2Players,
-        team1Captain: this.state.team1Captain,
-        team2Captain: this.state.team2Captain,
+        team1Players,
+        team2Players,
+        team1Captain,
+        team2Captain,
         state: 'toss',
       };
 
+      const { onMatchBegin, matchId } = this.props;
       fetcher
-        .put(`matches/${this.props.matchId}/begin`, postData)
-        .then(response => {
-          return this.props.onMatchBegin(response.data.match, response.data.message);
-        })
-        .catch(err => {
+        .put(`matches/${matchId}/begin`, postData)
+        .then((response) =>
+          onMatchBegin(response.data.match, response.data.message)
+        )
+        .catch((err) => {
           const isValid = {
             team1Players: true,
             team2Players: true,
@@ -94,187 +179,187 @@ export default class PreMatch extends Component {
      * @param action.unselect
      */
     onTeam1PlayerChange(action) {
-
-      this.setState(prevState => {
-        if (action.select) {
-          if (prevState.team1Players.indexOf(action.select) === -1) {
-            return { team1Players: prevState.team1Players.concat(action.select) };
+      this.setState(
+        (prevState) => {
+          if (action.select) {
+            if (prevState.team1Players.indexOf(action.select) === -1) {
+              return {
+                team1Players: prevState.team1Players.concat(action.select),
+              };
+            }
+            return { team1Players: prevState.team1Players };
           }
-          return { team1Players: prevState.team1Players };
-        } else if (action.unselect) {
-          return { team1Players: prevState.team1Players.filter(player => player !== action.unselect) };
-        } else {
+          if (action.unselect) {
+            return {
+              team1Players: prevState.team1Players.filter(
+                (player) => player !== action.unselect
+              ),
+            };
+          }
           throw new Error('Unknown Action');
-        }
-      }, () => {
-        if (this.state.team1Players.length === 1) {
-          this.setState({ team1Captain: this.state.team1Players[0] });
-        } else if (!this.state.team1Players.length) {
-          this.setState({ team1Captain: '' });
-        }
+        },
+        () => {
+          const { team1Players, team1Captain } = this.state;
+          if (team1Players.length === 1) {
+            this.setState({ team1Captain: team1Players[0] });
+          } else if (!team1Players.length) {
+            this.setState({ team1Captain: '' });
+          }
 
-        // if the selected captain is removed from the team
-        if (action.unselect === this.state.team1Captain && this.state.team1Players.length) {
-          this.setState({ team1Captain: this.state.team1Players[0] });
+          // if the selected captain is removed from the team
+          if (action.unselect === team1Captain && team1Players.length) {
+            this.setState({ team1Captain: team1Players[0] });
+          }
         }
-      });
+      );
     },
     onTeam2PlayerChange(action) {
-      this.setState(prevState => {
-        if (action.select) {
-          if (prevState.team2Players.indexOf(action.select) === -1) {
-            return { team2Players: prevState.team2Players.concat(action.select) };
+      this.setState(
+        (prevState) => {
+          if (action.select) {
+            if (prevState.team2Players.indexOf(action.select) === -1) {
+              return {
+                team2Players: prevState.team2Players.concat(action.select),
+              };
+            }
+            return { team2Players: prevState.team2Players };
           }
-          return { team2Players: prevState.team2Players };
-        } else if (action.unselect) {
-          return { team2Players: prevState.team2Players.filter(player => player !== action.unselect) };
-        } else {
+          if (action.unselect) {
+            return {
+              team2Players: prevState.team2Players.filter(
+                (player) => player !== action.unselect
+              ),
+            };
+          }
           throw new Error('Unknown Action');
-        }
-      }, () => {
-        if (this.state.team2Players.length === 1) {
-          this.setState({ team2Captain: this.state.team2Players[0] });
-        } else if (!this.state.team2Players.length) {
-          this.setState({ team2Captain: '' });
-        }
+        },
+        () => {
+          const { team2Captain, team2Players } = this.state;
+          if (team2Players.length === 1) {
+            this.setState({ team2Captain: team2Players[0] });
+          } else if (!team2Players.length) {
+            this.setState({ team2Captain: '' });
+          }
 
-        // if the selected captain is removed from the team
-        if (action.unselect === this.state.team2Captain && this.state.team2Players.length) {
-          this.setState({ team2Captain: this.state.team2Players[0] });
+          // if the selected captain is removed from the team
+          if (action.unselect === team2Captain && team2Players.length) {
+            this.setState({ team2Captain: team2Players[0] });
+          }
         }
-      });
+      );
     },
   };
-
 
   componentDidMount() {
     return fetcher
       .get('players')
-      .then(response => {
-        return this.setState({ players: response.data });
-      });
+      .then((response) => this.setState({ players: response.data }));
   }
-
 
   componentWillUnmount() {
     fetcher.cancelAll();
   }
 
-
   render() {
     let { players } = this.state;
     if (players && players.length < 4) {
-      return <Redirect to="/player?redirected=1"/>
+      return <Redirect to="/player?redirected=1" />;
     }
     players = players || [];
 
-    const getCheckboxOnChangeForTeam = (team, id) => {
-      // if checkbox is checked, key is 'select' and 'unselect otherwise. value is the index
-      if (team === 1) {
-        return (e) => this.onTeam1PlayerChange({
-          [e.target.checked ? 'select' : 'unselect']: id,
-        });
-      } else if (team === 2) {
-        return (e) => this.onTeam2PlayerChange({
-          [e.target.checked ? 'select' : 'unselect']: id,
-        });
-      } else {
-        throw new Error('Unknown Team');
-      }
-    };
-
     const matcher = (el1, el2) => el1._id === el2;
 
-    const getListItemMapperForTeam = team => (player) => (
-      <li key={player._id} className="list-group-item bg-transparent flex-fill">
-        <CheckBoxControl name={`cb-${player.jerseyNo}-${team}`}
-                         onChange={getCheckboxOnChangeForTeam(team, player._id)}>
-          {`${toTitleCase(player.name)} (${player.jerseyNo})`}
-        </CheckBoxControl>
-      </li>
+    const {
+      isValid,
+      team2Players,
+      team1Captain,
+      team1Players,
+      feedback,
+      team2Captain,
+    } = this.state;
+    const team1CandidatePlayers = subtract(players, team2Players, matcher).map(
+      getListItemMapperForTeam(1)
+    );
+    const team2CandidatePlayers = subtract(players, team1Players, matcher).map(
+      getListItemMapperForTeam(2)
     );
 
-    const team1CandidatePlayers = subtract(players, this.state.team2Players, matcher)
-      .map(getListItemMapperForTeam(1));
-    const team2CandidatePlayers = subtract(players, this.state.team1Players, matcher)
-      .map(getListItemMapperForTeam(2));
+    const team1CaptainForm = PreMatch.makeCaptainForm(
+      1,
+      players,
+      team1Players,
+      team1Captain,
+      (e) => this.onChange({ team1Captain: e.target.value }),
+      isValid.team1Captain,
+      feedback.team1Captain
+    );
 
-    const team1CaptainForm = PreMatch.makeCaptainForm(1, players, this.state.team1Players, this.state.team1Captain,
-      e => this.onChange({ team1Captain: e.target.value }),
-      this.state.isValid.team1Captain, this.state.feedback.team1Captain);
+    const team2CaptainForm = PreMatch.makeCaptainForm(
+      2,
+      players,
+      team2Players,
+      team2Captain,
+      (e) => this.onChange({ team2Captain: e.target.value }),
+      isValid.team2Captain,
+      feedback.team2Captain
+    );
 
-    const team2CaptainForm = PreMatch.makeCaptainForm(2, players, this.state.team2Players, this.state.team2Captain,
-      e => this.onChange({ team2Captain: e.target.value }),
-      this.state.isValid.team2Captain, this.state.feedback.team2Captain);
-
+    const { team2, team1, name } = this.props;
     return (
       <CenterContent>
-        <h2 className="text-center text-white bg-success py-3 rounded">{this.props.name}</h2>
+        <h2 className="text-center text-white bg-success py-3 rounded">
+          {name}
+        </h2>
         <div className="row">
           <div className="col-12 col-sm">
-            <h2 className="text-center text-primary">{this.props.team1.name}</h2>
-            <hr/>
+            <h2 className="text-center text-primary">{team1.name}</h2>
+            <hr />
             {team1CaptainForm}
             <div className="form-group row">
-              <label className="col-form-label col-lg-3">
+              <label
+                htmlFor="choose-players"
+                className="col-form-label col-lg-3"
+              >
                 Choose Players
               </label>
               <div className="col">
-                <ul className="list-group-select">{team1CandidatePlayers}</ul>
+                <ul id="choose-players" className="list-group-select">
+                  {team1CandidatePlayers}
+                </ul>
               </div>
             </div>
           </div>
           <div className="col-12 col-sm">
-            <h2 className="text-center text-primary">{this.props.team2.name}</h2>
-            <hr/>
+            <h2 className="text-center text-primary">{team2.name}</h2>
+            <hr />
             {team2CaptainForm}
             <div className="form-group row">
-              <label className="col-form-label col-lg-3">
+              <label htmlFor="select-group" className="col-form-label col-lg-3">
                 Choose Players
               </label>
               <div className="col">
-                <ul className="list-group-select">{team2CandidatePlayers}</ul>
+                <ul id="select-group" className="list-group-select">
+                  {team2CandidatePlayers}
+                </ul>
               </div>
             </div>
           </div>
-
         </div>
-        <FormButton type="button" text="Begin Match" btnClass="outline-primary"
-                    offsetCol="offset-0 text-center mt-3" onClick={this.onButtonClick}>
-        </FormButton>
+        <FormButton
+          type="button"
+          text="Begin Match"
+          btnClass="outline-primary"
+          offsetCol="offset-0 text-center mt-3"
+          onClick={this.onButtonClick}
+        />
       </CenterContent>
     );
-  }
-
-  static makeCaptainForm(teamNo, players, playerIds, captain, onChange, isValid, feedback) {
-    const selectOptions = players.filter(
-      el => playerIds.indexOf(el._id) !== -1,
-    );
-    let captainForm;
-    if (selectOptions.length) {
-      captainForm = <FormGroup label="Captain" type="select"
-                               options={selectOptions}
-                               name={`team${teamNo}-captain`} value={captain}
-                               onChange={onChange}
-                               isValid={isValid}
-                               feedback={feedback}/>;
-    } else {
-      captainForm = <FormGroup label="Captain" type="select"
-                               options={[{ _id: "-1", name: "Choose players first to select captain" }]}
-                               disabled
-                               name={`team${teamNo}-captain`} value={captain}
-                               onChange={onChange}
-                               isValid={isValid}
-                               feedback={feedback}/>
-    }
-
-    return captainForm;
   }
 }
 
 PreMatch.propTypes = {
-  team1: PropTypes.object,
-  team2: PropTypes.object,
+  team1: shape(TeamType),
+  team2: shape(TeamType),
   matchId: PropTypes.string,
   name: PropTypes.string,
   onMatchBegin: PropTypes.func,

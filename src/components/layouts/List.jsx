@@ -4,13 +4,13 @@
  * Date: Apr 04, 2019
  */
 
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Collapse, Button } from 'reactstrap';
 import * as feather from 'feather-icons';
 import InputControl from '../form/control/InputControl';
 import { isMobile } from '../../lib/utils';
+import { Named } from '../../types';
 
 class List extends React.Component {
   constructor(props) {
@@ -33,14 +33,14 @@ class List extends React.Component {
   };
 
   render() {
-    const {
-      title, list, itemClass, itemMapper, onFilter,
-    } = this.props;
+    const { title, list, itemClass, itemMapper, onFilter } = this.props;
     const className = `list-group-item bg-transparent ${itemClass || ''}`;
     const mapper = itemMapper || ((item) => item);
-    const items = list.map(
-      (item, i) => <li key={item._id} className={className}>{mapper(item, i)}</li>,
-    );
+    const items = list.map((item, i) => (
+      <li key={item._id} className={className}>
+        {mapper(item, i)}
+      </li>
+    ));
     const { isOpen } = this.state;
     return (
       <>
@@ -57,13 +57,12 @@ class List extends React.Component {
           </Button>
         </h3>
         <Collapse isOpen={isOpen}>
-          {onFilter
-          && (
-          <InputControl
-            autoFocus
-            placeholder="Type here to filter list"
-            onChange={(e) => onFilter(e.target.value)}
-          />
+          {onFilter && (
+            <InputControl
+              autoFocus
+              placeholder="Type here to filter list"
+              onChange={(e) => onFilter(e.target.value)}
+            />
           )}
           <hr />
           <ul className="list-group">{items}</ul>
@@ -77,9 +76,8 @@ List.propTypes = {
   title: PropTypes.string.isRequired,
   itemClass: PropTypes.string,
   itemMapper: PropTypes.func,
-  list: PropTypes.arrayOf(PropTypes.object).isRequired,
+  list: PropTypes.arrayOf(PropTypes.shape(Named)).isRequired,
   onFilter: PropTypes.func,
 };
-
 
 export default List;

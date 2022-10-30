@@ -4,12 +4,13 @@
  * Date: Apr 10, 2019
  */
 
-
-import React, {Component} from "react";
-import CenterContent from "./layouts/CenterContent";
-import SelectControl from "./form/control/select";
-import {bindMethods} from "../lib/utils";
-import fetcher from "../lib/fetcher";
+import React, { Component } from 'react';
+import { arrayOf, func, shape, string } from 'prop-types';
+import CenterContent from './layouts/CenterContent';
+import SelectControl from './form/control/select';
+import { bindMethods } from '../lib/utils';
+import fetcher from '../lib/fetcher';
+import { TeamType } from '../types';
 
 class Toss extends Component {
   constructor(props) {
@@ -34,22 +35,22 @@ class Toss extends Component {
 
   handlers = {
     onChange(action) {
-      this.setState(prevState => {
-        return {values: {...prevState.values, ...action}}
-      });
+      this.setState((prevState) => ({
+        values: { ...prevState.values, ...action },
+      }));
     },
     onClick() {
+      const { values } = this.state;
       const postData = {
-        won: this.state.values.won,
-        choice: this.state.values.choice,
+        won: values.won,
+        choice: values.choice,
         state: 'innings1',
       };
+      const { onToss, matchId } = this.props;
       fetcher
-        .put(`matches/${this.props.matchId}/toss`, postData)
-        .then(response => {
-          return this.props.onToss(response.data.match, response.data.message);
-        })
-        .catch(err => {
+        .put(`matches/${matchId}/toss`, postData)
+        .then((response) => onToss(response.data.match, response.data.message))
+        .catch((err) => {
           const isValid = {
             won: true,
             choice: true,
@@ -80,19 +81,37 @@ class Toss extends Component {
   }
 
   render() {
-    const {name} = this.props;
-    const {feedback} = this.state;
-    const teams = [{_id: '', name: 'None'}].concat(this.props.teams);
-    const options = ['Bat', 'Bowl'].map(el => ({_id: el, name: el}));
-    const ownControl = <SelectControl options={teams} id="own"
-                                      onChange={(e) => this.onChange({won: e.target.value})}
-                                      value={this.state.values.won} isValid={this.state.isValid.won}/>;
-    const choiceControl = <SelectControl options={options} id="choice"
-                                         onChange={(e) => this.onChange({choice: e.target.value})}
-                                         value={this.state.values.choice} isValid={this.state.isValid.choice}/>;
+    const { name } = this.props;
+    const { feedback } = this.state;
+    const { teams: teamsProp } = this.props;
+    const teams = [{ _id: '', name: 'None' }].concat(teamsProp);
+    const options = ['Bat', 'Bowl'].map((el) => ({ _id: el, name: el }));
+    const { values, isValid } = this.state;
+    const ownControl = (
+      <SelectControl
+        options={teams}
+        id="own"
+        name="own"
+        onChange={(e) => this.onChange({ won: e.target.value })}
+        value={values.won}
+        isValid={isValid.won}
+      />
+    );
+    const choiceControl = (
+      <SelectControl
+        options={options}
+        id="choice"
+        name="choice"
+        onChange={(e) => this.onChange({ choice: e.target.value })}
+        value={values.choice}
+        isValid={isValid.choice}
+      />
+    );
     return (
       <CenterContent>
-        <h2 className="text-center text-white bg-success py-3 mb-5 rounded">{name}</h2>
+        <h2 className="text-center text-white bg-success py-3 mb-5 rounded">
+          {name}
+        </h2>
         <div className="form-group row justify-content-center">
           <label htmlFor="won" className="col-form-label col-auto">
             <h5>Toss Won By</h5>
@@ -109,13 +128,24 @@ class Toss extends Component {
             <div className="invalid-feedback">{feedback.choice}</div>
           </div>
           <div className="col-auto">
-            <input type="button" className="btn btn-outline-primary" value="Continue" onClick={this.onClick}/>
+            <input
+              type="button"
+              className="btn btn-outline-primary"
+              value="Continue"
+              onClick={this.onClick}
+            />
           </div>
         </div>
       </CenterContent>
     );
   }
-
 }
+
+Toss.propTypes = {
+  onToss: func.isRequired,
+  matchId: string.isRequired,
+  name: string.isRequired,
+  teams: arrayOf(shape(TeamType)),
+};
 
 export default Toss;

@@ -4,8 +4,7 @@
  * Date: Apr 08, 2019
  */
 
-
-import axios from "axios";
+import axios from 'axios';
 
 const fetcher = {
   get token() {
@@ -20,7 +19,7 @@ let cancelTokenSource = axios.CancelToken.source();
 
 const baseAxios = axios.create({
   baseURL: `${process.env.SERVER_URL}/api/`,
-  headers: {Authorization: `Bearer ${fetcher.token}`},
+  headers: { Authorization: `Bearer ${fetcher.token}` },
   cancelToken: cancelTokenSource.token,
 });
 

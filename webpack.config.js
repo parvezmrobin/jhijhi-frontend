@@ -16,14 +16,15 @@ module.exports = {
   },
   output: {
     path: outputPath,
-    filename: (file) => file.chunk.name === 'serviceWorker' ? '[name].js' : '[name].[hash].js',
+    filename: (file) =>
+      file.chunk.name === 'serviceWorker' ? '[name].js' : '[name].[hash].js',
     chunkFilename: '[name].chunk.[hash].js',
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude:[ /node_modules/],
+        exclude: [/node_modules/],
         use: {
           loader: 'babel-loader',
         },
@@ -56,16 +57,14 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-        'process.env.SERVER_URL': `'${process.env.SERVER_URL}'`,
+      'process.env.SERVER_URL': `'${process.env.SERVER_URL}'`,
     }),
-    new MiniCssExtractPlugin({filename: '[name].[contentHash].css'}),
+    new MiniCssExtractPlugin({ filename: '[name].[contentHash].css' }),
     new CleanWebpackPlugin([outputDirectory]),
     new HtmlWebpackPlugin({
       template: './statics/template.html',
       favicon: './statics/favicon.ico',
     }),
-    new CopyPlugin([
-      { from: './statics', to: '.' },
-    ]),
+    new CopyPlugin([{ from: './statics', to: '.' }]),
   ],
 };

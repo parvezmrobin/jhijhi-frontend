@@ -29,13 +29,15 @@ afterEach(() => {
 
 it('should renders TagControl', () => {
   act(() => {
-    render(<TagControl
-      value={[]}
-      isValid
-      options={['1', '2', '3']}
-      onChange={() => {
-      }}
-    />, container);
+    render(
+      <TagControl
+        value={[]}
+        isValid
+        options={['1', '2', '3']}
+        onChange={() => {}}
+      />,
+      container
+    );
   });
   expect(container.textContent).toBe('Insert tags for easy searching');
 });
@@ -43,13 +45,15 @@ it('should renders TagControl', () => {
 it('should render selected values', () => {
   const value = ['1', '2'];
   act(() => {
-    render(<TagControl
-      value={value}
-      isValid
-      options={['1', '2', '3']}
-      onChange={() => {
-      }}
-    />, container);
+    render(
+      <TagControl
+        value={value}
+        isValid
+        options={['1', '2', '3']}
+        onChange={() => {}}
+      />,
+      container
+    );
   });
 
   expect(container.textContent).toBe(value.join(''));
@@ -57,13 +61,15 @@ it('should render selected values', () => {
 
 it('should render valid state', () => {
   act(() => {
-    render(<TagControl
-      value={['1', '2']}
-      isValid
-      options={['1', '2', '3']}
-      onChange={() => {
-      }}
-    />, container);
+    render(
+      <TagControl
+        value={['1', '2']}
+        isValid
+        options={['1', '2', '3']}
+        onChange={() => {}}
+      />,
+      container
+    );
   });
 
   const tagControl = container.firstChild;
@@ -72,13 +78,15 @@ it('should render valid state', () => {
 
 it('should render invalid state', () => {
   act(() => {
-    render(<TagControl
-      value={['1', '2']}
-      isValid={false}
-      options={['1', '2', '3']}
-      onChange={() => {
-      }}
-    />, container);
+    render(
+      <TagControl
+        value={['1', '2']}
+        isValid={false}
+        options={['1', '2', '3']}
+        onChange={() => {}}
+      />,
+      container
+    );
   });
 
   const tagControl = container.firstChild;

@@ -31,12 +31,10 @@ afterEach(() => {
 
 it('should renders InputControl', () => {
   act(() => {
-    render(<InputControl
-      value={['2']}
-      isValid
-      onChange={() => {
-      }}
-    />, container);
+    render(
+      <InputControl value={['2']} isValid onChange={() => {}} />,
+      container
+    );
   });
 
   const input = container.querySelector('input');
@@ -48,14 +46,17 @@ it('should handle onChange properly', () => {
   let val = '2';
   let isValid = true;
   act(() => {
-    render(<InputControl
-      value={[val]}
-      isValid={isValid}
-      onChange={(e) => {
-        val = e.target.value;
-        isValid = e.target.value < 3;
-      }}
-    />, container);
+    render(
+      <InputControl
+        value={[val]}
+        isValid={isValid}
+        onChange={(e) => {
+          val = e.target.value;
+          isValid = e.target.value < 3;
+        }}
+      />,
+      container
+    );
   });
 
   const input = container.querySelector('input');
