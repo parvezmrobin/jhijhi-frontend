@@ -777,7 +777,7 @@ class Running extends Component {
           <footer className="py-3 py-sm-0" />
         </main>
         <BatsmanSelectModal
-          allOutPrompted={singleBatsman}
+          showingSingleBatsmanPrompt={showSingleBatsmanModal}
           batsman1Index={batsman1}
           batsman2Index={batsman2}
           batsmanList={battingTeamPlayers}

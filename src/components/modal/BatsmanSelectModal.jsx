@@ -91,17 +91,18 @@ export default class BatsmanSelectModal extends Component {
       batsman2Id,
       batsmanList,
       singleBatsman,
-      allOutPrompted,
+      showingSingleBatsmanPrompt,
       onNumberOfBatsmenChange,
     } = this.props;
     const batsman1Exists = Number.isInteger(batsman1Index);
     const batsman2Exists = Number.isInteger(batsman2Index);
     const { errors } = this.state;
 
-    // if 'allout - play with single player?' is not prompted, and
-    // either batsman1 is not present or (it's not single batsman game and batsman2 is not present)
+    // if 'all out - play with single player?' is not prompted, and
+    // either batsman1 is not present or
+    // (it's not single batsman game and batsman2 is not present)
     const isModalOpen =
-      !allOutPrompted &&
+      !showingSingleBatsmanPrompt &&
       (!batsman1Exists || (!singleBatsman && !batsman2Exists));
 
     // although if `isModalOpen` is false, modal will not be shown but a backdrop will
@@ -167,5 +168,5 @@ BatsmanSelectModal.propTypes = {
   singleBatsman: PropTypes.bool,
   onNumberOfBatsmenChange: PropTypes.func,
   onSelect: PropTypes.func,
-  allOutPrompted: PropTypes.bool,
+  showingSingleBatsmanPrompt: PropTypes.bool,
 };
