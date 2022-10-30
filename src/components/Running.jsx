@@ -831,7 +831,7 @@ class Running extends Component {
             })
           }
         />
-        <Modal isOpen={showSingleBatsmanModal}>
+        <Modal isOpen={showSingleBatsmanModal} contentClassName="bg-dark">
           <ModalHeader>Want to play with single batsman?</ModalHeader>
           <ModalFooter>
             <Button

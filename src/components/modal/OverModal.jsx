@@ -61,7 +61,12 @@ export default class OverModal extends Component {
       size: modalSize,
     } = this.state;
     return (
-      <Modal isOpen={open} size={modalSize} toggle={this.close}>
+      <Modal
+        isOpen={open}
+        size={modalSize}
+        toggle={this.close}
+        contentClassName="bg-dark"
+      >
         <ModalHeader toggle={this.close} className="text-primary border-0">
           Bowled by&nbsp;
           <span className="font-italic">
