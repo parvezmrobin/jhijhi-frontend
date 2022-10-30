@@ -35,6 +35,9 @@ export default class Score extends Component {
    */
   static _calcRunRate(overs, bowls, run, round) {
     const runRate = (run / (overs * 6 + bowls)) * 6;
+    if (Number.isNaN(runRate)) {
+      return 'N/A';
+    }
     return round ? runRate.toFixed(round) : runRate.toString();
   }
 
@@ -207,9 +210,7 @@ export default class Score extends Component {
           </div>
         </div>
         <div className="container-fluid mt-2 text-white">
-          <div className="px-2">
-            {Number.isNaN(runRateText) ? 'N/A' : runRateText}
-          </div>
+          <div className="px-2">{runRateText}</div>
           <p className="px-2">
             <em>{tossOwner}</em> won the toss <br />
             and chose to <em>{choice}</em>.
