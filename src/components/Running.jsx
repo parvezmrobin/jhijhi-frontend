@@ -809,28 +809,27 @@ class Running extends Component {
           onEditClick={this.onOverModalEditClick}
           onEdit={this.onUpdate}
         />
-        <ScoreEditModal
-          isOpen={editModal.show}
-          overNo={editModal.overNo}
-          bowlNo={editModal.bowlNo}
-          bowl={
-            editModal.show &&
-            innings.overs[editModal.overNo].bowls[editModal.bowlNo]
-          }
-          onInput={this.onUpdate}
-          batsmanIndices={[batsman1, batsman2]}
-          batsmen={battingTeamPlayers}
-          matchId={match._id}
-          close={() =>
-            this.setState({
-              editModal: {
-                show: false,
-                overNo: -1,
-                bowlNo: -1,
-              },
-            })
-          }
-        />
+        {editModal.show && (
+          <ScoreEditModal
+            isOpen={editModal.show}
+            overNo={editModal.overNo}
+            bowlNo={editModal.bowlNo}
+            bowl={innings.overs[editModal.overNo].bowls[editModal.bowlNo]}
+            onInput={this.onUpdate}
+            batsmanIndices={[batsman1, batsman2]}
+            batsmen={battingTeamPlayers}
+            matchId={match._id}
+            close={() =>
+              this.setState({
+                editModal: {
+                  show: false,
+                  overNo: -1,
+                  bowlNo: -1,
+                },
+              })
+            }
+          />
+        )}
         <Modal isOpen={showSingleBatsmanModal} contentClassName="bg-dark">
           <ModalHeader>Want to play with single batsman?</ModalHeader>
           <ModalFooter>
