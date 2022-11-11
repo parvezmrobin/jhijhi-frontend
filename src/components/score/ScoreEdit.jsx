@@ -6,7 +6,7 @@
 
 import React from 'react';
 import * as PropTypes from 'prop-types';
-import { shape } from 'prop-types';
+import { shape, string } from 'prop-types';
 import ScoreInputV2 from './ScoreInputV2';
 import { PlayerType } from '../../types';
 
@@ -18,6 +18,7 @@ function ScoreEdit(props) {
     overNo,
     bowlNo,
     onInput,
+    className,
   } = props;
   const injectBowlEvent = (bowl) => {
     // `props.battingTeamPlayers` is the array of current battingTeamPlayers
@@ -33,6 +34,7 @@ function ScoreEdit(props) {
 
   return (
     <ScoreInputV2
+      className={className}
       batsmen={battingTeamPlayers}
       batsmanIndices={batsmanIndices}
       matchId={matchId}
@@ -52,6 +54,7 @@ ScoreEdit.propTypes = {
   overNo: PropTypes.number.isRequired,
   bowlNo: PropTypes.number.isRequired,
   onInput: PropTypes.func.isRequired,
+  className: string,
 };
 
 export default ScoreEdit;

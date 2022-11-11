@@ -226,7 +226,7 @@ export default class ScoreInputV2 extends Component {
       uncertainBatsmanId,
       errorMessage,
     } = this.state;
-    const { batsmen, actionText } = this.props;
+    const { batsmen, actionText, className = '' } = this.props;
     // prevent error while any of the batsmen changed to null
     batsmen[0] = batsmen[0] || { _id: null };
     batsmen[1] = batsmen[1] || { _id: null };
@@ -242,7 +242,7 @@ export default class ScoreInputV2 extends Component {
     }
 
     return (
-      <section className="score-input v2 rounded flex-grow-0">
+      <section className={`score-input v2 rounded flex-grow-0 ${className}`}>
         <div className="col-12 col-md-3 col-lg-auto">
           <label className="sr-only" htmlFor="by" />
           <SelectControl
@@ -413,6 +413,7 @@ export default class ScoreInputV2 extends Component {
 }
 
 ScoreInputV2.propTypes = {
+  className: string,
   batsmen: arrayOf(shape(PlayerType)).isRequired,
   batsmanIndices: arrayOf(number).isRequired,
   matchId: string.isRequired,

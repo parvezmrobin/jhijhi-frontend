@@ -26,17 +26,13 @@ function ScoreEditModal(props) {
   } = props;
 
   return (
-    <Modal isOpen={isOpen} size="xl" toggle={close} contentClassName="bg-dark">
-      <ModalHeader
-        className="border-0 text-white ml-3 pl-xl-7 pl-lg-6"
-        tag="h4"
-        toggle={close}
-      >
+    <Modal isOpen={isOpen} size="lg" toggle={close} contentClassName="bg-dark">
+      <ModalHeader className="border-0 text-white" tag="h4" toggle={close}>
         {overNo + 1}
         <sup>{ordinal(overNo + 1)}</sup> Over, Bowl {bowlNo + 1}
       </ModalHeader>
-      <ModalBody className="p-0">
-        <div className="pb-3 px-xl-7 px-lg-6 mx-lg-3">
+      <ModalBody>
+        <div className="pb-3">
           <h4 className="text-warning font-weight-light">
             With great power comes great responsibility!
           </h4>
@@ -50,6 +46,7 @@ function ScoreEditModal(props) {
           </ul>
         </div>
         <ScoreEdit
+          className="compact"
           matchId={matchId}
           battingTeamPlayers={batsmen}
           batsmanIndices={batsmanIndices}

@@ -172,9 +172,9 @@ section.score-input {
   @extend .bg-dark;
   @extend .text-white;
 
-  &.v2{
-    @extend .px-xl-7;
-    @extend .px-md-6;
+  &.v2:not(.compact){
+    @extend .px-xl-6;
+    @extend .px-md-3;
   }
 }
 
