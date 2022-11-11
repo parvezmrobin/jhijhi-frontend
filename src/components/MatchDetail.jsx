@@ -154,16 +154,20 @@ export default class MatchDetail extends Component {
     const bowlerName =
       bowlingTeamPlayers[innings.overs[overIndex]?.bowledBy]?.name;
 
+    const statusText = match.state === 'done' ? 'won the match' : 'lead';
+
     return (
       <main className="col min-vh-100 pt-5">
-        <h2 className="text-success bg-dark-trans pt-2 pb-3 mt-3 rounded text-center">
+        <h2 className="text-info bg-dark-trans pt-2 pb-3 mt-3 rounded text-center">
           {match.name}
         </h2>
         <div className="row mt-1">
-          <div className="pt-3 col-lg text-white">
+          <div className="mt-3 col-lg text-white">
             <h4 className="text-center">{winningTeam}</h4>
             <div className="shadow bg-dark-trans rounded pb-3 px-2">
-              <h5 className="text-center">won the match {type}. </h5>
+              <h5 className="text-center font-weight-light">
+                {statusText} {type}.{' '}
+              </h5>
               <h5 className="d-flex justify-content-center my-3">
                 <label
                   className={
@@ -201,19 +205,27 @@ export default class MatchDetail extends Component {
                 <br />
                 <strong>Decision:</strong> {choice}
               </p>
-              <p className="lead">
-                <strong>{innings1TeamName}:</strong> {innings1score}/
-                {innings1wicket}{' '}
-                <small>
-                  ({numOfOvers1}.{numOfBowls1} overs)
-                </small>
+              <div className="lead">
+                {numOfOvers1 !== -1 && (
+                  <div>
+                    <strong>{innings1TeamName}:</strong> {innings1score}/
+                    {innings1wicket}{' '}
+                    <small>
+                      ({numOfOvers1}.{numOfBowls1} overs)
+                    </small>
+                  </div>
+                )}
+                {numOfOvers2 !== -1 && (
+                  <div>
+                    <strong>{innings2TeamName}:</strong> {innings2score}/
+                    {innings2wicket}{' '}
+                    <small>
+                      ({numOfOvers2}.{numOfBowls2} overs)
+                    </small>
+                  </div>
+                )}
                 <br />
-                <strong>{innings2TeamName}:</strong> {innings2score}/
-                {innings2wicket}{' '}
-                <small>
-                  ({numOfOvers2}.{numOfBowls2} overs)
-                </small>
-              </p>
+              </div>
               <div className="row">
                 <div className="col-12 col-md col-lg-12">
                   <button

@@ -12,7 +12,9 @@ import { BowlType } from '../../types';
 
 function Over(props) {
   const { overNo, over, bowlerName, onOverClick, active } = props;
-  const className = `list-group-item text-dark ${active ? 'active' : ''}`;
+  const className = `list-group-item ${
+    active ? 'active text-white' : 'text-dark'
+  }`;
   /* eslint-disable react/no-array-index-key */
   const badges = over.bowls
     .filter((bowl) => bowl.isWicket || optional(bowl.boundary).run)
