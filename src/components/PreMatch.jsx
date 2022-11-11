@@ -16,31 +16,17 @@ import FormButton from './form/FormButton';
 import fetcher from '../lib/fetcher';
 import { PlayerType, TeamType } from '../types';
 
-const getCheckboxOnChangeForTeam = (team, id) => {
-  // if checkbox is checked, key is 'select' and 'unselect otherwise. value is the index
-  if (team === 1) {
-    return (e) =>
-      this.onTeam1PlayerChange({
-        [e.target.checked ? 'select' : 'unselect']: id,
-      });
-  }
-  if (team === 2) {
-    return (e) =>
-      this.onTeam2PlayerChange({
-        [e.target.checked ? 'select' : 'unselect']: id,
-      });
-  }
-  throw new Error('Unknown Team');
-};
-
-const getListItemMapperForTeam = (team) => {
+const getListItemMapperForTeam = (onTeamPlayerChange) => {
   function listItemMapper({ _id, jerseyNo, name }) {
-    // noinspection RequiredAttributes
     return (
       <li key={_id} className="list-group-item bg-transparent flex-fill">
         <CheckBoxControl
-          name={`cb-${jerseyNo}-${team}`}
-          onChange={getCheckboxOnChangeForTeam(team, _id)}
+          name={`cb-${jerseyNo}-${onTeamPlayerChange.name}`}
+          onChange={(e) => {
+            onTeamPlayerChange({
+              [e.target.checked ? 'select' : 'unselect']: _id,
+            });
+          }}
         >
           {`${toTitleCase(name)} (${jerseyNo})`}
         </CheckBoxControl>
@@ -278,10 +264,10 @@ export default class PreMatch extends Component {
       team2Captain,
     } = this.state;
     const team1CandidatePlayers = subtract(players, team2Players, matcher).map(
-      getListItemMapperForTeam(1)
+      getListItemMapperForTeam(this.onTeam1PlayerChange)
     );
     const team2CandidatePlayers = subtract(players, team1Players, matcher).map(
-      getListItemMapperForTeam(2)
+      getListItemMapperForTeam(this.onTeam2PlayerChange)
     );
 
     const team1CaptainForm = PreMatch.makeCaptainForm(

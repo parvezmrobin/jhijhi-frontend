@@ -30,9 +30,9 @@ function CheckBoxControl({ name, value, children, onChange, id: _id }) {
 CheckBoxControl.propTypes = {
   id: string,
   name: string.isRequired,
-  value: bool.isRequired,
+  value: bool, // value can be nullable when we only need an onChange event
   children: node,
-  onChange: func,
+  onChange: func.isRequired,
 };
 
 export default CheckBoxControl;
