@@ -10,7 +10,12 @@ import { shape } from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import CenterContent from './layouts/CenterContent';
 import CheckBoxControl from './form/control/checkbox';
-import { bindMethods, subtract, toTitleCase } from '../lib/utils';
+import {
+  bindMethods,
+  formatValidationFeedback,
+  subtract,
+  toTitleCase,
+} from '../lib/utils';
 import FormGroup from './form/FormGroup';
 import FormButton from './form/FormButton';
 import fetcher from '../lib/fetcher';
@@ -129,26 +134,7 @@ export default class PreMatch extends Component {
           onMatchBegin(response.data.match, response.data.message)
         )
         .catch((err) => {
-          const isValid = {
-            team1Players: true,
-            team2Players: true,
-            team1Captain: true,
-            team2Captain: true,
-          };
-          const feedback = {
-            team1Players: null,
-            team2Players: null,
-            team1Captain: null,
-            team2Captain: null,
-          };
-          for (const error of err.response.data.err) {
-            if (isValid[error.param]) {
-              isValid[error.param] = false;
-            }
-            if (!feedback[error.param]) {
-              feedback[error.param] = error.msg;
-            }
-          }
+          const { isValid, feedback } = formatValidationFeedback(err);
 
           this.setState({
             isValid,
@@ -237,9 +223,11 @@ export default class PreMatch extends Component {
   };
 
   componentDidMount() {
-    return fetcher
+    fetcher
       .get('players')
-      .then((response) => this.setState({ players: response.data }));
+      .then((response) => this.setState({ players: response.data }))
+      // eslint-disable-next-line no-console
+      .catch(console.error);
   }
 
   componentWillUnmount() {

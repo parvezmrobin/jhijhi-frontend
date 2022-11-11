@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { arrayOf, func, shape, string } from 'prop-types';
 import CenterContent from './layouts/CenterContent';
 import SelectControl from './form/control/select';
-import { bindMethods } from '../lib/utils';
+import { bindMethods, formatValidationFeedback } from '../lib/utils';
 import fetcher from '../lib/fetcher';
 import { TeamType } from '../types';
 
@@ -51,22 +51,7 @@ class Toss extends Component {
         .put(`matches/${matchId}/toss`, postData)
         .then((response) => onToss(response.data.match, response.data.message))
         .catch((err) => {
-          const isValid = {
-            won: true,
-            choice: true,
-          };
-          const feedback = {
-            won: null,
-            choice: null,
-          };
-          for (const error of err.response.data.err) {
-            if (isValid[error.param]) {
-              isValid[error.param] = false;
-            }
-            if (!feedback[error.param]) {
-              feedback[error.param] = error.msg;
-            }
-          }
+          const { isValid, feedback } = formatValidationFeedback(err);
 
           this.setState({
             isValid,
