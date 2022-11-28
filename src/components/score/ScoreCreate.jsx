@@ -26,7 +26,7 @@ class ScoreCreate extends Component {
 
     const { useV2 } = this.state;
     return (
-      <div className="container-fluid px-0">
+      <div className="container-fluid px-0 sticky-top" style={{ top: '56px' }}>
         <div className="text-white lead">
           <label
             className={useV2 ? 'badge' : 'badge badge-primary'}

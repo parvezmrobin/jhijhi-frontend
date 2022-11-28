@@ -324,6 +324,7 @@ class Running extends Component {
       },
       showSingleBatsmanModal: false,
       showErrorModal: false,
+      initialized: false,
     };
 
     bindMethods(this);
@@ -399,6 +400,7 @@ class Running extends Component {
     this.setState({
       batsman1,
       batsman2,
+      initialized: true,
     });
   }
 
@@ -629,7 +631,12 @@ class Running extends Component {
   }
 
   render() {
-    const { match, overModal, batsman1, batsman2, editModal } = this.state;
+    const { match, overModal, batsman1, batsman2, editModal, initialized } =
+      this.state;
+
+    if (!initialized) {
+      return null;
+    }
 
     if (match.state === 'done') {
       return <Redirect to={`/history@${match._id}`} />;
